@@ -5,48 +5,42 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use GuzzleHttp\Client;
+use App\Models\User;
+use App\Models\Curriculum;
 use GuzzleHttp\Exception\RequestException;
+use Carbon\Carbon;
 
 class CurriculumController extends Controller
 {
     public function index()
     {
         $user = auth()->user();
-        $user->load('curriculum');
+        $user->load('curriculum.educations');
+        $user->load('curriculum.experiences');
+
+        $birthDate = $user->curriculum?->date_of_birth;
+        if ($birthDate) {
+            $birthDate = Carbon::parse($birthDate)->format('Y-m-d');
+        }
+
         return Inertia::render('Curriculum/Index', [
             'profileNumber' => $user->id,
             'userInfo' => [
                 'name' => $user->name,
-                'title' => $user->curriculum?->title ?? 'Développeur web',
-                'categories' => ['Développement', 'Web', 'Mobile'],
-                'birthDate' => $user->curriculum?->birth_date ?? '01/01/1990',
-                'nationality' => $user->curriculum?->nationality ?? 'Sénégalaise',
-                'familyStatus' => $user->curriculum?->family_status ?? 'Célibataire',
-                'educationLevel' => $user->curriculum?->education_level ?? 'Bac +5 et plus',
-                'address' => $user->curriculum?->address ?? 'Dakar, Sénégal',
-                'education' => [
-                    [
-                        'level' => 'Bac +5 et plus',
-                        'type' => 'Université',
-                        'status' => 'completed',
-                        'startDate' => '2018',
-                        'endDate' => '2023',
-                        'school' => 'Université Cheikh Anta Diop de Dakar',
-                        'diploma' => 'Master en Informatique',
-                        'description' => 'Spécialisation en développement web et mobile'
-                    ],
-                    [
-                        'level' => 'Bac +3',
-                        'type' => 'Université',
-                        'status' => 'completed',
-                        'startDate' => '2015',
-                        'endDate' => '2018',
-                        'school' => 'Université Cheikh Anta Diop de Dakar',
-                        'diploma' => 'Licence en Informatique',
-                        'description' => 'Formation générale en informatique'
-                    ]
-                ],
-                'summary' => $user->curriculum?->summary ?? 'Développeur web passionné avec une expertise en développement full-stack. Spécialisé dans les technologies modernes comme Laravel, Vue.js et React.'
+                'email' => $user->email,
+                'title' => 'Développeur Full Stack',
+                'categories' => ['Web', 'Mobile', 'Backend'],
+                'birthDate' => $birthDate,
+                'nationality' => $user->curriculum?->nationality,
+                'civility' => $user->curriculum?->civility,
+                'phone' => $user->curriculum?->phone,
+                'country' => $user->curriculum?->country,
+                'familyStatus' => $user->curriculum?->family_status,
+                'educationLevel' => $user->curriculum?->study_level,
+                'address' => $user->curriculum?->address,
+                'educations' => $user->curriculum?->educations ?? [],
+                'experiences' => $user->curriculum?->experiences ?? [],
+                'summary' => $user->curriculum?->resume ?? 'Développeur web passionné avec une expertise en développement full-stack. Spécialisé dans les technologies modernes comme Laravel, Vue.js et React.'
             ],
             'auth' => [
                 'user' => $user
@@ -90,5 +84,67 @@ class CurriculumController extends Controller
                 'message' => 'Erreur lors de la correction: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function updateResume(Request $request)
+    {
+        $request->validate([
+            'resume' => 'required|string|min:10',
+        ]);
+        
+        $curriculum = auth()->user()->curriculum;
+        if (!$curriculum) {
+            $curriculum = auth()->user()->curriculum()->create([
+                'resume' => $request->resume,
+            ]);
+        } else {
+            $curriculum->update([
+                'resume' => $request->resume
+            ]);
+        }
+
+        return back()->with('success', 'Resume updated successfully');
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'civility' => 'required|string',
+            'date_of_birth' => 'required|date',
+            'phone' => 'required|string',
+            'address' => 'nullable|string',
+            'nationality' => 'nullable|string',
+            'study_level' => 'required|string',
+            'country' => 'nullable|string',
+            'family_status' => 'nullable|string',
+            'avatar' => 'nullable|image|max:1024', // 1MB max
+        ]);
+
+        $data = $request->only([
+            'civility',
+            'phone',
+            'address',
+            'nationality',
+            'study_level',
+            'country',
+            'family_status'
+        ]);
+        
+        // Format the date before saving
+        $data['date_of_birth'] = Carbon::parse($request->date_of_birth)->format('Y-m-d');
+
+        $curriculum = auth()->user()->curriculum;
+        if (!$curriculum) {
+            $curriculum = auth()->user()->curriculum()->create($data);
+        } else {
+            $curriculum->update($data);
+        }
+
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $curriculum->update(['avatar' => $path]);
+        }
+
+        return back()->with('success', 'Profile updated successfully');
     }
 }

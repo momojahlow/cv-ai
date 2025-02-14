@@ -20,4 +20,9 @@ class Experience extends Model
         'startDate' => 'date',
         'endDate' => 'date',
     ];
+
+    public function curriculum()
+    {
+        return $this->belongsTo(Curriculum::class);
+    }
 }

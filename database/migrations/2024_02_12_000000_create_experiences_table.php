@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('experiences', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('curriculum_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->date('startDate');
             $table->date('endDate');

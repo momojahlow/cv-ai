@@ -3,25 +3,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CorrectorSection extends Controller
 {
-    /**
-     * Handle the incoming request.
-     */
     public function __invoke(Request $request)
     {
-        $client = new Client(env('GEMINI_API_KEY'));
-        $prompts = "corrige moi ce texte :".$request->question;
-        try {
-            $response = $client->get('correct', [
-                'text' => $prompts,
-                'lang' => 'fr',
-            ]);
-            $response = json_decode($response->getBody()->getContents());
-            return response()->json($response);
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()]);
+        $user = auth()->user();
+        
+        $user->load('curriculum');
+        $user->load('curriculum.experiences');
+        $user->load('curriculum.educations');
+
+        $data = [
+            'user' => $user,
+            'curriculum' => $user->curriculum,
+            'education' => $user->curriculum?->educations ?? [],
+            'experience' => $user->curriculum?->experiences ?? [],
+            'formations' => session('formations', [])
+        ];
+
+        if ($request->route()->getName() === 'cv-pdf') {
+            $pdf = PDF::loadView('cv-pdf', $data);
+            return $pdf->download('cv.pdf');
         }
+
+        return view('cv', $data);
     }
 }

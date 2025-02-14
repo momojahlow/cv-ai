@@ -3,7 +3,10 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExperienceController;
+use App\Http\Controllers\EducationController;
+use App\Http\Controllers\CurriculumController;
 use Inertia\Inertia;
+use App\Http\Controllers\CorrectorSection;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -15,6 +18,8 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/cv', CorrectorSection::class)->name('cv');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -24,28 +29,16 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::get('/curriculum', function () {
-        $user = auth()->user();
-        $userInfo = [
-            'name' => $user->name,
-            'email' => $user->email,
-            'title' => 'Développeur Full Stack', // You might want to make this dynamic
-            'categories' => ['Web', 'Mobile', 'Backend'],
-            'birthDate' => '1990-01-01', // Get this from curriculum if exists
-            'nationality' => 'Française', // Get this from curriculum if exists
-            'familyStatus' => 'Célibataire', // Get this from curriculum if exists
-            'educationLevel' => 'Bac+5', // Get this from curriculum if exists
-            'address' => 'Paris, France', // Get this from curriculum if exists
-            'summary' => '', // Get this from curriculum if exists
-        ];
 
-        return Inertia::render('Curriculum/Index', [
-            'userInfo' => $userInfo,
-            'auth' => [
-                'user' => $user
-            ]
-        ]);
-    })->name('curriculum.index');
+    Route::get('/cv-pdf', CorrectorSection::class)->name('cv-pdf');
+
+    Route::get('/curriculum', [CurriculumController::class, 'index'])->name('curriculum.index');
+    Route::post('/curriculum/correct-summary', [CurriculumController::class, 'correctSummary'])->name('curriculum.correct-summary');
+    Route::post('/curriculum/update-resume', [CurriculumController::class, 'updateResume'])->name('curriculum.update-resume');
+    Route::post('/curriculum/update-profile', [CurriculumController::class, 'updateProfile'])->name('curriculum.update-profile');
+
+    Route::post('/education', [EducationController::class, 'store'])->name('education.store');
+    Route::delete('/education/{education}', [EducationController::class, 'destroy'])->name('education.destroy');
 
     Route::get('/experiences', [ExperienceController::class, 'index'])->name('experiences');
     Route::get('/experience/create', [ExperienceController::class, 'create'])->name('experience.create');

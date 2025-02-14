@@ -33,6 +33,14 @@ export default function Index({ profileNumber, userInfo, auth }) {
         }
     };
 
+    const downloadPDF = async () => {
+        try {
+          window.open(route('cv-pdf'), '_blank')
+        } catch (error) {
+          console.error('Error downloading PDF:', error)
+        }
+      }
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -114,20 +122,19 @@ export default function Index({ profileNumber, userInfo, auth }) {
                         {/* Action Buttons */}
                         <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
                             <div className="flex space-x-4">
-                                <button className="flex items-center text-[#2b8d96] hover:text-pink-600">
+                                <button 
+                                    onClick={downloadPDF}
+                                    className="flex items-center text-[#2b8d96] hover:text-pink-600"
+                                >
                                     <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clipRule="evenodd" />
                                     </svg>
                                     Version PDF
                                 </button>
-                                <button className="flex items-center text-[#2b8d96] hover:text-pink-600">
-                                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                                    </svg>
-                                    Envoyer ce CV par mail
-                                </button>
-                                <button className="flex items-center text-[#2b8d96] hover:text-pink-600">
+                                
+                                <button 
+                                onClick={downloadWeb}
+                                className="flex items-center text-[#2b8d96] hover:text-pink-600">
                                     <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 014 16a5.986 5.986 0 004.546-2.084A5 5 0 0014 10z" clipRule="evenodd" />
                                     </svg>

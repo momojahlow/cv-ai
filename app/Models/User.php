@@ -76,7 +76,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the curricula associated with the user.
+     * Get the curriculum associated with the user.
      */
     public function curriculum()
     {
