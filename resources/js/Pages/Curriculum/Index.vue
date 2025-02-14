@@ -441,10 +441,10 @@
               <h3 class="text-lg font-semibold">Langues</h3>
             </div>
             <button
-              @click="toggleLanguageForm"
+              @click="toggleLanguageModal"
               class="inline-flex items-center justify-center p-2 rounded-full text-[#2b8d96] hover:bg-gray-100"
             >
-              <svg v-if="!showLanguageForm" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg v-if="!showLanguageModal" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
               </svg>
               <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -455,6 +455,49 @@
 
         </div>
     </div>
+    <!-- Language Modal -->
+    <Modal :show="showLanguageModal" @close="closeModal">
+      <div class="p-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">
+          Langues
+        </h2>
+        
+        <form @submit.prevent="submitLanguage" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Langue</label>
+              <input
+                type="text"
+                v-model="languageForm.language"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              >
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Niveau</label>
+              <input
+                type="text"
+                v-model="languageForm.level"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              >
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end space-x-3">
+            <button
+              type="submit"
+              class="inline-flex items-center justify-center p-2 rounded-sm text-white bg-[#2b8d96] hover:bg-[#1a646b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2b8d96]"
+            >
+              Ajouter
+            </button>
+            <button
+                    @click="toggleLanguageModal"
+                    class="px-6 py-2 bg-red-500 text-white rounded-sm hover:bg-red-700"
+                  >
+                    Annuler
+            </button>
+          </div>
+        </form>
+      </div>
+    </Modal>
     <!-- Edit Modal -->
     <Modal :show="showEditModal" @close="closeModal">
       <div class="p-6">
@@ -618,6 +661,46 @@ const downloadPDF = async () => {
   }
 }
 
+//Languange modal
+const showLanguageModal = ref(false)
+const languageForm = ref({
+  language: '',
+  level: '',
+  description: ''
+})
+
+const toggleLanguageModal = () => {
+  showLanguageModal.value = !showLanguageModal.value
+  if (!showLanguageModal.value) {
+    // Reset form when closing
+    languageForm.value = {
+      language: '',
+      level: ''   
+    }
+  }
+}
+
+const submitLanguage = async () => {
+  try {
+    const response = await axios.post(route('curriculum.language.update'), languageForm.value)
+
+    console.log(languageForm.value)
+    showLanguageModal.value = false
+    languageForm.value = {
+      language: '',
+      level: ''
+    }
+  } catch (error) {
+    console.error('Error adding language:', error)
+    if (error.response?.data?.redirect) {
+      flash.error = error.response.data.message
+      window.location.href = error.response.data.redirect
+    } else {
+      flash.error = 'Error adding language'
+    }    
+  }
+} 
+
 // Edit Modal
 const showEditModal = ref(false)
 const form = ref({
@@ -633,7 +716,7 @@ const form = ref({
 })
 
 const closeModal = () => {
-  // Reset form to current user info when closing
+  // Reset form to current user info when closing summary
   form.value = {
     civility: props.userInfo?.civility || '',
     date_of_birth: props.userInfo?.birthDate || '',
@@ -675,7 +758,7 @@ const handleAvatarUpload = (event) => {
 
 // Resume
 const summary = ref('')
-const displayedSummary = ref('')
+const displayedSummary = ref(props.userInfo?.summary || '')
 const isLoading = ref(false)
 const isEditing = ref(false)
 const error = ref('')
@@ -727,7 +810,7 @@ const startEdit = () => {
 const validateSummary = () => {
   const resumeText = summary.value // Store the value before clearing it
   
-  router.post('/curriculum/update-resume', {
+  router.post(route('curriculum.resume.update'), {
     resume: resumeText
   }, {
     preserveScroll: true,
@@ -740,12 +823,6 @@ const validateSummary = () => {
       console.error('Error updating resume:', errors)
     }
   })
-}
-
-const updateSummary = () => {
-  displayedSummary.value = summary.value
-  summary.value = ''
-  isEditing.value = false
 }
 
 const cancelEdit = () => {
@@ -768,11 +845,12 @@ const handleCorrection = async () => {
   error.value = ''
   
   try {
-    const response = await axios.post(route('experience.correct-description'), {
-      description: summary.value
+    const response = await axios.post(route('curriculum.resume.correct'), {
+      resume: summary.value
     })
     
     if (response.data.success) {
+      console.log(response.data)
       summary.value = response.data.description
     } else {
       error.value = response.data.message || 'Une erreur est survenue lors de la correction'

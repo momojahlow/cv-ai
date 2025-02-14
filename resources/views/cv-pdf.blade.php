@@ -58,11 +58,13 @@
     <div class="section">
         <h2 class="section-title">Informations Personnelles</h2>
         <div class="profile-info">
-            <p><strong>Date de naissance:</strong> {{ $curriculum->birth_date ?? '' }}</p>
-            <p><strong>Nationalité:</strong> {{ $curriculum->nationality ?? '' }}</p>
-            <p><strong>Situation familiale:</strong> {{ $curriculum->family_status ?? '' }}</p>
-            <p><strong>Niveau d'étude:</strong> {{ $curriculum->education_level ?? '' }}</p>
-            <p><strong>Adresse:</strong> {{ $curriculum->address ?? '' }}</p>
+            <p><strong>Téléphone:</strong> {{ $user->phone ?? '-' }}</p>
+            <p><strong>E-mail:</strong> {{ $user->email ?? '-' }}</p>
+            <p><strong>Date de naissance:</strong> {{ Carbon\Carbon::parse($curriculum->birth_date)->format('d/m/Y') ?? '-' }}</p>
+            <p><strong>Nationalité:</strong> {{ $curriculum->nationality ?? '-' }}</p>
+            <p><strong>Situation familiale:</strong> {{ $curriculum->family_status ?? '-' }}</p>
+            <p><strong>Niveau d'étude:</strong> {{ $curriculum->education_level ?? '-' }}</p>
+            <p><strong>Adresse:</strong> {{ $curriculum->address ?? '-' }}</p>
         </div>
     </div>
 
@@ -73,7 +75,8 @@
 
     <div class="section">
         <h2 class="section-title">Formation</h2>
-        @foreach($formations as $education)
+        @dump($educations);
+        @foreach($educations as $education)
             <div class="education-item">
                 <div class="education-date">{{ $education['startDate'] }} - {{ $education['endDate'] }}</div>
                 <div class="education-school">{{ $education['school'] }}</div>

@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use GuzzleHttp\Client;
 use App\Models\User;
 use App\Models\Curriculum;
 use GuzzleHttp\Exception\RequestException;
 use Carbon\Carbon;
+use GeminiAPI\Client;
+use GeminiAPI\Resources\Parts\TextPart;
 
 class CurriculumController extends Controller
 {
@@ -48,42 +49,60 @@ class CurriculumController extends Controller
         ]);
     }
 
-    public function correctSummary(Request $request)
+    public function correctResume(Request $request)
     {
         $validated = $request->validate([
-            'summary' => 'required|string',
+            'resume' => 'required|string',
         ]);
 
         $client = new Client(env('GEMINI_API_KEY'));
-        $prompts = "corrige moi ce texte et améliore le de manière professionnelle :" . $validated['summary'];
+        $prompts = "Sans commentaire corrige moi ce texte et améliore le de manière professionnelle :" . $validated['resume'];
         
         try {
-            $response = $client->get('correct', [
-                'text' => $prompts,
-                'lang' => 'fr',
+            $response = $client->geminiPro()->generateContent(
+                new TextPart($prompts)
+            );
+
+            $correctedResume = trim($response->text());
+
+            return response()->json([
+                'success' => true,
+                'resume' => $correctedResume
             ]);
-            
-            $responseData = json_decode($response->getBody()->getContents());
-            
-            if (isset($responseData->text)) {
-                $correctedText = trim($responseData->text);
-                return response()->json([
-                    'success' => true,
-                    'summary' => $correctedText
-                ]);
-            }
-            
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'La correction n\'a pas pu être effectuée'
-            ], 422);
-            
-        } catch (RequestException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de la correction: ' . $e->getMessage()
+                'message' => 'Une erreur est survenue lors de la correction: ' . $e->getMessage()
             ], 500);
         }
+        
+        // try {
+        //     $response = $client->get('correct', [
+        //         'text' => $prompts,
+        //         'lang' => 'fr',
+        //     ]);
+            
+        //     $responseData = json_decode($response->getBody()->getContents());
+            
+        //     if (isset($responseData->text)) {
+        //         $correctedText = trim($responseData->text);
+        //         return response()->json([
+        //             'success' => true,
+        //             'summary' => $correctedText
+        //         ]);
+        //     }
+            
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'La correction n\'a pas pu être effectuée'
+        //     ], 422);
+            
+        // } catch (RequestException $e) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Erreur lors de la correction: ' . $e->getMessage()
+        //     ], 500);
+        // }
     }
 
     public function updateResume(Request $request)
@@ -102,6 +121,30 @@ class CurriculumController extends Controller
                 'resume' => $request->resume
             ]);
         }
+
+        return back()->with('success', 'Resume updated successfully');
+    }
+
+
+    public function updateLanguages(Request $request)
+    {
+        $data = $request->validate([
+            'language' => 'required|string',
+            'level' => 'required|string',
+        ]);
+
+        $curriculum = auth()->user()->curriculum ?? auth()->user()->curriculum()->create([
+            'user_id' => auth()->user()->id,
+        ]);
+
+        $existingLanguages = $curriculum->languages ?? [];
+        $existingLanguages[] = [
+            'language' => $data['language'],
+            'level' => $data['level'],
+        ];
+
+        $curriculum->languages = $existingLanguages;
+    $curriculum->save();
 
         return back()->with('success', 'Resume updated successfully');
     }
