@@ -11,9 +11,12 @@ class Experience extends Model
 
     protected $fillable = [
         'title',
+        'company',
+        'location',
         'startDate',
         'endDate',
         'description',
+        'curriculum_id'
     ];
 
     protected $casts = [

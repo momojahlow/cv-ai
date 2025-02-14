@@ -12,6 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('curriculum_id')->constrained()->onDelete('cascade');
             $table->string('title');
+            $table->string('company');
+            $table->string('location');
             $table->date('startDate');
             $table->date('endDate');
             $table->text('description');

@@ -29,10 +29,19 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-
     Route::get('/cv-pdf', CorrectorSection::class)->name('cv-pdf');
 
-    Route::get('/curriculum', [CurriculumController::class, 'index'])->name('curriculum.index');
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/curriculum', [CurriculumController::class, 'index'])->name('curriculum.index');
+        Route::post('/curriculum/profile', [CurriculumController::class, 'updateProfile'])->name('curriculum.profile.update');
+        Route::post('/curriculum/resume', [CurriculumController::class, 'updateResume'])->name('curriculum.resume.update');
+
+        // Experience routes
+        Route::post('/experience', [ExperienceController::class, 'store'])->name('experience.store');
+        Route::put('/experience/{experience}', [ExperienceController::class, 'update'])->name('experience.update');
+        Route::delete('/experience/{experience}', [ExperienceController::class, 'destroy'])->name('experience.destroy');
+    });
+
     Route::post('/curriculum/correct-summary', [CurriculumController::class, 'correctSummary'])->name('curriculum.correct-summary');
     Route::post('/curriculum/update-resume', [CurriculumController::class, 'updateResume'])->name('curriculum.update-resume');
     Route::post('/curriculum/update-profile', [CurriculumController::class, 'updateProfile'])->name('curriculum.update-profile');
@@ -40,11 +49,11 @@ Route::middleware([
     Route::post('/education', [EducationController::class, 'store'])->name('education.store');
     Route::delete('/education/{education}', [EducationController::class, 'destroy'])->name('education.destroy');
 
-    Route::get('/experiences', [ExperienceController::class, 'index'])->name('experiences');
+    // Route::get('/experiences', [ExperienceController::class, 'index'])->name('experiences');
     Route::get('/experience/create', [ExperienceController::class, 'create'])->name('experience.create');
-    Route::post('/experience/store', [ExperienceController::class, 'store'])->name('experience.store');
-    Route::get('/experience/{id}/edit', [ExperienceController::class, 'edit'])->name('experience.edit');
-    Route::put('/experience/{id}/update', [ExperienceController::class, 'update'])->name('experience.update');
-    Route::delete('/experience/{id}/delete', [ExperienceController::class, 'destroy'])->name('experience.destroy');
-    Route::post('/experience/correct-description', [ExperienceController::class, 'correctDescription'])->name('experience.correct-description');
+    // Route::post('/experience/store', [ExperienceController::class, 'store'])->name('experience.store');
+    // Route::get('/experience/{id}/edit', [ExperienceController::class, 'edit'])->name('experience.edit');
+    // Route::put('/experience/{id}/update', [ExperienceController::class, 'update'])->name('experience.update');
+    // Route::delete('/experience/{id}/delete', [ExperienceController::class, 'destroy'])->name('experience.destroy');
+    // Route::post('/experience/correct-description', [ExperienceController::class, 'correctDescription'])->name('experience.correct-description');
 });

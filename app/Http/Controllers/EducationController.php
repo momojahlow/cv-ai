@@ -3,12 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Education;
+use App\Models\Curriculum;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EducationController extends Controller
 {
     public function store(Request $request)
     {
+        $user = Auth::user();
+        
+        // Check if user has a curriculum, if not create one
+        if (!$user->curriculum) {
+            $curriculum = Curriculum::create([
+                'user_id' => $user->id
+            ]);
+            $user->refresh();
+        }
+
         $validated = $request->validate([
             'level' => 'required|string',
             'type' => 'required|string',
@@ -19,17 +31,7 @@ class EducationController extends Controller
             'description' => 'nullable|string'
         ]);
 
-        $user = auth()->user();
-        $curriculum = $user->curriculum;
-
-        if (!$curriculum) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Curriculum not found'
-            ], 404);
-        }
-
-        $education = $curriculum->education()->create([
+        $education = $user->curriculum->education()->create([
             ...$validated,
             'status' => 'completed'
         ]);
@@ -42,8 +44,16 @@ class EducationController extends Controller
 
     public function destroy(Education $education)
     {
-        $user = auth()->user();
+        $user = Auth::user();
         
+        // Check if user has a curriculum, if not create one
+        if (!$user->curriculum) {
+            $curriculum = Curriculum::create([
+                'user_id' => $user->id
+            ]);
+            $user->refresh();
+        }
+
         if ($education->curriculum->user_id !== $user->id) {
             return response()->json([
                 'success' => false,
