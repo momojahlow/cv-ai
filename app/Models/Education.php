@@ -7,7 +7,7 @@ use App\Models\Curriculum;
 
 class Education extends Model
 {
-    protected $table = 'education';
+    protected $table = 'educations';
 
     protected $fillable = [
         'curriculum_id',
@@ -25,6 +25,4 @@ class Education extends Model
     {
         return $this->belongsTo(Curriculum::class);
     }
-
-    
 }

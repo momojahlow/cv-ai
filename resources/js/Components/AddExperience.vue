@@ -119,12 +119,12 @@ const handleCorrection = async () => {
 
   isLoading.value = true
   error.value = ''
-  
+
   try {
     const response = await axios.post(route('experience.correct-description'), {
       description: form.description
     })
-    
+
     if (response.data.success) {
       form.description = response.data.description
     } else {

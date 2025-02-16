@@ -31,7 +31,7 @@
           <div class="flex space-x-6">
             <div class="w-32">
               <img
-                :src="defaultAvatar"
+                :src="avatarUrl"
                 alt="Profile"
                 class="w-full h-32 object-cover rounded-lg bg-gray-200"
               />
@@ -44,7 +44,7 @@
                   {{ userInfo.categories.join(' / ') }}
                 </p>
               </div>
-              
+
               <div class="mt-4 grid grid-cols-2 gap-4">
                 <div>
                   <p class="text-sm">
@@ -82,7 +82,7 @@
         <!-- Action Buttons -->
         <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
           <div class="flex space-x-4">
-            <button 
+            <button
               @click="downloadPDF"
               class="flex items-center text-[#2b8d96] hover:text-pink-600"
             >
@@ -144,14 +144,14 @@
                 GEO<span class="text-yellow-400">AI</span>
               </div>
             </div>
-            
+
             <div class="bg-white p-6">
               <p class="text-gray-600 text-sm italic mb-4">
-                Rédigez ci-dessous un résumé de votre carrière et de vos aspirations professionnelles. 
+                Rédigez ci-dessous un résumé de votre carrière et de vos aspirations professionnelles.
                 GEO-AI peut vous faire ici un résumé sur la base de votre CV joint.
                 Êtes-vous prêt à utiliser la puissance de l'IA ?!
               </p>
-              
+
               <textarea
                 v-model="summary"
                 rows="2"
@@ -159,7 +159,7 @@
                 placeholder="Écrivez votre résumé ici..."
               />
               <div v-if="error" class="mt-2 text-red-500">{{ error }}</div>
-              
+
               <div class="mt-4 flex justify-end space-x-4">
                 <button
                   @click="handleCorrection"
@@ -298,9 +298,11 @@
           </div>
 
           <div class="space-y-6">
-            <div v-for="(education, index) in formations" :key="index" class="flex">
+            <div v-for="(education, index) in userInfo.educations" :key="index" class="flex">
               <div class="w-48 flex-shrink-0 whitespace-nowrap">
-                <div class="text-sm text-gray-600">{{ education.startDate }} - {{ education.endDate }}</div>
+                <div class="text-sm text-gray-600">
+                  {{ formatDate(education.start_date) }} - {{ formatDate(education.end_date) }}
+                </div>
               </div>
               <div class="flex-1">
                 <h4 class="text-lg font-medium text-gray-900">{{ education.diploma }}</h4>
@@ -453,15 +455,68 @@
             </button>
           </div>
 
+          <div class="mt-6 bg-white shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Langues</h3>
+                <button
+                  @click="toggleLanguageModal"
+                  class="inline-flex items-center justify-center p-2 rounded-full text-[#2b8d96] hover:bg-gray-100"
+                >
+                  <svg v-if="!showLanguageModal" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Display languages -->
+              <div class="space-y-2">
+                <div v-if="props.userInfo.languages && props.userInfo.languages.length > 0"
+                     v-for="(lang, index) in props.userInfo.languages"
+                     :key="index"
+                     class="flex justify-between items-center p-3 bg-gray-50 rounded-md"
+                >
+                  <div>
+                    <span class="font-medium">{{ lang.language }}</span>
+                    <span class="text-gray-500 ml-2">- {{ lang.level }}</span>
+                  </div>
+                  <div class="flex space-x-2">
+                    <button
+                      @click="editLanguage(lang)"
+                      class="text-[#2b8d96] hover:text-[#1a646b]"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      @click="deleteLanguage(lang.id)"
+                      class="text-red-500 hover:text-red-700"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div v-else class="text-gray-500 text-center py-4">
+                  Aucune langue ajoutée
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
     </div>
     <!-- Language Modal -->
     <Modal :show="showLanguageModal" @close="closeModal">
       <div class="p-6">
         <h2 class="text-lg font-medium text-gray-900 mb-4">
-          Langues
+          {{ isEditing ? 'Modifier la langue' : 'Ajouter une langue' }}
         </h2>
-        
+
         <form @submit.prevent="submitLanguage" class="space-y-4">
           <div class="grid grid-cols-2 gap-4">
             <div>
@@ -470,29 +525,38 @@
                 type="text"
                 v-model="languageForm.language"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                required
               >
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700">Niveau</label>
-              <input
-                type="text"
+              <select
                 v-model="languageForm.level"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                required
               >
+                <option value="">Sélectionnez un niveau</option>
+                <option value="Débutant">Débutant</option>
+                <option value="Intermédiaire">Intermédiaire</option>
+                <option value="Avancé">Avancé</option>
+                <option value="Bilingue">Bilingue</option>
+                <option value="Langue maternelle">Langue maternelle</option>
+              </select>
             </div>
           </div>
           <div class="mt-6 flex justify-end space-x-3">
             <button
               type="submit"
-              class="inline-flex items-center justify-center p-2 rounded-sm text-white bg-[#2b8d96] hover:bg-[#1a646b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2b8d96]"
+              class="inline-flex items-center justify-center px-4 py-2 rounded-sm text-white bg-[#2b8d96] hover:bg-[#1a646b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2b8d96]"
             >
-              Ajouter
+              {{ isEditing ? 'Modifier' : 'Ajouter' }}
             </button>
             <button
-                    @click="toggleLanguageModal"
-                    class="px-6 py-2 bg-red-500 text-white rounded-sm hover:bg-red-700"
-                  >
-                    Annuler
+              @click="closeModal"
+              type="button"
+              class="px-4 py-2 bg-red-500 text-white rounded-sm hover:bg-red-700"
+            >
+              Annuler
             </button>
           </div>
         </form>
@@ -504,7 +568,7 @@
         <h2 class="text-lg font-medium text-gray-900 mb-4">
           Modifier mes informations
         </h2>
-        
+
         <form @submit.prevent="updateProfile" class="space-y-4">
           <div class="grid grid-cols-2 gap-4">
             <!-- Civility -->
@@ -535,7 +599,7 @@
                 <option value="Divorce">Divorce</option>
                 <option value="Veuf">Veuf</option>
                 <option value="Séparé">Séparé</option>
-                <option value="Union libre">Union libre</option>                
+                <option value="Union libre">Union libre</option>
               </select>
             </div>
 
@@ -628,10 +692,13 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { usePage } from '@inertiajs/vue3'
 import { Head } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Modal from '@/Components/Modal.vue'
 import { router } from '@inertiajs/vue3'
+
+const page = usePage()
 
 const props = defineProps({
   auth: Object,
@@ -663,43 +730,95 @@ const downloadPDF = async () => {
 
 //Languange modal
 const showLanguageModal = ref(false)
+const isEditing = ref(false)
 const languageForm = ref({
+  id: null,
   language: '',
-  level: '',
-  description: ''
+  level: ''
 })
 
 const toggleLanguageModal = () => {
+  isEditing.value = false
   showLanguageModal.value = !showLanguageModal.value
-  if (!showLanguageModal.value) {
-    // Reset form when closing
-    languageForm.value = {
-      language: '',
-      level: ''   
-    }
+  resetLanguageForm()
+}
+
+const resetLanguageForm = () => {
+  languageForm.value = {
+    id: null,
+    language: '',
+    level: ''
   }
+}
+
+const editLanguage = (language) => {
+  isEditing.value = true
+  languageForm.value = {
+    id: language.id,
+    language: language.language,
+    level: language.level
+  }
+  showLanguageModal.value = true
 }
 
 const submitLanguage = async () => {
   try {
-    const response = await axios.post(route('curriculum.language.update'), languageForm.value)
-
-    console.log(languageForm.value)
-    showLanguageModal.value = false
-    languageForm.value = {
-      language: '',
-      level: ''
-    }
-  } catch (error) {
-    console.error('Error adding language:', error)
-    if (error.response?.data?.redirect) {
-      flash.error = error.response.data.message
-      window.location.href = error.response.data.redirect
+    let response
+    if (isEditing.value) {
+      response = await axios.put(route('curriculum.language.update', languageForm.value.id), languageForm.value)
+      // Update the existing language in the UI
+      const index = props.userInfo.languages.findIndex(lang => lang.id === languageForm.value.id)
+      if (index !== -1) {
+        props.userInfo.languages[index] = {
+          ...props.userInfo.languages[index],
+          ...languageForm.value
+        }
+      }
     } else {
-      flash.error = 'Error adding language'
-    }    
+      response = await axios.post(route('curriculum.language.update'), languageForm.value)
+      // Add new language to the UI
+      if (!props.userInfo.languages) {
+        props.userInfo.languages = []
+      }
+      props.userInfo.languages.push({
+        id: response.data.id,
+        language: languageForm.value.language,
+        level: languageForm.value.level
+      })
+    }
+
+    // Close modal and reset form
+    closeModal()
+  } catch (error) {
+    console.error('Error managing language:', error)
+    if (error.response?.data?.redirect) {
+      window.location.href = error.response.data.redirect
+    }
   }
-} 
+}
+
+const deleteLanguage = async (id) => {
+  if (!confirm('Êtes-vous sûr de vouloir supprimer cette langue ?')) {
+    return
+  }
+
+  try {
+    await axios.delete(route('curriculum.language.delete', id))
+    // Remove the language from the UI
+    props.userInfo.languages = props.userInfo.languages.filter(lang => lang.id !== id)
+  } catch (error) {
+    console.error('Error deleting language:', error)
+    if (error.response?.data?.redirect) {
+      window.location.href = error.response.data.redirect
+    }
+  }
+}
+
+// const closeModal = () => {
+//   showLanguageModal.value = false
+//   isEditing.value = false
+//   resetLanguageForm()
+// }
 
 // Edit Modal
 const showEditModal = ref(false)
@@ -711,7 +830,7 @@ const form = ref({
   nationality: props.userInfo?.nationality || '',
   study_level: props.userInfo?.educationLevel || '',
   country: props.userInfo?.country || '',
-  family_status: props.userInfo?.familyStatus || '',  
+  family_status: props.userInfo?.familyStatus || '',
   avatar: null
 })
 
@@ -725,7 +844,7 @@ const closeModal = () => {
     nationality: props.userInfo?.nationality || '',
     study_level: props.userInfo?.educationLevel || '',
     country: props.userInfo?.country || '',
-    family_status: props.userInfo?.familyStatus || '',    
+    family_status: props.userInfo?.familyStatus || '',
     avatar: null
   }
   showEditModal.value = false
@@ -760,12 +879,12 @@ const handleAvatarUpload = (event) => {
 const summary = ref('')
 const displayedSummary = ref(props.userInfo?.summary || '')
 const isLoading = ref(false)
-const isEditing = ref(false)
+// const isEditing = ref(false)
 const error = ref('')
 
 // Education form state
 const showEducationForm = ref(false)
-const formations = ref([])
+// const formations = ref([])
 const educationForm = ref({
   level: 'Bac +5 et plus',
   type: 'Université',
@@ -792,12 +911,40 @@ const toggleEducationForm = () => {
   }
 }
 
-const submitEducation = () => {
-  formations.value.push({
-    ...educationForm.value,
-    status: 'completed'
-  })
-  toggleEducationForm()
+const submitEducation = async () => {
+  try {
+    const formData = {
+      level: educationForm.value.level,
+      type: educationForm.value.type,
+      start_date: educationForm.value.startDate,
+      end_date: educationForm.value.endDate,
+      school: educationForm.value.school,
+      diploma: educationForm.value.diploma,
+      description: educationForm.value.description
+    }
+
+    const response = await axios.post(route('education.store'), formData)
+
+    // Add the new education to the list
+    if (!props.userInfo.educations) {
+      props.userInfo.educations = []
+    }
+    props.userInfo.educations.push(response.data.education)
+
+    // Close form and reset
+    toggleEducationForm()
+
+    // Show success message using Inertia flash
+    // page.props.flash.message = 'Formation ajoutée avec succès'
+  } catch (error) {
+    console.error('Error adding education:', error)
+    if (error.response?.data?.redirect) {
+      // page.props.flash.error = error.response.data.message
+      window.location.href = error.response.data.redirect
+    } else {
+      // page.props.flash.error = 'Erreur lors de l\'ajout de la formation'
+    }
+  }
 }
 
 const startEdit = () => {
@@ -809,7 +956,7 @@ const startEdit = () => {
 
 const validateSummary = () => {
   const resumeText = summary.value // Store the value before clearing it
-  
+
   router.post(route('curriculum.resume.update'), {
     resume: resumeText
   }, {
@@ -843,12 +990,12 @@ const handleCorrection = async () => {
 
   isLoading.value = true
   error.value = ''
-  
+
   try {
     const response = await axios.post(route('curriculum.resume.correct'), {
       resume: summary.value
     })
-    
+
     if (response.data.success) {
       console.log(response.data)
       summary.value = response.data.description
@@ -897,14 +1044,14 @@ const submitExperience = async () => {
     const response = await axios.post(route('experience.store'), experienceForm.value)
     props.userInfo.experiences = [...(props.userInfo.experiences || []), response.data]
     toggleExperienceForm()
-    flash.success = 'Experience added successfully'
+    // flash.success = 'Experience added successfully'
   } catch (error) {
     console.error('Error adding experience:', error)
     if (error.response?.data?.redirect) {
-      flash.error = error.response.data.message
+      // flash.error = error.response.data.message
       window.location.href = error.response.data.redirect
     } else {
-      flash.error = 'Error adding experience'
+      // flash.error = 'Error adding experience'
     }
   }
 }
@@ -916,36 +1063,36 @@ const editExperience = async (experience) => {
       title: experience.title,
       company: experience.company,
       location: experience.location,
-      start_date: experience.startDate,
-      end_date: experience.endDate,
+      start_date: experience.start_date,
+      end_date: experience.end_date,
       description: experience.description
     }
     showExperienceForm.value = true
   } catch (error) {
     console.error('Error editing experience:', error)
     if (error.response?.data?.redirect) {
-      flash.error = error.response.data.message
+      // flash.error = error.response.data.message
       window.location.href = error.response.data.redirect
     } else {
-      flash.error = 'Error editing experience'
+      // flash.error = 'Error editing experience'
     }
   }
 }
 
 const deleteExperience = async (id) => {
   if (!confirm('Are you sure you want to delete this experience?')) return
-  
+
   try {
     await axios.delete(route('experience.destroy', id))
     props.userInfo.experiences = props.userInfo.experiences.filter(exp => exp.id !== id)
-    flash.success = 'Experience deleted successfully'
+    // flash.success = 'Experience deleted successfully'
   } catch (error) {
     console.error('Error deleting experience:', error)
     if (error.response?.data?.redirect) {
-      flash.error = error.response.data.message
+      // flash.error = error.response.data.message
       window.location.href = error.response.data.redirect
     } else {
-      flash.error = 'Error deleting experience'
+      // flash.error = 'Error deleting experience'
     }
   }
 }
@@ -957,4 +1104,16 @@ const formatDate = (date) => {
     month: 'long'
   })
 }
+
+const avatarUrl = computed(() => {
+  if (props.userInfo.avatar) {
+    return `/storage/${props.userInfo.avatar}`
+  }
+  // Use the profile_photo_url from auth user if available
+  if (props.auth?.user?.profile_photo_url) {
+    return props.auth.user.profile_photo_url
+  }
+  // Fallback to default avatar
+  return '/storage/default-avatar.png'
+})
 </script>

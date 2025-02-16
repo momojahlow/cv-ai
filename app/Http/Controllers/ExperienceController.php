@@ -20,7 +20,7 @@ class ExperienceController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        
+
         // Check if user has a curriculum, if not create one
         if (!$user->curriculum) {
             $curriculum = Curriculum::create([
@@ -43,8 +43,8 @@ class ExperienceController extends Controller
             'title' => $validated['title'],
             'company' => $validated['company'],
             'location' => $validated['location'],
-            'startDate' => $validated['start_date'],
-            'endDate' => $validated['end_date'],
+            'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
             'description' => $validated['description'],
             'curriculum_id' => $user->curriculum->id
         ];
@@ -57,7 +57,7 @@ class ExperienceController extends Controller
     public function update(Request $request, Experience $experience)
     {
         $user = Auth::user();
-        
+
         // Check if user has a curriculum, if not create one
         if (!$user->curriculum) {
             $curriculum = Curriculum::create([
@@ -82,8 +82,8 @@ class ExperienceController extends Controller
             'title' => $validated['title'],
             'company' => $validated['company'],
             'location' => $validated['location'],
-            'startDate' => $validated['start_date'],
-            'endDate' => $validated['end_date'],
+            'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
             'description' => $validated['description']
         ];
 
@@ -95,7 +95,7 @@ class ExperienceController extends Controller
     public function destroy(Experience $experience)
     {
         $user = Auth::user();
-        
+
         // Check if user has a curriculum, if not create one
         if (!$user->curriculum) {
             $curriculum = Curriculum::create([
@@ -105,7 +105,7 @@ class ExperienceController extends Controller
         }
 
         $this->authorize('delete', $experience);
-        
+
         $experience->delete();
 
         return response()->json(['message' => 'Experience deleted successfully']);

@@ -12,7 +12,7 @@ export default function AddExperience() {
     const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
         startDate: '',
-        endDate: new Date().toISOString().split('T')[0],
+        endDate: '',
         description: ''
     });
 
@@ -30,12 +30,12 @@ export default function AddExperience() {
 
         setIsLoading(true);
         setError('');
-        
+
         try {
             const response = await axios.post(route('experience.correct-description'), {
                 description: data.description
             });
-            
+
             if (response.data.success) {
                 setData('description', response.data.description);
             } else {
@@ -67,31 +67,31 @@ export default function AddExperience() {
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="startDate" value="Date de début" />
+                    <InputLabel htmlFor="start_date" value="Date de début" />
                     <TextInput
-                        id="startDate"
+                        id="start_date"
                         type="date"
-                        name="startDate"
-                        value={data.startDate}
+                        name="start_date"
+                        value={data.start_date}
                         className="mt-1 block w-full"
-                        onChange={e => setData('startDate', e.target.value)}
+                        onChange={e => setData('start_date', e.target.value)}
                         required
                     />
-                    {errors.startDate && <div className="text-red-500">{errors.startDate}</div>}
+                    {errors.start_date && <div className="text-red-500">{errors.start_date}</div>}
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="endDate" value="Date de fin" />
+                    <InputLabel htmlFor="end_date" value="Date de fin" />
                     <TextInput
-                        id="endDate"
+                        id="end_date"
                         type="date"
-                        name="endDate"
-                        value={data.endDate}
+                        name="end_date"
+                        value={data.end_date}
                         className="mt-1 block w-full"
-                        onChange={e => setData('endDate', e.target.value)}
+                        onChange={e => setData('end_date', e.target.value)}
                         required
                     />
-                    {errors.endDate && <div className="text-red-500">{errors.endDate}</div>}
+                    {errors.end_date && <div className="text-red-500">{errors.end_date}</div>}
                 </div>
 
                 <div>

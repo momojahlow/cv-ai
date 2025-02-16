@@ -2,26 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Experience extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
+        'curriculum_id',
         'title',
         'company',
         'location',
-        'startDate',
-        'endDate',
-        'description',
-        'curriculum_id'
-    ];
-
-    protected $casts = [
-        'startDate' => 'date',
-        'endDate' => 'date',
+        'start_date',
+        'end_date',
+        'description'
     ];
 
     public function curriculum()

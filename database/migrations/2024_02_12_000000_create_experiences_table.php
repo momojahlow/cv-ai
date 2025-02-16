@@ -10,12 +10,12 @@ return new class extends Migration
     {
         Schema::create('experiences', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('curriculum_id')->constrained()->onDelete('cascade');
+            $table->foreignId('curriculum_id')->references('id')->on('curriculums')->onDelete('cascade');
             $table->string('title');
             $table->string('company');
             $table->string('location');
-            $table->date('startDate');
-            $table->date('endDate');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->text('description');
             $table->timestamps();
         });

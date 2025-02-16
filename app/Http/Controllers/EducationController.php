@@ -12,7 +12,7 @@ class EducationController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        
+
         // Check if user has a curriculum, if not create one
         if (!$user->curriculum) {
             $curriculum = Curriculum::create([
@@ -31,7 +31,7 @@ class EducationController extends Controller
             'description' => 'nullable|string'
         ]);
 
-        $education = $user->curriculum->education()->create([
+        $education = $user->curriculum->educations()->create([
             ...$validated,
             'status' => 'completed'
         ]);
@@ -45,7 +45,7 @@ class EducationController extends Controller
     public function destroy(Education $education)
     {
         $user = Auth::user();
-        
+
         // Check if user has a curriculum, if not create one
         if (!$user->curriculum) {
             $curriculum = Curriculum::create([

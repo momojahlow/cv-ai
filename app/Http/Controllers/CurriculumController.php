@@ -57,7 +57,7 @@ class CurriculumController extends Controller
 
         $client = new Client(env('GEMINI_API_KEY'));
         $prompts = "Sans commentaire corrige moi ce texte et améliore le de manière professionnelle :" . $validated['resume'];
-        
+
         try {
             $response = $client->geminiPro()->generateContent(
                 new TextPart($prompts)
@@ -75,15 +75,15 @@ class CurriculumController extends Controller
                 'message' => 'Une erreur est survenue lors de la correction: ' . $e->getMessage()
             ], 500);
         }
-        
+
         // try {
         //     $response = $client->get('correct', [
         //         'text' => $prompts,
         //         'lang' => 'fr',
         //     ]);
-            
+
         //     $responseData = json_decode($response->getBody()->getContents());
-            
+
         //     if (isset($responseData->text)) {
         //         $correctedText = trim($responseData->text);
         //         return response()->json([
@@ -91,12 +91,12 @@ class CurriculumController extends Controller
         //             'summary' => $correctedText
         //         ]);
         //     }
-            
+
         //     return response()->json([
         //         'success' => false,
         //         'message' => 'La correction n\'a pas pu être effectuée'
         //     ], 422);
-            
+
         // } catch (RequestException $e) {
         //     return response()->json([
         //         'success' => false,
@@ -110,7 +110,7 @@ class CurriculumController extends Controller
         $request->validate([
             'resume' => 'required|string|min:10',
         ]);
-        
+
         $curriculum = auth()->user()->curriculum;
         if (!$curriculum) {
             $curriculum = auth()->user()->curriculum()->create([
@@ -144,9 +144,17 @@ class CurriculumController extends Controller
         ];
 
         $curriculum->languages = $existingLanguages;
-    $curriculum->save();
+        $curriculum->save();
 
         return back()->with('success', 'Resume updated successfully');
+    }
+
+    public function deleteLanguage($id)
+    {
+        $language = auth()->user()->curriculum->languages()->findOrFail($id);
+        $language->delete();
+
+        return response()->json(['success' => true]);
     }
 
     public function updateProfile(Request $request)
@@ -172,7 +180,7 @@ class CurriculumController extends Controller
             'country',
             'family_status'
         ]);
-        
+
         // Format the date before saving
         $data['date_of_birth'] = Carbon::parse($request->date_of_birth)->format('Y-m-d');
 

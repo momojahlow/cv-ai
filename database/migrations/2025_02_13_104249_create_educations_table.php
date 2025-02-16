@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('education', function (Blueprint $table) {
+        Schema::create('educations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('curriculum_id')->constrained()->onDelete('cascade');
+            $table->foreignId('curriculum_id')->references('id')->on('curriculums')->onDelete('cascade');
             $table->string('level');
             $table->string('type');
             $table->string('status')->default('completed');
             $table->string('start_date');
             $table->string('end_date');
             $table->string('school');
-            $table->string('diploma');
+            $table->string('diploma')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
         });
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('education');
+        Schema::dropIfExists('educations');
     }
 };
