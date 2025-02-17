@@ -58,4 +58,12 @@ class Curriculum extends Model
     {
         return $this->hasMany(Experience::class);
     }
+
+    /**
+     * Get the language records for the curriculum.
+     */
+    public function languages()
+    {
+        return $this->hasMany(Language::class);
+    }
 }

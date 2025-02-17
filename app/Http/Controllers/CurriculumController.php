@@ -126,6 +126,25 @@ class CurriculumController extends Controller
     }
 
 
+    public function addLanguage(Request $request)
+    {
+        $data = $request->validate([
+            'language' => 'required|string',
+            'level' => 'required|string',
+        ]);
+
+        $curriculum = auth()->user()->curriculum ?? auth()->user()->curriculum()->create([
+            'user_id' => auth()->user()->id,
+        ]);
+
+        $curriculum->languages()->create([
+            'language' => $data['language'],
+            'level' => $data['level'],
+        ]);
+
+        return back()->with('success', 'Resume updated successfully');
+    }
+
     public function updateLanguages(Request $request)
     {
         $data = $request->validate([

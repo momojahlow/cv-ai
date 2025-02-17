@@ -35,7 +35,8 @@ Route::middleware([
         Route::get('/curriculum', [CurriculumController::class, 'index'])->name('curriculum.index');
         Route::post('/curriculum/profile', [CurriculumController::class, 'updateProfile'])->name('curriculum.profile.update');
         Route::post('/curriculum/resume', [CurriculumController::class, 'updateResume'])->name('curriculum.resume.update');
-        Route::post('/curriculum/languages', [CurriculumController::class, 'updateLanguages'])->name('curriculum.language.update');
+        Route::post('/curriculum/languages', [CurriculumController::class, 'addLanguage'])->name('curriculum.language.add');
+        Route::put('/curriculum/languages/{language}', [CurriculumController::class, 'updateLanguages'])->name('curriculum.language.update');
         Route::post('/curriculum/correct-resume', [CurriculumController::class, 'correctResume'])->name('curriculum.resume.correct');
         Route::post('/curriculum/update-profile', [CurriculumController::class, 'updateProfile'])->name('curriculum.update-profile');
 
