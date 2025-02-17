@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Education;
 use App\Models\Experience;
+use App\Models\Language;
 
 class Curriculum extends Model
 {
@@ -24,7 +25,6 @@ class Curriculum extends Model
         'city',
         'country',
         'resume',
-        'languages',
         'avatar',
         'family_status',
         'user_id'
@@ -32,7 +32,6 @@ class Curriculum extends Model
 
     protected $casts = [
         'date_of_birth' => 'date',
-        'languages' => 'array',
     ];
 
     /**

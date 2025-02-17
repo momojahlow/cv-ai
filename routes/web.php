@@ -18,8 +18,6 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/cv', CurriculumGenerator::class)->name('cv');
-
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -30,6 +28,7 @@ Route::middleware([
     })->name('dashboard');
 
     Route::get('/cv-pdf', CurriculumGenerator::class)->name('cv-pdf');
+    Route::get('/cv-web', CurriculumGenerator::class)->name('cv-web');
 
     Route::middleware(['auth'])->group(function () {
         Route::get('/curriculum', [CurriculumController::class, 'index'])->name('curriculum.index');
@@ -37,6 +36,7 @@ Route::middleware([
         Route::post('/curriculum/resume', [CurriculumController::class, 'updateResume'])->name('curriculum.resume.update');
         Route::post('/curriculum/languages', [CurriculumController::class, 'addLanguage'])->name('curriculum.language.add');
         Route::put('/curriculum/languages/{language}', [CurriculumController::class, 'updateLanguages'])->name('curriculum.language.update');
+        Route::delete('/curriculum/languages/{language}', [CurriculumController::class, 'deleteLanguage'])->name('curriculum.language.delete');
         Route::post('/curriculum/correct-resume', [CurriculumController::class, 'correctResume'])->name('curriculum.resume.correct');
         Route::post('/curriculum/update-profile', [CurriculumController::class, 'updateProfile'])->name('curriculum.update-profile');
 
@@ -52,11 +52,4 @@ Route::middleware([
         Route::post('/educations', [EducationController::class, 'store'])->name('education.store');
         Route::delete('/education/{education}', [EducationController::class, 'destroy'])->name('education.destroy');
     });
-
-
-
-
-
-
-    // Route::post('/experience/correct-description', [ExperienceController::class, 'correctDescription'])->name('experience.correct-description');
 });

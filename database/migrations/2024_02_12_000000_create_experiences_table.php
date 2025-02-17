@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('location');
             $table->date('start_date');
             $table->date('end_date');
+            $table->string('city')->nullable();
+            $table->string('country')->nullable();
             $table->text('description');
             $table->timestamps();
         });

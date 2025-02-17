@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('end_date');
             $table->string('school');
             $table->string('diploma')->nullable();
+            $table->string('city')->nullable();
+            $table->string('country')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
         });

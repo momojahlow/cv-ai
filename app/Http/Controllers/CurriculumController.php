@@ -9,18 +9,21 @@ use App\Models\Curriculum;
 use GuzzleHttp\Exception\RequestException;
 use Carbon\Carbon;
 use GeminiAPI\Client;
+use App\Models\Language;
 use GeminiAPI\Resources\Parts\TextPart;
 
 class CurriculumController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        $user->load('curriculum.educations');
-        $user->load('curriculum.experiences');
+        $user = auth()->user()->load([
+            'curriculum.languages',
+            'curriculum.educations',
+            'curriculum.experiences',
+            
+        ]);
 
-        $birthDate = $user->curriculum?->date_of_birth;
-        if ($birthDate) {
+        if ($birthDate = $user->curriculum?->date_of_birth) {
             $birthDate = Carbon::parse($birthDate)->format('Y-m-d');
         }
 
@@ -41,6 +44,7 @@ class CurriculumController extends Controller
                 'address' => $user->curriculum?->address,
                 'educations' => $user->curriculum?->educations ?? [],
                 'experiences' => $user->curriculum?->experiences ?? [],
+                'languages' => $user->curriculum?->languages ?? [],
                 'summary' => $user->curriculum?->resume ?? 'Développeur web passionné avec une expertise en développement full-stack. Spécialisé dans les technologies modernes comme Laravel, Vue.js et React.'
             ],
             'auth' => [
@@ -56,7 +60,7 @@ class CurriculumController extends Controller
         ]);
 
         $client = new Client(env('GEMINI_API_KEY'));
-        $prompts = "Sans commentaire corrige moi ce texte et améliore le de manière professionnelle :" . $validated['resume'];
+        $prompts = "Sans commentaire corrige moi ce texte et reformule le de manière professionnelle en 100 mots :" . $validated['resume'];
 
         try {
             $response = $client->geminiPro()->generateContent(
@@ -133,46 +137,34 @@ class CurriculumController extends Controller
             'level' => 'required|string',
         ]);
 
-        $curriculum = auth()->user()->curriculum ?? auth()->user()->curriculum()->create([
-            'user_id' => auth()->user()->id,
-        ]);
+        $curriculum = auth()->user()->curriculum ?? auth()->user()->curriculum()->create();
 
-        $curriculum->languages()->create([
-            'language' => $data['language'],
+        $language = $curriculum->languages()->create([
+            'name' => $data['language'],  // Changed to use 'name'
             'level' => $data['level'],
         ]);
 
-        return back()->with('success', 'Resume updated successfully');
+        return response()->json($language);
     }
 
-    public function updateLanguages(Request $request)
+    public function updateLanguages(Request $request, Language $language)
     {
         $data = $request->validate([
             'language' => 'required|string',
             'level' => 'required|string',
         ]);
 
-        $curriculum = auth()->user()->curriculum ?? auth()->user()->curriculum()->create([
-            'user_id' => auth()->user()->id,
+        $language->update([
+            'name' => $data['language'],  // Changed to use 'name'
+            'level' => $data['level'],
         ]);
 
-        $existingLanguages = $curriculum->languages ?? [];
-        $existingLanguages[] = [
-            'language' => $data['language'],
-            'level' => $data['level'],
-        ];
-
-        $curriculum->languages = $existingLanguages;
-        $curriculum->save();
-
-        return back()->with('success', 'Resume updated successfully');
+        return response()->json($language);
     }
 
-    public function deleteLanguage($id)
+    public function deleteLanguage(Language $language)
     {
-        $language = auth()->user()->curriculum->languages()->findOrFail($id);
         $language->delete();
-
         return response()->json(['success' => true]);
     }
 
@@ -217,4 +209,6 @@ class CurriculumController extends Controller
 
         return back()->with('success', 'Profile updated successfully');
     }
+
+
 }

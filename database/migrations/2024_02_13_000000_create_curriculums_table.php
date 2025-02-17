@@ -11,9 +11,9 @@ return new class extends Migration
         Schema::create('curriculums', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('civility')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('nationality')->nullable();
-            $table->string('civility')->nullable();
             $table->string('study_level')->nullable();
             $table->string('family_status')->nullable();
             $table->string('phone')->nullable();
@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('country')->nullable();
             $table->text('resume')->nullable();
-            $table->json('languages')->nullable();
             $table->string('avatar')->nullable();
             $table->timestamps();
         });

@@ -98,12 +98,12 @@
               </svg>
               Envoyer ce CV par mail
             </button> -->
-            <button class="flex items-center text-[#2b8d96] hover:text-pink-600">
+            <a href="/cv-web" target="_blank" class="flex items-center text-[#2b8d96] hover:text-pink-600">
               <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 014 16a5.986 5.986 0 004.546-2.084A5 5 0 0014 10z" clip-rule="evenodd" />
               </svg>
               Version Web
-            </button>
+            </a>
           </div>
         </div>
 
@@ -133,7 +133,7 @@
             </div>
           </div>
 
-          <!-- Kiara Section -->
+          <!-- GEO-AI Section -->
           <div v-if="isEditing" class="mt-6 bg-[#2b8d96] rounded-lg overflow-hidden">
             <div class="p-6 text-white flex justify-between items-center">
               <div>
@@ -280,6 +280,29 @@
                   class="w-full h-40 p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 />
               </div>
+              <div class="mt-4 grid grid-cols-2 gap-4">
+                <div>
+                  <InputLabel for="education_city" value="Ville" />
+                  <TextInput
+                    id="education_city"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="educationForm.city"
+                  />
+                  <InputError class="mt-2" :message="form.errors.city" />
+                </div>
+
+                <div>
+                  <InputLabel for="education_country" value="Pays" />
+                  <TextInput
+                    id="education_country"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="educationForm.country"
+                  />
+                  <InputError class="mt-2" :message="form.errors.country" />
+                </div>
+              </div>
               <div class="mt-4 flex justify-end space-x-4">
                 <button
                   @click="submitEducation"
@@ -374,6 +397,29 @@
                   class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 />
               </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <InputLabel for="city" value="Ville" />
+                  <TextInput
+                    id="city"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="experienceForm.city"
+                  />
+                  <InputError class="mt-2" :message="form.errors.city" />
+                </div>
+
+                <div>
+                  <InputLabel for="country" value="Pays" />
+                  <TextInput
+                    id="country"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="experienceForm.country"
+                  />
+                  <InputError class="mt-2" :message="form.errors.country" />
+                </div>
+              </div>
               <div class="mt-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                   Date de début
@@ -456,62 +502,48 @@
           </div>
 
           <div class="mt-6 bg-white shadow rounded-lg">
-            <div class="px-4 py-5 sm:p-6">
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-medium text-gray-900">Langues</h3>
-                <button
-                  @click="toggleLanguageModal"
-                  class="inline-flex items-center justify-center p-2 rounded-full text-[#2b8d96] hover:bg-gray-100"
-                >
-                  <svg v-if="!showLanguageModal" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                  <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
 
               <!-- Display languages -->
               <div class="space-y-2">
-                <div v-if="props.userInfo.languages && props.userInfo.languages.length > 0"
-                     v-for="(lang, index) in props.userInfo.languages"
-                     :key="index"
-                     class="flex justify-between items-center p-3 bg-gray-50 rounded-md"
-                >
-                  <div>
-                    <span class="font-medium">{{ lang.language }}</span>
-                    <span class="text-gray-500 ml-2">- {{ lang.level }}</span>
+                <template v-if="props.userInfo.languages?.length">
+                  <div
+                    v-for="(lang, index) in props.userInfo.languages"
+                    :key="index"
+                    class="flex justify-between items-center p-3 bg-gray-50 rounded-md"
+                  >
+                    <div>
+                      <span class="font-medium">{{ lang.name }}</span>
+                      <span class="text-gray-500 ml-2">- {{ lang.level }}</span>
+                    </div>
+                    <div class="flex space-x-2">
+                      <button
+                        @click="editLanguage(lang)"
+                        class="text-[#2b8d96] hover:text-[#1a646b]"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        @click="deleteLanguage(lang.id)"
+                        class="text-red-500 hover:text-red-700"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
-                  <div class="flex space-x-2">
-                    <button
-                      @click="editLanguage(lang)"
-                      class="text-[#2b8d96] hover:text-[#1a646b]"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
-                    <button
-                      @click="deleteLanguage(lang.id)"
-                      class="text-red-500 hover:text-red-700"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
+                </template>
                 <div v-else class="text-gray-500 text-center py-4">
                   Aucune langue ajoutée
                 </div>
               </div>
-            </div>
           </div>
         </div>
     </div>
     <!-- Language Modal -->
-    <Modal :show="showLanguageModal" @close="closeModal">
+    <Modal :show="showLanguageModal" @close="closeLanguageModal">
       <div class="p-6">
         <h2 class="text-lg font-medium text-gray-900 mb-4">
           {{ isEditing ? 'Modifier la langue' : 'Ajouter une langue' }}
@@ -547,14 +579,14 @@
           <div class="mt-6 flex justify-end space-x-3">
             <button
               type="submit"
-              class="inline-flex items-center justify-center px-4 py-2 rounded-sm text-white bg-[#2b8d96] hover:bg-[#1a646b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2b8d96]"
+              class="inline-flex items-center justify-center px-4 py-2 rounded-xs text-white bg-[#2b8d96] hover:bg-[#1a646b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2b8d96]"
             >
               {{ isEditing ? 'Modifier' : 'Ajouter' }}
             </button>
             <button
-              @click="closeModal"
+              @click="closeLanguageModal"
               type="button"
-              class="px-4 py-2 bg-red-500 text-white rounded-sm hover:bg-red-700"
+              class="px-4 py-2 bg-red-500 text-white rounded-xs hover:bg-red-700"
             >
               Annuler
             </button>
@@ -563,7 +595,7 @@
       </div>
     </Modal>
     <!-- Edit Modal -->
-    <Modal :show="showEditModal" @close="closeModal">
+    <Modal :show="showEditModal" @close="closeEditModal">
       <div class="p-6">
         <h2 class="text-lg font-medium text-gray-900 mb-4">
           Modifier mes informations
@@ -670,18 +702,17 @@
 
           <div class="mt-6 flex justify-end space-x-3">
             <button
-              type="button"
-              @click="closeModal"
-              class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              Annuler
-            </button>
-            <button
               type="submit"
-              class="px-4 py-2 bg-[#2b8d96] text-white rounded-md text-sm font-medium hover:bg-[#1a5f68]"
-              :disabled="form.processing"
+              class="inline-flex items-center justify-center px-4 py-2 rounded-xs text-white bg-[#2b8d96] hover:bg-[#1a646b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2b8d96]"
             >
               Enregistrer
+            </button>
+            <button
+              @click="closeEditModal"
+              type="button"
+              class="px-4 py-2 bg-red-500 text-white rounded-xs hover:bg-red-700"
+            >
+              Annuler
             </button>
           </div>
         </form>
@@ -696,7 +727,11 @@ import { usePage } from '@inertiajs/vue3'
 import { Head } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Modal from '@/Components/Modal.vue'
+import InputLabel from '@/Components/InputLabel.vue'
+import TextInput from '@/Components/TextInput.vue'
+import InputError from '@/Components/InputError.vue'
 import { router } from '@inertiajs/vue3'
+import axios from 'axios'
 
 const page = usePage()
 
@@ -708,6 +743,13 @@ const props = defineProps({
 
 const defaultAvatar = '/storage/default-avatar.png'
 
+// Form states
+const showEditModal = ref(false)
+const isEditing = ref(false)
+const form = ref({
+  avatar: null
+})
+
 const formattedBirthDate = computed(() => {
   if (!props.userInfo?.birthDate) return ''
   const date = new Date(props.userInfo.birthDate)
@@ -718,157 +760,22 @@ const formattedBirthDate = computed(() => {
   })
 })
 
-// Add download function
+// Download PDF function
 const downloadPDF = async () => {
   try {
-    // Using window.open to trigger the download
-    window.open(route('cv-pdf'), '_blank')
+    const response = await axios.get(route('curriculum.download'), {
+      responseType: 'blob'
+    })
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'cv.pdf')
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   } catch (error) {
     console.error('Error downloading PDF:', error)
   }
-}
-
-//Languange modal
-const showLanguageModal = ref(false)
-const isEditing = ref(false)
-const languageForm = ref({
-  id: null,
-  language: '',
-  level: ''
-})
-
-const toggleLanguageModal = () => {
-  isEditing.value = false
-  showLanguageModal.value = !showLanguageModal.value
-  resetLanguageForm()
-}
-
-const resetLanguageForm = () => {
-  languageForm.value = {
-    id: null,
-    language: '',
-    level: ''
-  }
-}
-
-const editLanguage = (language) => {
-  isEditing.value = true
-  languageForm.value = {
-    id: language.id,
-    language: language.language,
-    level: language.level
-  }
-  showLanguageModal.value = true
-}
-
-const submitLanguage = async () => {
-  try {
-    let response
-    if (isEditing.value) {
-      response = await axios.put(route('curriculum.language.update', languageForm.value.id), languageForm.value)
-      // Update the existing language in the UI
-      const index = props.userInfo.languages.findIndex(lang => lang.id === languageForm.value.id)
-      if (index !== -1) {
-        props.userInfo.languages[index] = {
-          ...props.userInfo.languages[index],
-          ...languageForm.value
-        }
-      }
-    } else {
-      response = await axios.post(route('curriculum.language.update'), languageForm.value)
-      // Add new language to the UI
-      if (!props.userInfo.languages) {
-        props.userInfo.languages = []
-      }
-      props.userInfo.languages.push({
-        id: response.data.id,
-        language: languageForm.value.language,
-        level: languageForm.value.level
-      })
-    }
-
-    // Close modal and reset form
-    closeModal()
-  } catch (error) {
-    console.error('Error managing language:', error)
-    if (error.response?.data?.redirect) {
-      window.location.href = error.response.data.redirect
-    }
-  }
-}
-
-const deleteLanguage = async (id) => {
-  if (!confirm('Êtes-vous sûr de vouloir supprimer cette langue ?')) {
-    return
-  }
-
-  try {
-    await axios.delete(route('curriculum.language.delete', id))
-    // Remove the language from the UI
-    props.userInfo.languages = props.userInfo.languages.filter(lang => lang.id !== id)
-  } catch (error) {
-    console.error('Error deleting language:', error)
-    if (error.response?.data?.redirect) {
-      window.location.href = error.response.data.redirect
-    }
-  }
-}
-
-// const closeModal = () => {
-//   showLanguageModal.value = false
-//   isEditing.value = false
-//   resetLanguageForm()
-// }
-
-// Edit Modal
-const showEditModal = ref(false)
-const form = ref({
-  civility: props.userInfo?.civility || '',
-  date_of_birth: props.userInfo?.birthDate || '',
-  phone: props.userInfo?.phone || '',
-  address: props.userInfo?.address || '',
-  nationality: props.userInfo?.nationality || '',
-  study_level: props.userInfo?.educationLevel || '',
-  country: props.userInfo?.country || '',
-  family_status: props.userInfo?.familyStatus || '',
-  avatar: null
-})
-
-const closeModal = () => {
-  // Reset form to current user info when closing summary
-  form.value = {
-    civility: props.userInfo?.civility || '',
-    date_of_birth: props.userInfo?.birthDate || '',
-    phone: props.userInfo?.phone || '',
-    address: props.userInfo?.address || '',
-    nationality: props.userInfo?.nationality || '',
-    study_level: props.userInfo?.educationLevel || '',
-    country: props.userInfo?.country || '',
-    family_status: props.userInfo?.familyStatus || '',
-    avatar: null
-  }
-  showEditModal.value = false
-}
-
-
-
-const updateProfile = () => {
-  const formData = new FormData()
-  Object.keys(form.value).forEach(key => {
-    if (form.value[key] !== null) {
-      formData.append(key, form.value[key])
-    }
-  })
-
-  router.post(route('curriculum.update-profile'), formData, {
-    onSuccess: () => {
-      closeModal()
-      // Refresh the page to show updated data
-      router.visit(route('curriculum.index'))
-    },
-    preserveScroll: true,
-    preserveState: true,
-  })
 }
 
 const handleAvatarUpload = (event) => {
@@ -879,36 +786,25 @@ const handleAvatarUpload = (event) => {
 const summary = ref('')
 const displayedSummary = ref(props.userInfo?.summary || '')
 const isLoading = ref(false)
-// const isEditing = ref(false)
 const error = ref('')
 
 // Education form state
 const showEducationForm = ref(false)
-// const formations = ref([])
 const educationForm = ref({
-  level: 'Bac +5 et plus',
-  type: 'Université',
-  startDate: '',
-  endDate: '',
+  level: '',
+  type: '',
+  status: 'completed',
+  start_date: '',
+  end_date: '',
   school: '',
   diploma: '',
-  description: ''
+  description: '',
+  city: '',
+  country: ''
 })
 
 const toggleEducationForm = () => {
   showEducationForm.value = !showEducationForm.value
-  if (!showEducationForm.value) {
-    // Reset form when closing
-    educationForm.value = {
-      level: 'Bac +5 et plus',
-      type: 'Université',
-      startDate: '',
-      endDate: '',
-      school: '',
-      diploma: '',
-      description: ''
-    }
-  }
 }
 
 const submitEducation = async () => {
@@ -955,7 +851,7 @@ const startEdit = () => {
 }
 
 const validateSummary = () => {
-  const resumeText = summary.value // Store the value before clearing it
+  const resumeText = summary.value
 
   router.post(route('curriculum.resume.update'), {
     resume: resumeText
@@ -997,8 +893,7 @@ const handleCorrection = async () => {
     })
 
     if (response.data.success) {
-      console.log(response.data)
-      summary.value = response.data.description
+      summary.value = response.data.resume
     } else {
       error.value = response.data.message || 'Une erreur est survenue lors de la correction'
     }
@@ -1018,25 +913,13 @@ const experienceForm = ref({
   location: '',
   start_date: '',
   end_date: '',
-  description: ''
+  description: '',
+  city: '',
+  country: ''
 })
 
 const toggleExperienceForm = () => {
   showExperienceForm.value = !showExperienceForm.value
-  if (!showExperienceForm.value) {
-    resetExperienceForm()
-  }
-}
-
-const resetExperienceForm = () => {
-  experienceForm.value = {
-    title: '',
-    company: '',
-    location: '',
-    start_date: '',
-    end_date: '',
-    description: ''
-  }
 }
 
 const submitExperience = async () => {
@@ -1065,17 +948,13 @@ const editExperience = async (experience) => {
       location: experience.location,
       start_date: experience.start_date,
       end_date: experience.end_date,
-      description: experience.description
+      description: experience.description,
+      city: experience.city,
+      country: experience.country
     }
     showExperienceForm.value = true
   } catch (error) {
     console.error('Error editing experience:', error)
-    if (error.response?.data?.redirect) {
-      // flash.error = error.response.data.message
-      window.location.href = error.response.data.redirect
-    } else {
-      // flash.error = 'Error editing experience'
-    }
   }
 }
 
@@ -1085,14 +964,10 @@ const deleteExperience = async (id) => {
   try {
     await axios.delete(route('experience.destroy', id))
     props.userInfo.experiences = props.userInfo.experiences.filter(exp => exp.id !== id)
-    // flash.success = 'Experience deleted successfully'
   } catch (error) {
     console.error('Error deleting experience:', error)
     if (error.response?.data?.redirect) {
-      // flash.error = error.response.data.message
       window.location.href = error.response.data.redirect
-    } else {
-      // flash.error = 'Error deleting experience'
     }
   }
 }
@@ -1109,11 +984,9 @@ const avatarUrl = computed(() => {
   if (props.userInfo.avatar) {
     return `/storage/${props.userInfo.avatar}`
   }
-  // Use the profile_photo_url from auth user if available
   if (props.auth?.user?.profile_photo_url) {
     return props.auth.user.profile_photo_url
   }
-  // Fallback to default avatar
-  return '/storage/default-avatar.png'
+  return defaultAvatar
 })
 </script>

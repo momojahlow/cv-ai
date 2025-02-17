@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('level');
             $table->string('code')->nullable();
             $table->tinyText('description')->nullable();
-            $table->foreignId('curriculum_id')->references('id')->on('curriculums');
+            $table->foreignId('curriculum_id')->references('id')->on('curriculums')->onDelete('cascade');
             $table->timestamps();
         });
     }

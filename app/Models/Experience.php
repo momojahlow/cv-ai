@@ -16,6 +16,11 @@ class Experience extends Model
         'description'
     ];
 
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
+
     public function curriculum()
     {
         return $this->belongsTo(Curriculum::class);
