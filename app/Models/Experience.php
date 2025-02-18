@@ -13,7 +13,9 @@ class Experience extends Model
         'location',
         'start_date',
         'end_date',
-        'description'
+        'description',
+        'city',
+        'country'
     ];
 
     protected $casts = [

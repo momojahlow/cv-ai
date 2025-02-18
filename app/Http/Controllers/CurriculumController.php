@@ -191,9 +191,10 @@ class CurriculumController extends Controller
             'country',
             'family_status'
         ]);
+        // dd($request->date_of_birth)
 
         // Format the date before saving
-        $data['date_of_birth'] = Carbon::parse($request->date_of_birth)->format('Y-m-d');
+        // $data['date_of_birth'] = Carbon::parse($request->date_of_birth)->format('Y-m-d');
 
         $curriculum = auth()->user()->curriculum;
         if (!$curriculum) {

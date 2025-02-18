@@ -28,7 +28,9 @@ class EducationController extends Controller
             'end_date' => 'required|string',
             'school' => 'required|string',
             'diploma' => 'required|string',
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'city' => 'nullable|string',
+            'country' => 'nullable|string'
         ]);
 
         $education = $user->curriculum->educations()->create([

@@ -38,7 +38,7 @@ Route::middleware([
         Route::put('/curriculum/languages/{language}', [CurriculumController::class, 'updateLanguages'])->name('curriculum.language.update');
         Route::delete('/curriculum/languages/{language}', [CurriculumController::class, 'deleteLanguage'])->name('curriculum.language.delete');
         Route::post('/curriculum/correct-resume', [CurriculumController::class, 'correctResume'])->name('curriculum.resume.correct');
-        Route::post('/curriculum/update-profile', [CurriculumController::class, 'updateProfile'])->name('curriculum.update-profile');
+        Route::post('/curriculum/update-profile', [CurriculumController::class, 'updateProfile'])->name('curriculum.update.profile');
 
         // Experience routes
         Route::get('/experience/create', [ExperienceController::class, 'create'])->name('experience.create');

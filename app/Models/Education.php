@@ -18,7 +18,9 @@ class Education extends Model
         'end_date',
         'school',
         'diploma',
-        'description'
+        'description',
+        'city',
+        'country'
     ];
 
     protected $casts = [
