@@ -115,12 +115,12 @@
               </label>
 
               <label class="relative flex items-center cursor-pointer">
-                <input 
-                  type="radio" 
+                <input
+                  type="radio"
                   v-model="colorSetting"
                   value="secondary"
-                  name="cvColor" 
-                  class="hidden peer" 
+                  name="cvColor"
+                  class="hidden peer"
                 />
                 <div class="w-6 h-6 rounded-full border-2 border-secondary flex items-center justify-center">
                   <div v-show="colorSetting === 'secondary'" class="w-3 h-3 bg-secondary rounded-full"></div>
@@ -342,7 +342,7 @@
                   @click="submitEducation"
                   class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                 >
-                  Ajouter
+                  {{ isEditingEducation ? 'Modifier' : 'Ajouter' }}
                 </button>
                 <button
                   @click="toggleEducationForm"
@@ -371,6 +371,24 @@
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     {{ education.type }}
                   </span>
+                  <div class="flex space-x-2">
+                    <button
+                      @click="editEducation(education)"
+                      class="text-[#2b8d96] hover:text-[#1a646b]"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      @click="deleteEducation(education.id)"
+                      class="text-red-500 hover:text-red-700"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
                 <p class="mt-2 text-sm text-gray-500">{{ education.description }}</p>
               </div>
@@ -488,7 +506,7 @@
                   @click="submitExperience"
                   class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                 >
-                  Ajouter
+                  {{ isEditingExperience ? 'Modifier' : 'Ajouter' }}
                 </button>
                 <button
                   @click="toggleExperienceForm"
@@ -506,9 +524,31 @@
                 <div class="text-sm text-gray-600">{{ formatDate(experience.start_date) }} - {{ formatDate(experience.end_date) }}</div>
               </div>
               <div class="flex-1">
-                <h4 class="text-lg font-medium text-gray-900">{{ experience.title }}</h4>
-                <div class="text-sm text-gray-600 mt-1">
-                  {{ experience.company }} • {{ experience.location }}
+                <div class="flex justify-between">
+                  <div>
+                    <h4 class="text-lg font-medium text-gray-900">{{ experience.title }}</h4>
+                    <div class="text-sm text-gray-600 mt-1">
+                      {{ experience.company }} • {{ experience.location }}
+                    </div>
+                  </div>
+                  <div class="flex space-x-2">
+                    <button
+                      @click="editExperience(experience)"
+                      class="text-[#2b8d96] hover:text-[#1a646b]"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      @click="deleteExperience(experience.id)"
+                      class="text-red-500 hover:text-red-700"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
                 <p class="mt-2 text-sm text-gray-500">{{ experience.description }}</p>
               </div>
@@ -632,7 +672,7 @@
     <Modal :show="showEditModal" @close="closeEditModal">
       <div class="p-6">
         <h2 class="text-lg font-medium text-gray-900 mb-4">
-          Modifier mes informations 
+          Modifier mes informations
         </h2>
 
         <form @submit.prevent="updateProfile" class="space-y-4"  enctype="multipart/form-data">
@@ -640,8 +680,8 @@
             <!-- Civility -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Civilité</label>
-              <select 
-                v-model="formProfile.civility" 
+              <select
+                v-model="formProfile.civility"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 :class="{ 'border-red-500': formErrors.civility }"
               >
@@ -666,8 +706,8 @@
             <!-- family status -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Statut familial</label>
-              <select 
-                v-model="formProfile.family_status" 
+              <select
+                v-model="formProfile.family_status"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 :class="{ 'border-red-500': formErrors.family_status }"
               >
@@ -720,8 +760,8 @@
             <!-- Study Level -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Niveau d'études</label>
-              <select 
-                v-model="formProfile.study_level" 
+              <select
+                v-model="formProfile.study_level"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 :class="{ 'border-red-500': formErrors.study_level }"
               >
@@ -876,7 +916,7 @@ function closeEditModal() {
 const updateProfile = async () => {
   try {
     const formData = new FormData();
-    
+
     Object.keys(formProfile.value).forEach((key) => {
       const value = formProfile.value[key];
       if (key === "avatar" && value instanceof File) {
@@ -941,29 +981,45 @@ const submitEducation = async () => {
       end_date: educationForm.value.endDate,
       school: educationForm.value.school,
       diploma: educationForm.value.diploma,
-      description: educationForm.value.description
+      description: educationForm.value.description,
+      city: educationForm.value.city,
+      country: educationForm.value.country
     }
 
-    const response = await axios.post(route('education.store'), formData)
-
-    // Add the new education to the list
-    if (!props.userInfo.educations) {
-      props.userInfo.educations = []
-    }
-    props.userInfo.educations.push(response.data.education)
-
-    // Close form and reset
-    toggleEducationForm()
-
-    // Show success message using Inertia flash
-    // page.props.flash.message = 'Formation ajoutée avec succès'
-  } catch (error) {
-    console.error('Error adding education:', error)
-    if (error.response?.data?.redirect) {
-      // page.props.flash.error = error.response.data.message
-      window.location.href = error.response.data.redirect
+    let response
+    if (isEditingEducation.value) {
+      response = await axios.put(route('education.update', editingEducationId.value), formData)
+      const index = props.userInfo.educations.findIndex(edu => edu.id === editingEducationId.value)
+      if (index !== -1) {
+        props.userInfo.educations[index] = response.data.education
+      }
     } else {
-      // page.props.flash.error = 'Erreur lors de l\'ajout de la formation'
+      response = await axios.post(route('education.store'), formData)
+      if (!props.userInfo.educations) {
+        props.userInfo.educations = []
+      }
+      props.userInfo.educations.push(response.data.education)
+    }
+
+    // Reset form and close
+    toggleEducationForm()
+    isEditingEducation.value = false
+    editingEducationId.value = null
+    educationForm.value = {
+      level: '',
+      type: '',
+      startDate: '',
+      endDate: '',
+      school: '',
+      diploma: '',
+      description: '',
+      city: '',
+      country: ''
+    }
+  } catch (error) {
+    console.error('Error submitting education:', error)
+    if (error.response?.data?.redirect) {
+      window.location.href = error.response.data.redirect
     }
   }
 }
@@ -984,7 +1040,7 @@ const submitLanguage = async () => {
         language: languageForm.value.language,
         level: languageForm.value.level
       });
-      
+
       // Update the language in the list
       const index = props.userInfo.languages.findIndex(lang => lang.id === editingLanguageId.value);
       if (index !== -1) {
@@ -996,7 +1052,7 @@ const submitLanguage = async () => {
         language: languageForm.value.language,
         level: languageForm.value.level
       });
-      
+
       // Add the new language to the list
       if (!props.userInfo.languages) {
         props.userInfo.languages = [];
@@ -1092,42 +1148,72 @@ const toggleExperienceForm = () => {
 
 const submitExperience = async () => {
   try {
-    const response = await axios.post(route('experience.store'), experienceForm.value)
-    props.userInfo.experiences = [...(props.userInfo.experiences || []), response.data]
-    toggleExperienceForm()
-    // flash.success = 'Experience added successfully'
-  } catch (error) {
-    console.error('Error adding experience:', error)
-    if (error.response?.data?.redirect) {
-      // flash.error = error.response.data.message
-      window.location.href = error.response.data.redirect
+    const formData = {
+      title: experienceForm.value.title,
+      company: experienceForm.value.company,
+      location: experienceForm.value.location,
+      start_date: experienceForm.value.start_date,
+      end_date: experienceForm.value.end_date,
+      description: experienceForm.value.description,
+      city: experienceForm.value.city,
+      country: experienceForm.value.country
+    }
+
+    let response
+    if (isEditingExperience.value) {
+      response = await axios.put(route('experience.update', editingExperienceId.value), formData)
+      const index = props.userInfo.experiences.findIndex(exp => exp.id === editingExperienceId.value)
+      if (index !== -1) {
+        props.userInfo.experiences[index] = response.data
+      }
     } else {
-      // flash.error = 'Error adding experience'
+      response = await axios.post(route('experience.store'), formData)
+      if (!props.userInfo.experiences) {
+        props.userInfo.experiences = []
+      }
+      props.userInfo.experiences.push(response.data)
+    }
+
+    // Reset form and close
+    toggleExperienceForm()
+    isEditingExperience.value = false
+    editingExperienceId.value = null
+    experienceForm.value = {
+      title: '',
+      company: '',
+      location: '',
+      start_date: '',
+      end_date: '',
+      description: '',
+      city: '',
+      country: ''
+    }
+  } catch (error) {
+    console.error('Error submitting experience:', error)
+    if (error.response?.data?.redirect) {
+      window.location.href = error.response.data.redirect
     }
   }
 }
 
-const editExperience = async (experience) => {
-  try {
-    experienceForm.value = {
-      id: experience.id,
-      title: experience.title,
-      company: experience.company,
-      location: experience.location,
-      start_date: experience.start_date,
-      end_date: experience.end_date,
-      description: experience.description,
-      city: experience.city,
-      country: experience.country
-    }
-    showExperienceForm.value = true
-  } catch (error) {
-    console.error('Error editing experience:', error)
+const editExperience = (experience) => {
+  experienceForm.value = {
+    title: experience.title,
+    company: experience.company,
+    location: experience.location,
+    start_date: experience.start_date,
+    end_date: experience.end_date,
+    description: experience.description,
+    city: experience.city,
+    country: experience.country
   }
+  showExperienceForm.value = true
+  isEditingExperience.value = true
+  editingExperienceId.value = experience.id
 }
 
 const deleteExperience = async (id) => {
-  if (!confirm('Are you sure you want to delete this experience?')) return
+  if (!confirm('Êtes-vous sûr de vouloir supprimer cette expérience ?')) return
 
   try {
     await axios.delete(route('experience.destroy', id))
@@ -1192,4 +1278,39 @@ const deleteLanguage = async (id) => {
     console.error('Error deleting language:', error);
   }
 };
+
+const editEducation = (education) => {
+  educationForm.value = {
+    level: education.level,
+    type: education.type,
+    startDate: education.start_date,
+    endDate: education.end_date,
+    school: education.school,
+    diploma: education.diploma,
+    description: education.description,
+    city: education.city,
+    country: education.country
+  }
+  showEducationForm.value = true
+  isEditingEducation.value = true
+  editingEducationId.value = education.id
+}
+
+const deleteEducation = async (id) => {
+  if (!confirm('Êtes-vous sûr de vouloir supprimer cette formation ?')) return
+
+  try {
+    await axios.delete(route('education.destroy', id))
+    props.userInfo.educations = props.userInfo.educations.filter(edu => edu.id !== id)
+  } catch (error) {
+    console.error('Error deleting education:', error)
+    if (error.response?.data?.redirect) {
+      window.location.href = error.response.data.redirect
+    }
+  }
+}
+const isEditingEducation = ref(false)
+const editingEducationId = ref(null)
+const isEditingExperience = ref(false)
+const editingExperienceId = ref(null)
 </script>

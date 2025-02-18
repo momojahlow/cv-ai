@@ -67,4 +67,35 @@ class EducationController extends Controller
             'success' => true
         ]);
     }
+
+    public function update(Request $request, Education $education)
+    {
+        $user = Auth::user();
+
+        if ($education->curriculum->user_id !== $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'level' => 'required|string',
+            'type' => 'required|string',
+            'start_date' => 'required|string',
+            'end_date' => 'required|string',
+            'school' => 'required|string',
+            'diploma' => 'required|string',
+            'description' => 'nullable|string',
+            'city' => 'nullable|string',
+            'country' => 'nullable|string'
+        ]);
+
+        $education->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'education' => $education
+        ]);
+    }
 }

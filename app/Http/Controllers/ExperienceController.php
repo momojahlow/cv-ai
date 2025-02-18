@@ -74,20 +74,12 @@ class ExperienceController extends Controller
             'location' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after:start_date',
-            'description' => 'required|string'
+            'description' => 'required|string',
+            'city' => 'nullable|string',
+            'country' => 'nullable|string'
         ]);
 
-        // Convert snake_case to camelCase for database
-        $data = [
-            'title' => $validated['title'],
-            'company' => $validated['company'],
-            'location' => $validated['location'],
-            'start_date' => $validated['start_date'],
-            'end_date' => $validated['end_date'],
-            'description' => $validated['description']
-        ];
-
-        $experience->update($data);
+        $experience->update($validated);
 
         return response()->json($experience);
     }
