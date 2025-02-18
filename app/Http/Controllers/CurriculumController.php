@@ -23,10 +23,7 @@ class CurriculumController extends Controller
             
         ]);
 
-        if ($birthDate = $user->curriculum?->date_of_birth) {
-            $birthDate = Carbon::parse($birthDate)->format('Y-m-d');
-        }
-
+        
         return Inertia::render('Curriculum/Index', [
             'profileNumber' => $user->id,
             'userInfo' => [
@@ -34,13 +31,13 @@ class CurriculumController extends Controller
                 'email' => $user->email,
                 'title' => 'Développeur Full Stack',
                 'categories' => ['Web', 'Mobile', 'Backend'],
-                'birthDate' => $birthDate,
+                'date_of_birth' => $user->curriculum?->date_of_birth?->format('Y-m-d'),
                 'nationality' => $user->curriculum?->nationality,
                 'civility' => $user->curriculum?->civility,
                 'phone' => $user->curriculum?->phone,
                 'country' => $user->curriculum?->country,
-                'familyStatus' => $user->curriculum?->family_status,
-                'educationLevel' => $user->curriculum?->study_level,
+                'family_status' => $user->curriculum?->family_status,
+                'study_level' => $user->curriculum?->study_level,
                 'address' => $user->curriculum?->address,
                 'educations' => $user->curriculum?->educations ?? [],
                 'experiences' => $user->curriculum?->experiences ?? [],
@@ -179,7 +176,7 @@ class CurriculumController extends Controller
             'study_level' => 'required|string',
             'country' => 'nullable|string',
             'family_status' => 'nullable|string',
-            'avatar' => 'nullable|image|max:1024', // 1MB max
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:1024',
         ]);
 
         $data = $request->only([
