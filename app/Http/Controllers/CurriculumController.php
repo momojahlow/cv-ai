@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use GeminiAPI\Client;
 use App\Models\Language;
 use GeminiAPI\Resources\Parts\TextPart;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class CurriculumController extends Controller
 {
@@ -200,7 +202,14 @@ class CurriculumController extends Controller
         }
 
         if ($request->hasFile('avatar')) {
+            if ($curriculum->avatar) {
+                Storage::disk('public')->delete($curriculum->avatar);
+            }
+        
+            // Store the new avatar
             $path = $request->file('avatar')->store('avatars', 'public');
+        
+            // Update the curriculum with the new avatar path
             $curriculum->update(['avatar' => $path]);
         }
 
