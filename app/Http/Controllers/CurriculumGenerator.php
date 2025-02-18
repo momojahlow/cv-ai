@@ -27,17 +27,17 @@ class CurriculumGenerator extends Controller
         $experiences = $curriculum->experiences;
         $languages = $curriculum->languages;
 
-        if ($request->route()->getName() === 'curriculum.pdf') { // Ensure route name matches
-            // Ensure directory exists
-            if (!Storage::exists('public/cv')) {
-                Storage::makeDirectory('public/cv');
+        if ($request->route()->getName() === 'curriculum.pdf') { 
+            if (!Storage::disk('public')->exists('cv')) {
+                // Storage::makeDirectory('public/cv');
+                Storage::disk('public')->makeDirectory('cv');
             }
-
-            // Generate HTML
             $html = view('cv', compact('user', 'curriculum', 'educations', 'experiences', 'languages', 'color'))->render();
 
             // Save PDF
-            $pdfPath = Storage::path("public/cv/cv-{$user->id}.pdf");
+            $pdfRelativePath = "cv/cv-{$user->id}.pdf";
+            $pdfPath = Storage::disk('public')->path($pdfRelativePath);
+            // $pdfPath = Storage::path("public/cv/cv-{$user->id}.pdf");
             Browsershot::html($html)
                 ->format('A4')
                 ->save($pdfPath);
