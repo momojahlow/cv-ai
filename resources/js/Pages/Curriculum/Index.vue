@@ -57,11 +57,11 @@
                   </p>
                   <p class="text-sm">
                     <span class="text-gray-500">Situation familiale :</span>
-                    <span class="ml-2">{{ userInfo.familyStatus }}</span>
+                    <span class="ml-2">{{ userInfo.family_status }}</span>
                   </p>
                   <p class="text-sm">
                     <span class="text-gray-500">Niveau d'étude :</span>
-                    <span class="ml-2">{{ userInfo.educationLevel }}</span>
+                    <span class="ml-2">{{ userInfo.study_level }}</span>
                   </p>
                 </div>
                 <div>
@@ -98,12 +98,12 @@
               </svg>
               Envoyer ce CV par mail
             </button> -->
-            <!-- <a href="/cv-web" target="_blank" class="flex items-center text-[#2b8d96] hover:text-pink-600">
+            <a href="/cv-web" target="_blank" class="flex items-center text-[#2b8d96] hover:text-pink-600">
               <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 014 16a5.986 5.986 0 004.546-2.084A5 5 0 0014 10z" clip-rule="evenodd" />
               </svg>
               Version Web
-            </a> -->
+            </a>
           </div>
         </div>
 
@@ -289,7 +289,7 @@
                     class="mt-1 block w-full"
                     v-model="educationForm.city"
                   />
-                  <InputError class="mt-2" :message="form.errors.city" />
+                  <!-- <InputError v-if="form.errors.city" class="mt-2" :message="form.errors.city" /> -->
                 </div>
 
                 <div>
@@ -300,7 +300,7 @@
                     class="mt-1 block w-full"
                     v-model="educationForm.country"
                   />
-                  <InputError class="mt-2" :message="form.errors.country" />
+                  <!-- <InputError v-if="form.errors.country" class="mt-2" :message="form.errors.country[0]" /> -->
                 </div>
               </div>
               <div class="mt-4 flex justify-end space-x-4">
@@ -397,7 +397,7 @@
                   class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 />
               </div>
-              <div class="grid grid-cols-2 gap-4">
+              <div class="grid grid-cols-2 gap-4 mt-4">
                 <div>
                   <InputLabel for="city" value="Ville" />
                   <TextInput
@@ -406,7 +406,7 @@
                     class="mt-1 block w-full"
                     v-model="experienceForm.city"
                   />
-                  <InputError class="mt-2" :message="form.errors.city" />
+                  <!-- <InputError class="mt-2" :message="form.errors.city" /> -->
                 </div>
 
                 <div>
@@ -417,7 +417,7 @@
                     class="mt-1 block w-full"
                     v-model="experienceForm.country"
                   />
-                  <InputError class="mt-2" :message="form.errors.country" />
+                  <!-- <InputError class="mt-2" :message="form.errors.country" /> -->
                 </div>
               </div>
               <div class="mt-4">
@@ -598,19 +598,24 @@
     <Modal :show="showEditModal" @close="closeEditModal">
       <div class="p-6">
         <h2 class="text-lg font-medium text-gray-900 mb-4">
-          Modifier mes informations
+          Modifier mes informations 
         </h2>
 
-        <form @submit.prevent="updateProfile" class="space-y-4">
+        <form @submit.prevent="updateProfile" class="space-y-4"  enctype="multipart/form-data">
           <div class="grid grid-cols-2 gap-4">
             <!-- Civility -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Civilité</label>
-              <select v-model="form.civility" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]">
+              <select 
+                v-model="formProfile.civility" 
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.civility }"
+              >
                 <option value="M.">M.</option>
                 <option value="Mme">Mme</option>
                 <option value="Mlle">Mlle</option>
               </select>
+              <InputError v-if="formErrors.civility" :message="formErrors.civility[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Date of Birth -->
@@ -618,21 +623,28 @@
               <label class="block text-sm font-medium text-gray-700">Date de naissance</label>
               <input
                 type="date"
-                v-model="form.date_of_birth"
+                v-model="formProfile.date_of_birth"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.date_of_birth }"
               >
+              <InputError v-if="formErrors.date_of_birth" :message="formErrors.date_of_birth[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <!-- family status -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Statut familial</label>
-              <select v-model="form.family_status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]">
-                <option value="Célibataire">Célibataire</option>
-                <option value="Marie">Marie</option>
-                <option value="Divorce">Divorce</option>
-                <option value="Veuf">Veuf</option>
-                <option value="Séparé">Séparé</option>
+              <select 
+                v-model="formProfile.family_status" 
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.family_status }"
+              >
+                <option value="Célibataire">Célibataire</option>
+                <option value="Marié(e)">Marié(e)</option>
+                <option value="Divorcé(e)">Divorcé(e)</option>
+                <option value="Veuf(ve)">Veuf(ve)</option>
+                <option value="Séparé(e)">Séparé(e)</option>
                 <option value="Union libre">Union libre</option>
               </select>
+              <InputError v-if="formErrors.family_status" :message="formErrors.family_status[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Phone -->
@@ -640,9 +652,11 @@
               <label class="block text-sm font-medium text-gray-700">Téléphone</label>
               <input
                 type="tel"
-                v-model="form.phone"
+                v-model="formProfile.phone"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.phone }"
               >
+              <InputError v-if="formErrors.phone" :message="formErrors.phone[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Address -->
@@ -650,9 +664,11 @@
               <label class="block text-sm font-medium text-gray-700">Adresse</label>
               <input
                 type="text"
-                v-model="form.address"
+                v-model="formProfile.address"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.address }"
               >
+              <InputError v-if="formErrors.address" :message="formErrors.address[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Nationality -->
@@ -660,15 +676,21 @@
               <label class="block text-sm font-medium text-gray-700">Nationalité</label>
               <input
                 type="text"
-                v-model="form.nationality"
+                v-model="formProfile.nationality"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.nationality }"
               >
+              <InputError v-if="formErrors.nationality" :message="formErrors.nationality[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Study Level -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Niveau d'études</label>
-              <select v-model="form.study_level" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]">
+              <select 
+                v-model="formProfile.study_level" 
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.study_level }"
+              >
                 <option value="Bac">Bac</option>
                 <option value="Bac +2">Bac +2</option>
                 <option value="Bac +3">Bac +3</option>
@@ -676,6 +698,7 @@
                 <option value="Bac +5">Bac +5</option>
                 <option value="Bac +5 et plus">Bac +5 et plus</option>
               </select>
+              <InputError v-if="formErrors.study_level" :message="formErrors.study_level[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Country -->
@@ -683,9 +706,11 @@
               <label class="block text-sm font-medium text-gray-700">Pays</label>
               <input
                 type="text"
-                v-model="form.country"
+                v-model="formProfile.country"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.country }"
               >
+              <InputError v-if="formErrors.country" :message="formErrors.country[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Avatar -->
@@ -696,7 +721,10 @@
                 @change="handleAvatarUpload"
                 accept="image/*"
                 class="mt-1 block w-full"
+                :class="{ 'border-red-500': formErrors.avatar }"
               >
+              <p v-if="formErrors.avatar" class="mt-1 text-sm text-red-600">{{ formErrors.avatar[0] }}</p>
+              <InputError v-if="formErrors.avatar" :message="formErrors.avatar[0]" class="mt-2" />
             </div>
           </div>
 
@@ -745,14 +773,34 @@ const defaultAvatar = '/storage/default-avatar.png'
 
 // Form states
 const showEditModal = ref(false)
+const showLanguageModal = ref(false)
+const editingLanguageId = ref(null);
+const languageForm = ref({
+  language: '',
+  level: ''
+})
 const isEditing = ref(false)
 const form = ref({
   avatar: null
 })
 
+const formProfile = ref({
+  civility: props.userInfo?.civility || '',
+  date_of_birth: props.userInfo?.date_of_birth || '',
+  family_status: props.userInfo?.family_status || '',
+  phone: props.userInfo?.phone || '',
+  address: props.userInfo?.address || '',
+  nationality: props.userInfo?.nationality || '',
+  study_level: props.userInfo?.study_level || '',
+  country: props.userInfo?.country || '',
+  avatar: null
+})
+
+const formErrors = ref({});
+
 const formattedBirthDate = computed(() => {
-  if (!props.userInfo?.birthDate) return ''
-  const date = new Date(props.userInfo.birthDate)
+  if (!props.userInfo?.date_of_birth) return ''
+  const date = new Date(props.userInfo.date_of_birth)
   return date.toLocaleDateString('fr-FR', {
     day: '2-digit',
     month: '2-digit',
@@ -763,7 +811,10 @@ const formattedBirthDate = computed(() => {
 // Download PDF function
 const downloadPDF = async () => {
   try {
-    const response = await axios.get(route('curriculum.download'), {
+    const response = await axios.get(route('curriculum.pdf'), {
+      headers: {
+        'Content-Type': 'application/pdf'
+      },
       responseType: 'blob'
     })
     const url = window.URL.createObjectURL(new Blob([response.data]))
@@ -778,8 +829,46 @@ const downloadPDF = async () => {
   }
 }
 
+function closeLanguageModal() {
+  showLanguageModal.value = false
+}
+
+function closeEditModal() {
+  showEditModal.value = false
+}
+
+const updateProfile = async () => {
+  try {
+    const formData = new FormData();
+    
+    Object.keys(formProfile.value).forEach((key) => {
+      const value = formProfile.value[key];
+      if (key === "avatar" && value instanceof File) {
+        formData.append(key, value);
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value);
+      }
+    });
+
+    const response = await axios.post(route('curriculum.profile.update'), formData);
+
+    // Update the user info in the page
+    props.userInfo = { ...props.userInfo, ...response.data };
+
+    // Close the modal
+    showEditModal.value = false;
+
+    // Show success message (if you have a notification system)
+    // notification.success('Profile updated successfully');
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
+  }
+};
 const handleAvatarUpload = (event) => {
-  form.value.avatar = event.target.files[0]
+  formProfile.value.avatar = event.target.files[0]
 }
 
 // Resume
@@ -849,6 +938,49 @@ const startEdit = () => {
     summary.value = displayedSummary.value
   }
 }
+
+const submitLanguage = async () => {
+  try {
+    let response;
+    if (isEditing.value) {
+      // Update existing language
+      response = await axios.put(route('curriculum.language.update', editingLanguageId.value), {
+        language: languageForm.value.language,
+        level: languageForm.value.level
+      });
+      
+      // Update the language in the list
+      const index = props.userInfo.languages.findIndex(lang => lang.id === editingLanguageId.value);
+      if (index !== -1) {
+        props.userInfo.languages[index] = response.data;
+      }
+    } else {
+      // Add new language
+      response = await axios.post(route('curriculum.language.add'), {
+        language: languageForm.value.language,
+        level: languageForm.value.level
+      });
+      
+      // Add the new language to the list
+      if (!props.userInfo.languages) {
+        props.userInfo.languages = [];
+      }
+      props.userInfo.languages.push(response.data);
+    }
+
+    // Close modal and reset form
+    showLanguageModal.value = false;
+    languageForm.value = {
+      language: '',
+      level: ''
+    };
+    isEditing.value = false;
+    editingLanguageId.value = null;
+
+  } catch (error) {
+    console.error('Error submitting language:', error);
+  }
+};
 
 const validateSummary = () => {
   const resumeText = summary.value
@@ -989,4 +1121,39 @@ const avatarUrl = computed(() => {
   }
   return defaultAvatar
 })
+const toggleLanguageModal = () => {
+  if (showLanguageModal.value) {
+    // If modal is open, close it and reset form
+    showLanguageModal.value = false
+    languageForm.value = {
+      language: '',
+      level: ''
+    }
+    isEditing.value = false
+  } else {
+    // If modal is closed, open it
+    showLanguageModal.value = true
+  }
+}
+const editLanguage = (language) => {
+  editingLanguageId.value = language.id;
+  languageForm.value = {
+    language: language.name,  // Note: using 'name' as per your backend model
+    level: language.level
+  };
+  isEditing.value = true;
+  showLanguageModal.value = true;
+};
+
+const deleteLanguage = async (id) => {
+  if (!confirm('Êtes-vous sûr de vouloir supprimer cette langue ?')) return;
+
+  try {
+    await axios.delete(route('curriculum.language.delete', id));
+    // Remove the language from the list
+    props.userInfo.languages = props.userInfo.languages.filter(lang => lang.id !== id);
+  } catch (error) {
+    console.error('Error deleting language:', error);
+  }
+};
 </script>

@@ -23,12 +23,13 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::get('/cv-pdf', CurriculumGenerator::class)->name('cv-pdf');
-    Route::get('/cv-web', CurriculumGenerator::class)->name('cv-web');
+    Route::get('/cv-pdf', CurriculumGenerator::class)->name('curriculum.pdf');
+    Route::get('/cv-web', CurriculumGenerator::class)->name('curriculum.web');
 
     Route::middleware(['auth'])->group(function () {
         Route::get('/curriculum', [CurriculumController::class, 'index'])->name('curriculum.index');
@@ -38,7 +39,6 @@ Route::middleware([
         Route::put('/curriculum/languages/{language}', [CurriculumController::class, 'updateLanguages'])->name('curriculum.language.update');
         Route::delete('/curriculum/languages/{language}', [CurriculumController::class, 'deleteLanguage'])->name('curriculum.language.delete');
         Route::post('/curriculum/correct-resume', [CurriculumController::class, 'correctResume'])->name('curriculum.resume.correct');
-        Route::post('/curriculum/update-profile', [CurriculumController::class, 'updateProfile'])->name('curriculum.update-profile');
 
         // Experience routes
         Route::get('/experience/create', [ExperienceController::class, 'create'])->name('experience.create');

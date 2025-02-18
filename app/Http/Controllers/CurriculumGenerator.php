@@ -20,7 +20,7 @@ class CurriculumGenerator extends Controller
         $experiences = $curriculum->experiences;
         $languages = $curriculum->languages;
         $html = view('cv', compact('user', 'curriculum', 'educations', 'experiences', 'languages'))->render();
-        if ($request->route()->getName() === 'cv-pdf') {
+        if ($request->route()->getName() === 'curriculum-pdf') {
             // $pdf = PDF::loadView('cv-pdf', compact('user', 'curriculum', 'educations', 'experiences', 'languages'));
             // return $pdf->download('cv.pdf');
             Browsershot::html($html)
