@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CV</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 <body class="bg-gray-100 ">
+    @php
+        $bgColor = 'bg-' . $color;
+        $textColor = 'text-' . $color;
+        $borderColor = 'border-' . $color.' border-opacity-30';
+    @endphp
     <div class="bg-white rounded-lg p-6 w-[600px] mx-auto">
         <div class="flex gap-4">
+            {{-- @dd($curriculum) --}}
             <div class="w-24 h-24 bg-gray-200 rounded-md shrink-0">
-                <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('storage/'.$curriculum->avatar) }}" alt="Avatar de l'utilisateur" class="w-full h-full object-cover rounded-md">
+                <img src="{{ $curriculum->avatar ?  asset('storage/'.$curriculum->avatar):asset('storage/' . $user->avatar)  }}" alt="Avatar de l'utilisateur" class="w-full h-full object-cover rounded-md">
             </div>
             <div>
                 <h1 class="text-xl font-bold text-gray-800">{{ $user->name }}</h1>
@@ -35,25 +41,25 @@
             </div>
         </div>
 
-        <hr class="my-3 border-teal-300 border-dotted ">
+        <hr class="my-3 {{$borderColor}} border-dotted ">
 
         <div class="text-sm text-gray-700">
             <p><strong>Adresse :</strong> {{ $curriculum->address ?? '-' }}</p>
             <p><strong>Téléphone :</strong> {{ $curriculum->phone ?? '-' }} | <strong>E-mail :</strong> {{ $curriculum->email ?? '-' }}</p>
         </div>
 
-        <hr class="my-3 border-teal-300 border-dotted ">
+        <hr class="my-3 {{$borderColor}} border-dotted ">
 
-        <h2 class="text-teal-600 font-bold text-lg flex items-center">
-            <span class="w-2 h-6 bg-teal-600 mr-2"></span> Résumé du CV
+        <h2 class="{{$textColor}} font-bold text-lg flex items-center">
+            <span class="w-2 h-6 {{$bgColor}} mr-2"></span> Résumé du CV
         </h2>
         <p class="text-gray-700 mt-2 text-xs">{{ $curriculum->resume ?? 'Aucun résumé disponible' }}</p>
-        <h2 class="text-teal-600 font-bold text-lg flex items-center mt-4">
-            <span class="w-2 h-6 bg-teal-600 mr-2"></span> Formation
+        <h2 class="{{$textColor}} font-bold text-lg flex items-center mt-4">
+            <span class="w-2 h-6 {{$bgColor}} mr-2"></span> Formation
         </h2>        
         @foreach ($educations as $education)
             <div class="mt-2 pl-6">
-                <p class="text-lg font-bold text-teal-700">{{$education->school}} : {{$education->diploma}}</p>
+                <p class="text-lg font-bold {{$textColor}}">{{$education->school}} : {{$education->diploma}}</p>
                 <p class="text-md font-bold">{{$education->level}} : <span class="text-xs font-semibold">{{$education->type}}</span></p>
                 <p class="italic font-semibold">
                     {{$education->start_date->format('Y')}} - {{$education->end_date->format('Y')}}
@@ -62,8 +68,8 @@
                 <p class="text-gray-700 text-xs">{{$education->description}}</p>
             </div>
         @endforeach
-        <h2 class="text-teal-600 font-bold text-lg flex items-center mt-4">
-            <span class="w-2 h-6 bg-teal-600 mr-2"></span> Expérience Professionnelle
+        <h2 class="text-{{$color}} font-bold text-lg flex items-center mt-4">
+            <span class="w-2 h-6 bg-{{$color}} mr-2"></span> Expérience Professionnelle
         </h2>        
         @foreach ($experiences as $experience)
             <div class="mt-2 pl-6">
@@ -78,8 +84,8 @@
                 <p class="text-gray-700 text-xs">{{$experience->description}}</p>
             </div>
         @endforeach
-        <h2 class="text-teal-600 font-bold text-lg flex items-center mt-4">
-            <span class="w-2 h-6 bg-teal-600 mr-2"></span> Expérience Professionnelle
+        <h2 class="{{$textColor}} font-bold text-lg flex items-center mt-4">
+            <span class="w-2 h-6 bg-{{$color}} mr-2"></span> Langues
         </h2>        
         @foreach ($languages as $language)
             <div class="mt-2 pl-6">

@@ -28,8 +28,8 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::get('/cv-pdf', CurriculumGenerator::class)->name('curriculum.pdf');
-    Route::get('/cv-web', CurriculumGenerator::class)->name('curriculum.web');
+    Route::get('/cv-pdf/{color?}', CurriculumGenerator::class)->name('curriculum.pdf');
+    Route::get('/cv-web/{color?}', CurriculumGenerator::class)->name('curriculum.web');
 
     Route::middleware(['auth'])->group(function () {
         Route::get('/curriculum', [CurriculumController::class, 'index'])->name('curriculum.index');
