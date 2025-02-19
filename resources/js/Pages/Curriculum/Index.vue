@@ -719,33 +719,39 @@
               <label class="block text-sm font-medium text-gray-700 mb-2">Niveau d'étude</label>
               <select v-model="educationForm.level"
                 class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.level }"
               >
                 <option value="Bac +5 et plus">Bac +5 et plus</option>
                 <option value="Bac +3">Bac +3</option>
                 <option value="Bac +2">Bac +2</option>
                 <option value="Bac">Bac</option>
               </select>
+              <InputError v-if="formErrors.level" :message="formErrors.level[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Type d'établissement</label>
               <select v-model="educationForm.type"
                 class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.type }"
               >
                 <option value="Université">Université</option>
                 <option value="École d'ingénieur">École d'ingénieur</option>
                 <option value="École de commerce">École de commerce</option>
               </select>
+              <InputError v-if="formErrors.type" :message="formErrors.type[0]" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
               <InputLabel for="education_city" value="Ville" />
-              <TextInput id="education_city" type="text" class="mt-1 block w-full" v-model="educationForm.city" />
+              <TextInput id="education_city" type="text" class="mt-1 block w-full" :class="{ 'border-red-500': formErrors.city }" v-model="educationForm.city" />
+              <InputError v-if="formErrors.city" :city="formErrors.city[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <InputLabel for="education_country" value="Pays" />
-              <TextInput id="education_country" type="text" class="mt-1 block w-full" v-model="educationForm.country" />
+              <TextInput id="education_country" type="text" class="mt-1 block w-full" :class="{ 'border-red-500': formErrors.country }" v-model="educationForm.country" />
+              <InputError v-if="formErrors.country" :message="formErrors.country[0]" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
 
@@ -756,7 +762,9 @@
                 v-model="educationForm.startDate"
                 type="date"
                 class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.startDate }"
               />
+              <InputError v-if="formErrors.startDate" :message="formErrors.startDate[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Date de fin</label>
@@ -764,7 +772,9 @@
                 v-model="educationForm.endDate"
                 type="date"
                 class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.endDate }"
               />
+              <InputError v-if="formErrors.endDate" :message="formErrors.endDate[0]" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
 
@@ -774,7 +784,9 @@
               v-model="educationForm.school"
               type="text"
               class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              :class="{ 'border-red-500': formErrors.school }"
             />
+            <InputError v-if="formErrors.school" :message="formErrors.school[0]" class="mt-1 text-xs text-red-500" />
           </div>
 
           <div>
@@ -783,7 +795,9 @@
               v-model="educationForm.diploma"
               type="text"
               class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              :class="{ 'border-red-500': formErrors.diploma }"
             />
+            <InputError v-if="formErrors.diploma" :message="formErrors.diploma[0]" class="mt-1 text-xs text-red-500" />
           </div>
 
           <div>
@@ -791,7 +805,9 @@
             <textarea
               v-model="educationForm.description"
               class="w-full h-40 p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              :class="{ 'border-red-500': formErrors.description }"
             />
+            <InputError v-if="formErrors.description" :message="formErrors.description[0]" class="mt-1 text-xs text-red-500" />
           </div>
 
           <div class="flex justify-end space-x-4">
@@ -831,13 +847,17 @@
               <label class="block text-sm font-medium text-gray-700 mb-2">Titre du poste</label>
               <input v-model="experienceForm.title" type="text"
                 class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.title }"
               />
+              <InputError v-if="formErrors.title" :message="formErrors.title[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Entreprise</label>
               <input v-model="experienceForm.company" type="text"
                 class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.company }"
               />
+              <InputError v-if="formErrors.company" :message="formErrors.company[0]" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
 
@@ -845,13 +865,16 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">Lieu</label>
             <input v-model="experienceForm.location" type="text"
               class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              :class="{ 'border-red-500': formErrors.location }"
             />
+            <InputError v-if="formErrors.location" :message="formErrors.location[0]" class="mt-1 text-xs text-red-500" />
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
               <InputLabel for="experience_city" value="Ville" />
-              <TextInput id="experience_city" type="text" class="mt-1 block w-full" v-model="experienceForm.city" />
+              <TextInput id="experience_city" type="text" class="mt-1 block w-full" v-model="experienceForm.city" :class="{ 'border-red-500': formErrors.city }" />
+              <InputError v-if="formErrors.city" :message="formErrors.city[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <InputLabel for="experience_country" value="Pays" />
@@ -866,7 +889,9 @@
                 v-model="experienceForm.start_date"
                 type="date"
                 class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.start_date }"
               />
+              <InputError v-if="formErrors.start_date" :message="formErrors.start_date[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Date de fin</label>
@@ -874,7 +899,9 @@
                 v-model="experienceForm.end_date"
                 type="date"
                 class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.end_date }"
               />
+              <InputError v-if="formErrors.end_date" :message="formErrors.end_date[0]" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
 
@@ -883,7 +910,9 @@
             <textarea
               v-model="experienceForm.description"
               class="w-full h-40 p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              :class="{ 'border-red-500': formErrors.description }"
             />
+            <InputError v-if="formErrors.description" :message="formErrors.description[0]" class="mt-1 text-xs text-red-500" />
           </div>
 
           <div class="flex justify-end space-x-4">
@@ -926,6 +955,9 @@ import TextInput from '@/Components/TextInput.vue'
 import InputError from '@/Components/InputError.vue'
 import { router } from '@inertiajs/vue3'
 import axios from 'axios'
+import { confirmDelete } from "@/utils/useConfirm";
+import { showToast } from '@/Utils/useToast'
+
 
 const page = usePage()
 
@@ -935,23 +967,23 @@ const props = defineProps({
   userInfo: Object,
 })
 
-const defaultAvatar = '/storage/default-avatar.png'
-
-// Form states
+const defaultAvatar = '/storage/default-avatar.png';
 const showEditModal = ref(false)
 const showLanguageModal = ref(false)
 const showEducationModal = ref(false)
 const showExperienceModal = ref(false)
 const editingLanguageId = ref(null);
+const colorSetting = ref('primary')
+const isEditing = ref(false)
+const formErrors = ref({});
+
 const languageForm = ref({
   language: '',
   level: ''
 })
-const isEditing = ref(false)
 const form = ref({
   avatar: null
 })
-const colorSetting = ref('primary')
 
 const formProfile = ref({
   civility: props.userInfo?.civility || '',
@@ -966,7 +998,6 @@ const formProfile = ref({
   avatar: null
 })
 
-const formErrors = ref({});
 
 const formattedBirthDate = computed(() => {
   if (!props.userInfo?.date_of_birth) return ''
@@ -978,7 +1009,6 @@ const formattedBirthDate = computed(() => {
   })
 })
 
-// Download PDF function
 const downloadPDF = async () => {
   try {
     const response = await axios.get(route('curriculum.pdf'), {
@@ -1326,13 +1356,12 @@ const editExperience = (experience) => {
 }
 
 const deleteExperience = async (id) => {
-  if (!confirm('Êtes-vous sûr de vouloir supprimer cette expérience ?')) return
-
+  if (!await confirmDelete()) return;
   try {
     await axios.delete(route('experience.destroy', id))
     props.userInfo.experiences = props.userInfo.experiences.filter(exp => exp.id !== id)
+    showToast("success", "Supprimer avec succès !");
   } catch (error) {
-    console.error('Error deleting experience:', error)
     if (error.response && error.response.data.errors) {
       formErrors.value = error.response.data.errors;
     }
@@ -1384,11 +1413,11 @@ const editLanguage = (language) => {
 };
 
 const deleteLanguage = async (id) => {
-  if (!confirm('Êtes-vous sûr de vouloir supprimer cette langue ?')) return;
+  if (!await confirmDelete()) return;
 
   try {
     await axios.delete(route('curriculum.language.delete', id));
-    // Remove the language from the list
+    showToast("success", "Supprimer avec succès !");
     props.userInfo.languages = props.userInfo.languages.filter(lang => lang.id !== id);
   } catch (error) {
     console.error('Error deleting language:', error);
@@ -1422,11 +1451,12 @@ const formatDateForInput = (date) => {
 }
 
 const deleteEducation = async (id) => {
-  if (!confirm('Êtes-vous sûr de vouloir supprimer cette formation ?')) return
+  if (!await confirmDelete()) return;
 
   try {
     await axios.delete(route('education.destroy', id))
     props.userInfo.educations = props.userInfo.educations.filter(edu => edu.id !== id)
+    showToast("success", "Supprimer avec succès !");
   } catch (error) {
     console.error('Error deleting education:', error)
     if (error.response && error.response.data.errors) {
