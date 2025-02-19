@@ -35,6 +35,8 @@ class ExperienceController extends Controller
             'location' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after:start_date',
+            'city' => 'nullable|string',
+            'country' => 'nullable|string',
             'description' => 'required|string'
         ]);
 

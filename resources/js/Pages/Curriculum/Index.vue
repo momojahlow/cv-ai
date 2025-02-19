@@ -39,11 +39,11 @@
             <div class="flex-1">
               <h2 class="text-xl font-semibold text-gray-700">{{ userInfo.name }}</h2>
               <p class="text-gray-600">{{ userInfo.title }}</p>
-              <div class="mt-2">
+              <!-- <div class="mt-2">
                 <p class="text-sm text-gray-500">
                   {{ userInfo.categories.join(' / ') }}
                 </p>
-              </div>
+              </div> -->
 
               <div class="mt-4 grid grid-cols-2 gap-4">
                 <div>
@@ -137,18 +137,18 @@
           </div>
         </div>
         <!-- GEO-AI Section -->
-        <div class="mt-6 bg-[#2b8d96] overflow-hidden">
+        <div class="mt-6 bg-danger overflow-hidden">
           <div class="p-6 text-white flex justify-between items-center">
             <div>
               <h2 class="text-3xl font-bold mb-2">Quelques secondes pour convaincre.</h2>
-              <p class="text-lg">Générez un résumé de CV percutant grâce à GEO-IA.</p>
+              <p class="text-lg">Générez un résumé de CV percutant grâce à HOUKOUI <span class="text-gray-300">EMPLOI</span>.</p>
             </div>
-            <div class="text-4xl font-bold text-[#1a526a]">
-              GEO<span class="text-yellow-400">AI</span>
+            <div class="text-4xl font-bold text-white">
+              HOKOUI<span class="text-gray-300"> EMPLOI</span>
             </div>
           </div>
           <div class="bg-white p-6">
-            <p class="text-gray-600 text-sm italic mb-4">
+            <p class="text-gray-600 text-sm italic">
               Rédigez ci-dessous un résumé de votre carrière et de vos aspirations professionnelles.
               GEO-AI peut vous faire ici un résumé sur la base de votre CV joint.
               Êtes-vous prêt à utiliser la puissance de l'IA ?!
@@ -238,11 +238,8 @@
             <div class="bg-white p-6 rounded-lg shadow-lg">
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Niveau d'étude
-                  </label>
-                  <select
-                    v-model="educationForm.level"
+                  <label class="block text-sm font-medium text-gray-700 mb-2"> Niveau d'étude </label>
+                  <select v-model="educationForm.level"
                     class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                   >
                     <option value="Bac +5 et plus">Bac +5 et plus</option>
@@ -252,17 +249,27 @@
                   </select>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Type d'établissement
-                  </label>
-                  <select
-                    v-model="educationForm.type"
+                  <label class="block text-sm font-medium text-gray-700 mb-2"> Type d'établissement </label>
+                  <select  v-model="educationForm.type"
                     class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                   >
                     <option value="Université">Université</option>
                     <option value="École d'ingénieur">École d'ingénieur</option>
                     <option value="École de commerce">École de commerce</option>
                   </select>
+                </div>
+              </div>
+              <div class="mt-4 grid grid-cols-2 gap-4">
+                <div>
+                  <InputLabel for="education_city" value="Ville" />
+                  <TextInput id="education_city" type="text" class="mt-1 block w-full" v-model="educationForm.city" />
+                  <!-- <InputError v-if="form.errors.city" class="mt-2" :message="form.errors.city" /> -->
+                </div>
+
+                <div>
+                  <InputLabel for="education_country" value="Pays" />
+                  <TextInput id="education_country" type="text" class="mt-1 block w-full" v-model="educationForm.country" />
+                  <!-- <InputError v-if="form.errors.country" class="mt-2" :message="form.errors.country[0]" /> -->
                 </div>
               </div>
               <div class="mt-4">
@@ -314,39 +321,15 @@
                   class="w-full h-40 p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 />
               </div>
-              <div class="mt-4 grid grid-cols-2 gap-4">
-                <div>
-                  <InputLabel for="education_city" value="Ville" />
-                  <TextInput
-                    id="education_city"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="educationForm.city"
-                  />
-                  <!-- <InputError v-if="form.errors.city" class="mt-2" :message="form.errors.city" /> -->
-                </div>
-
-                <div>
-                  <InputLabel for="education_country" value="Pays" />
-                  <TextInput
-                    id="education_country"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="educationForm.country"
-                  />
-                  <!-- <InputError v-if="form.errors.country" class="mt-2" :message="form.errors.country[0]" /> -->
-                </div>
-              </div>
+              
               <div class="mt-4 flex justify-end space-x-4">
-                <button
-                  @click="submitEducation"
-                  class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                <button @click="submitEducation"
+                  class="px-6 py-2 bg-secondary text-white  hover:bg-yellow-700"
                 >
                   {{ isEditingEducation ? 'Modifier' : 'Ajouter' }}
                 </button>
-                <button
-                  @click="toggleEducationForm"
-                  class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                <button @click="toggleEducationForm"
+                  class="px-6 py-2 bg-danger text-white hover:bg-red-700"
                 >
                   Annuler
                 </button>
@@ -362,16 +345,12 @@
                 </div>
               </div>
               <div class="flex-1">
-                <h4 class="text-lg font-medium text-gray-900">{{ education.diploma }}</h4>
-                <div class="text-sm text-gray-600 mt-1">{{ education.school }}</div>
-                <div class="mt-2 flex items-center space-x-4">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {{ education.level }}
-                  </span>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    {{ education.type }}
-                  </span>
-                  <div class="flex space-x-2">
+                <div class="flex justify-between">
+                  <div>
+                    <h4 class="text-lg font-medium text-gray-900">{{ education.diploma }}</h4>
+                    <div class="text-sm text-gray-600 mt-1">{{ education.school }}</div>
+                  </div>
+                  <div class="flex space-x-2 p-2">
                     <button
                       @click="editEducation(education)"
                       class="text-[#2b8d96] hover:text-[#1a646b]"
@@ -389,6 +368,14 @@
                       </svg>
                     </button>
                   </div>
+                </div>
+                <div class="mt-2 flex items-center space-x-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {{ education.level }}
+                  </span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    {{ education.type }}
+                  </span>
                 </div>
                 <p class="mt-2 text-sm text-gray-500">{{ education.description }}</p>
               </div>
@@ -519,7 +506,7 @@
           </div>
 
           <div class="space-y-6">
-            <div v-for="(experience, index) in userInfo.experiences" :key="index" class="flex">
+            <div v-for="(experience, index) in userInfo.experiences" :key="index" class="flex gap-2">
               <div class="w-48 flex-shrink-0 whitespace-nowrap">
                 <div class="text-sm text-gray-600">{{ formatDate(experience.start_date) }} - {{ formatDate(experience.end_date) }}</div>
               </div>
@@ -531,7 +518,7 @@
                       {{ experience.company }} • {{ experience.location }}
                     </div>
                   </div>
-                  <div class="flex space-x-2">
+                  <div class="flex space-x-2 p-2">
                     <button
                       @click="editExperience(experience)"
                       class="text-[#2b8d96] hover:text-[#1a646b]"
@@ -1280,6 +1267,7 @@ const deleteLanguage = async (id) => {
 };
 
 const editEducation = (education) => {
+  console.table(education)
   educationForm.value = {
     level: education.level,
     type: education.type,

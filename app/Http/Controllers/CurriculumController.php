@@ -25,6 +25,35 @@ class CurriculumController extends Controller
             
         ]);
 
+        $educations = $user->curriculum?->educations->map(function ($education) {
+            return [
+                'id' => $education->id,
+                'level' => $education->level,
+                'type' => $education->type,
+                'status' => $education->status,
+                'school' => $education->school,
+                'diploma' => $education->diploma,
+                'start_date' => $education->start_date?->format('Y-m-d'),
+                'end_date' => $education->end_date?->format('Y-m-d'),
+                'description' => $education->description,
+                'city' => $education->city,
+                'country' => $education->country,
+            ];
+        });
+
+        $experiences = $user->curriculum?->experiences->map(function ($experience) {
+            return [
+                'id' => $experience->id,
+                'title' => $experience->title,
+                'company' => $experience->company,
+                'location' => $experience->location,
+                'start_date' => $experience->start_date?->format('Y-m-d'),
+                'end_date' => $experience->end_date?->format('Y-m-d'),
+                'description' => $experience->description,
+                'city' => $experience->city,
+                'country' => $experience->country,
+            ];
+        });
         
         return Inertia::render('Curriculum/Index', [
             'profileNumber' => $user->id,
@@ -41,9 +70,10 @@ class CurriculumController extends Controller
                 'family_status' => $user->curriculum?->family_status,
                 'study_level' => $user->curriculum?->study_level,
                 'address' => $user->curriculum?->address,
-                'educations' => $user->curriculum?->educations ?? [],
-                'experiences' => $user->curriculum?->experiences ?? [],
+                'educations' => $educations ?? [],
+                'experiences' => $experiences ?? [],
                 'languages' => $user->curriculum?->languages ?? [],
+                'avatar' => $user->curriculum?->avatar ?? null,
                 'summary' => $user->curriculum?->resume ?? 'Développeur web passionné avec une expertise en développement full-stack. Spécialisé dans les technologies modernes comme Laravel, Vue.js et React.'
             ],
             'auth' => [

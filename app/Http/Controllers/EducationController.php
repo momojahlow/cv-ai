@@ -28,13 +28,18 @@ class EducationController extends Controller
             'end_date' => 'required|string',
             'school' => 'required|string',
             'diploma' => 'required|string',
+            'city' => 'nullable|string',
+            'country' => 'nullable|string',
             'description' => 'nullable|string'
         ]);
+        // dd($validated);
 
         $education = $user->curriculum->educations()->create([
             ...$validated,
             'status' => 'completed'
         ]);
+
+        // return redirect()->back();
 
         return response()->json([
             'success' => true,

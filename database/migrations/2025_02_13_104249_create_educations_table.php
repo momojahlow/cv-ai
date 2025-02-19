@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 return new class extends Migration
 {
@@ -17,8 +18,8 @@ return new class extends Migration
             $table->string('level');
             $table->string('type');
             $table->string('status')->default('completed');
-            $table->string('start_date');
-            $table->string('end_date');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->string('school');
             $table->string('diploma')->nullable();
             $table->string('city')->nullable();
@@ -34,5 +35,19 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('educations');
+    }
+
+    protected function startDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ? $value->format('Y-m-d') : null,
+        );
+    }
+
+    protected function endDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ? $value->format('Y-m-d') : null,
+        );
     }
 };
