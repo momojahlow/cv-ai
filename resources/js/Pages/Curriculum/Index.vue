@@ -33,7 +33,7 @@
               <img
                 :src="avatarUrl"
                 alt="Profile"
-                class="w-full h-32 object-cover rounded-lg bg-gray-200"
+                class="w-full h-32 object-cover  bg-gray-200"
               />
             </div>
             <div class="flex-1">
@@ -232,7 +232,7 @@
           </div>
 
           <div v-if="showEducationModal" class="mt-4 mb-6">
-            <div class="bg-white p-6 rounded-lg shadow-lg">
+            <div class="bg-white p-6  shadow-lg">
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Niveau d'étude</label>
@@ -804,7 +804,7 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Niveau d'étude</label>
               <select v-model="educationForm.level"
-                class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
               >
                 <option value="Bac +5 et plus">Bac +5 et plus</option>
                 <option value="Bac +3">Bac +3</option>
@@ -815,7 +815,7 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Type d'établissement</label>
               <select v-model="educationForm.type"
-                class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
               >
                 <option value="Université">Université</option>
                 <option value="École d'ingénieur">École d'ingénieur</option>
@@ -841,7 +841,7 @@
               <input
                 v-model="educationForm.startDate"
                 type="date"
-                class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
               />
             </div>
             <div>
@@ -849,7 +849,7 @@
               <input
                 v-model="educationForm.endDate"
                 type="date"
-                class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
               />
             </div>
           </div>
@@ -859,7 +859,7 @@
             <input
               v-model="educationForm.school"
               type="text"
-              class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
             />
           </div>
 
@@ -868,7 +868,7 @@
             <input
               v-model="educationForm.diploma"
               type="text"
-              class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
             />
           </div>
 
@@ -876,7 +876,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
             <textarea
               v-model="educationForm.description"
-              class="w-full h-40 p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              class="w-full h-40 p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
             />
           </div>
 
