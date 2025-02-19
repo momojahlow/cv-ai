@@ -323,47 +323,52 @@
           </div>
 
           <div class="space-y-6">
-            <div v-for="(education, index) in userInfo.educations" :key="index" class="flex">
-              <div class="w-48 flex-shrink-0 whitespace-nowrap">
-                <div class="text-sm text-gray-600">
-                  {{ formatDate(education.start_date) }} - {{ formatDate(education.end_date) }}
-                </div>
-              </div>
-              <div class="flex-1">
-                <div class="flex justify-between">
-                  <div>
-                    <h4 class="text-lg font-medium text-gray-900">{{ education.diploma }}</h4>
-                    <div class="text-sm text-gray-600 mt-1">{{ education.school }}</div>
-                  </div>
-                  <div class="flex space-x-2 p-2">
-                    <button
-                      @click="editEducation(education)"
-                      class="text-[#2b8d96] hover:text-[#1a646b]"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
-                    <button
-                      @click="deleteEducation(education.id)"
-                      class="text-red-500 hover:text-red-700"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
+            <template v-if="userInfo.educations?.length">
+              <div v-for="(education, index) in userInfo.educations" :key="index" class="flex">
+                <div class="w-48 flex-shrink-0 whitespace-nowrap">
+                  <div class="text-sm text-gray-600">
+                    {{ formatDate(education.start_date) }} - {{ formatDate(education.end_date) }}
                   </div>
                 </div>
-                <div class="mt-2 flex items-center space-x-4">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {{ education.level }}
-                  </span>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    {{ education.type }}
-                  </span>
+                <div class="flex-1">
+                  <div class="flex justify-between">
+                    <div>
+                      <h4 class="text-lg font-medium text-gray-900">{{ education.diploma }}</h4>
+                      <div class="text-sm text-gray-600 mt-1">{{ education.school }}</div>
+                    </div>
+                    <div class="flex space-x-2 p-2">
+                      <button
+                        @click="editEducation(education)"
+                        class="text-[#2b8d96] hover:text-[#1a646b]"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        @click="deleteEducation(education.id)"
+                        class="text-red-500 hover:text-red-700"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="mt-2 flex items-center space-x-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {{ education.level }}
+                    </span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      {{ education.type }}
+                    </span>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-500">{{ education.description }}</p>
                 </div>
-                <p class="mt-2 text-sm text-gray-500">{{ education.description }}</p>
               </div>
+            </template>
+            <div v-else class="text-gray-500 text-center py-4">
+              Aucune formation ajoutée
             </div>
           </div>
         </div>
@@ -375,155 +380,54 @@
               <h3 class="text-lg font-semibold">Experience professionnelle</h3>
             </div>
             <button
-              @click="toggleExperienceForm"
+              @click="openExperienceModal"
               :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
             >
-              <svg v-if="!showExperienceForm" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-              <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
-          <div v-if="showExperienceForm" class="mt-4 mb-6">
-            <div class="bg-white p-6 rounded-lg shadow-lg">
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Titre
-                  </label>
-                  <input
-                    v-model="experienceForm.title"
-                    type="text"
-                    class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Entreprise
-                  </label>
-                  <input
-                    v-model="experienceForm.company"
-                    type="text"
-                    class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                  />
-                </div>
-              </div>
-              <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Lieu
-                </label>
-                <input
-                  v-model="experienceForm.location"
-                  type="text"
-                  class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                />
-              </div>
-              <div class="grid grid-cols-2 gap-4 mt-4">
-                <div>
-                  <InputLabel for="city" value="Ville" />
-                  <TextInput
-                    id="city"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="experienceForm.city"
-                  />
-                  <!-- <InputError class="mt-2" :message="form.errors.city" /> -->
-                </div>
-
-                <div>
-                  <InputLabel for="country" value="Pays" />
-                  <TextInput
-                    id="country"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="experienceForm.country"
-                  />
-                  <!-- <InputError class="mt-2" :message="form.errors.country" /> -->
-                </div>
-              </div>
-              <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Date de début
-                </label>
-                <input
-                  v-model="experienceForm.start_date"
-                  type="date"
-                  class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                />
-              </div>
-              <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Date de fin
-                </label>
-                <input
-                  v-model="experienceForm.end_date"
-                  type="date"
-                  class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                />
-              </div>
-              <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Description
-                </label>
-                <textarea
-                  v-model="experienceForm.description"
-                  class="w-full h-40 p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                />
-              </div>
-              <div class="mt-4 flex justify-end space-x-4">
-                <button
-                  @click="submitExperience"
-                  class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                >
-                  {{ isEditingExperience ? 'Modifier' : 'Ajouter' }}
-                </button>
-                <button
-                  @click="toggleExperienceForm"
-                  class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                >
-                  Annuler
-                </button>
-              </div>
-            </div>
-          </div>
-
           <div class="space-y-6">
-            <div v-for="(experience, index) in userInfo.experiences" :key="index" class="flex gap-2">
-              <div class="w-48 flex-shrink-0 whitespace-nowrap">
-                <div class="text-sm text-gray-600">{{ formatDate(experience.start_date) }} - {{ formatDate(experience.end_date) }}</div>
-              </div>
-              <div class="flex-1">
-                <div class="flex justify-between">
-                  <div>
-                    <h4 class="text-lg font-medium text-gray-900">{{ experience.title }}</h4>
-                    <div class="text-sm text-gray-600 mt-1">
-                      {{ experience.company }} • {{ experience.location }}
+            <template v-if="userInfo.experiences?.length">
+              <div v-for="(experience, index) in userInfo.experiences" :key="index" class="flex gap-2">
+                <div class="w-48 flex-shrink-0 whitespace-nowrap">
+                  <div class="text-sm text-gray-600">{{ formatDate(experience.start_date) }} - {{ formatDate(experience.end_date) }}</div>
+                </div>
+                <div class="flex-1">
+                  <div class="flex justify-between">
+                    <div>
+                      <h4 class="text-lg font-medium text-gray-900">{{ experience.title }}</h4>
+                      <div class="text-sm text-gray-600 mt-1">
+                        {{ experience.company }} • {{ experience.location }}
+                      </div>
+                    </div>
+                    <div class="flex space-x-2 p-2">
+                      <button
+                        @click="editExperience(experience)"
+                        class="text-[#2b8d96] hover:text-[#1a646b]"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        @click="deleteExperience(experience.id)"
+                        class="text-red-500 hover:text-red-700"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
-                  <div class="flex space-x-2 p-2">
-                    <button
-                      @click="editExperience(experience)"
-                      class="text-[#2b8d96] hover:text-[#1a646b]"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
-                    <button
-                      @click="deleteExperience(experience.id)"
-                      class="text-red-500 hover:text-red-700"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
+                  <p class="mt-2 text-sm text-gray-500">{{ experience.description }}</p>
                 </div>
-                <p class="mt-2 text-sm text-gray-500">{{ experience.description }}</p>
               </div>
+            </template>
+            <div v-else class="text-gray-500 text-center py-4">
+              Aucune expérience ajoutée
             </div>
           </div>
         </div>
@@ -599,18 +503,19 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700">Langue</label>
-              <input
-                type="text"
-                v-model="languageForm.language"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              <input type="text" v-model="languageForm.language"
+                class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.language }"
                 required
               >
+              <InputError v-if="formErrors.language" :message="formErrors.language[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700">Niveau</label>
               <select
                 v-model="languageForm.level"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.level }"
                 required
               >
                 <option value="">Sélectionnez un niveau</option>
@@ -620,6 +525,7 @@
                 <option value="Bilingue">Bilingue</option>
                 <option value="Langue maternelle">Langue maternelle</option>
               </select>
+              <InputError v-if="formErrors.level" :message="formErrors.level[0]" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
           <div class="mt-6 flex justify-end space-x-3">
@@ -904,6 +810,100 @@
         </form>
       </div>
     </Modal>
+    <!-- Experience Modal -->
+    <Modal :show="showExperienceModal" @close="closeExperienceModal">
+      <div class="p-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">
+          {{ isEditingExperience ? "Modifier l'expérience" : "Ajouter une expérience" }}
+        </h2>
+
+        <form @submit.prevent="submitExperience" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Titre du poste</label>
+              <input v-model="experienceForm.title" type="text"
+                class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Entreprise</label>
+              <input v-model="experienceForm.company" type="text"
+                class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Lieu</label>
+            <input v-model="experienceForm.location" type="text"
+              class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <InputLabel for="experience_city" value="Ville" />
+              <TextInput id="experience_city" type="text" class="mt-1 block w-full" v-model="experienceForm.city" />
+            </div>
+            <div>
+              <InputLabel for="experience_country" value="Pays" />
+              <TextInput id="experience_country" type="text" class="mt-1 block w-full" v-model="experienceForm.country" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Date de début</label>
+              <input
+                v-model="experienceForm.start_date"
+                type="date"
+                class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Date de fin</label>
+              <input
+                v-model="experienceForm.end_date"
+                type="date"
+                class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+            <textarea
+              v-model="experienceForm.description"
+              class="w-full h-40 p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+            />
+          </div>
+
+          <div class="flex justify-end space-x-4">
+            <button 
+              @click="correctSummary(experienceForm.description,'experience')"
+              :disabled="isLoading || !experienceForm.description?.trim()"
+              class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ isLoading ? 'Correction en cours...' : 'Corriger avec HOKOUI-EMPLOI' }}
+            </button>
+            <button 
+              type="submit"
+              class="px-6 py-2 bg-secondary text-white hover:bg-yellow-700"
+              :disabled="isLoading"
+            >
+              {{ isEditingExperience ? 'Modifier' : 'Ajouter' }}
+            </button>
+            <button
+              type="button"
+              @click="closeExperienceModal"
+              class="px-6 py-2 bg-danger text-white hover:bg-red-700"
+            >
+              Annuler
+            </button>
+          </div>
+        </form>
+      </div>
+    </Modal>
   </AppLayout>
 </template>
 
@@ -933,6 +933,7 @@ const defaultAvatar = '/storage/default-avatar.png'
 const showEditModal = ref(false)
 const showLanguageModal = ref(false)
 const showEducationModal = ref(false)
+const showExperienceModal = ref(false)
 const editingLanguageId = ref(null);
 const languageForm = ref({
   language: '',
@@ -957,7 +958,6 @@ const formProfile = ref({
 })
 
 const formErrors = ref({});
-console.log(formErrors.value)
 
 const formattedBirthDate = computed(() => {
   if (!props.userInfo?.date_of_birth) return ''
@@ -987,6 +987,12 @@ const downloadPDF = async () => {
     document.body.removeChild(link)
   } catch (error) {
     console.error('Error downloading PDF:', error)
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
+    if (error.response?.data?.redirect) {
+      window.location.href = error.response.data.redirect
+    }
   }
 }
 
@@ -1022,9 +1028,11 @@ const updateProfile = async () => {
     // Show success message (if you have a notification system)
     // notification.success('Profile updated successfully');
   } catch (error) {
-    console.error('Error updating profile:', error);
     if (error.response && error.response.data.errors) {
       formErrors.value = error.response.data.errors;
+    }
+    if (error.response?.data?.redirect) {
+      window.location.href = error.response.data.redirect
     }
   }
 };
@@ -1092,6 +1100,9 @@ const submitEducation = async () => {
     closeEducationModal()
   } catch (error) {
     console.error('Error submitting education:', error)
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
     if (error.response?.data?.redirect) {
       window.location.href = error.response.data.redirect
     }
@@ -1145,6 +1156,9 @@ const submitLanguage = async () => {
 
   } catch (error) {
     console.error('Error submitting language:', error);
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
   }
 };
 
@@ -1179,29 +1193,29 @@ const toggleSummaryEdit = () => {
   }
 }
 
-const handleCorrection = async () => {
-  if (!summary.value.trim()) return
+// const handleCorrection = async () => {
+//   if (!summary.value.trim()) return
 
-  isLoading.value = true
-  error.value = ''
+//   isLoading.value = true
+//   error.value = ''
 
-  try {
-    const response = await axios.post(route('curriculum.resume.correct'), {
-      resume: summary.value
-    })
+//   try {
+//     const response = await axios.post(route('curriculum.resume.correct'), {
+//       resume: summary.value
+//     })
 
-    if (response.data.success) {
-      summary.value = response.data.resume
-    } else {
-      error.value = response.data.message || 'Une erreur est survenue lors de la correction'
-    }
-  } catch (err) {
-    error.value = err.response?.data?.message || 'Une erreur est survenue lors de la correction'
-    console.error('Erreur lors de la correction:', err)
-  } finally {
-    isLoading.value = false
-  }
-}
+//     if (response.data.success) {
+//       summary.value = response.data.resume
+//     } else {
+//       error.value = response.data.message || 'Une erreur est survenue lors de la correction'
+//     }
+//   } catch (err) {
+//     error.value = err.response?.data?.message || 'Une erreur est survenue lors de la correction'
+//     console.error('Erreur lors de la correction:', err)
+//   } finally {
+//     isLoading.value = false
+//   }
+// }
 
 const correctSummary = async (summaryToEdit,category = null) => {
   console.log('Correcting: '+summaryToEdit)
@@ -1228,14 +1242,15 @@ const correctSummary = async (summaryToEdit,category = null) => {
     }
   } catch (err) {
     error.value = err.response?.data?.message || 'Une erreur est survenue lors de la correction'
-    console.error('Erreur lors de la correction:', err)
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
   } finally {
     isLoading.value = false
   }
 }
 
 // Experience form state
-const showExperienceForm = ref(false)
 const experienceForm = ref({
   title: '',
   company: '',
@@ -1246,10 +1261,6 @@ const experienceForm = ref({
   city: '',
   country: ''
 })
-
-const toggleExperienceForm = () => {
-  showExperienceForm.value = !showExperienceForm.value
-}
 
 const submitExperience = async () => {
   try {
@@ -1279,22 +1290,12 @@ const submitExperience = async () => {
       props.userInfo.experiences.push(response.data)
     }
 
-    // Reset form and close
-    toggleExperienceForm()
-    isEditingExperience.value = false
-    editingExperienceId.value = null
-    experienceForm.value = {
-      title: '',
-      company: '',
-      location: '',
-      start_date: '',
-      end_date: '',
-      description: '',
-      city: '',
-      country: ''
-    }
+    closeExperienceModal()
   } catch (error) {
     console.error('Error submitting experience:', error)
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
     if (error.response?.data?.redirect) {
       window.location.href = error.response.data.redirect
     }
@@ -1305,16 +1306,16 @@ const editExperience = (experience) => {
   experienceForm.value = {
     title: experience.title,
     company: experience.company,
-    location: experience.location,
-    start_date: experience.start_date,
-    end_date: experience.end_date,
+    location: experience.location || '',
+    start_date: formatDateForInput(experience.start_date),
+    end_date: formatDateForInput(experience.end_date),
     description: experience.description,
-    city: experience.city,
-    country: experience.country
+    city: experience.city || '',
+    country: experience.country || ''
   }
-  showExperienceForm.value = true
   isEditingExperience.value = true
   editingExperienceId.value = experience.id
+  showExperienceModal.value = true 
 }
 
 const deleteExperience = async (id) => {
@@ -1325,6 +1326,9 @@ const deleteExperience = async (id) => {
     props.userInfo.experiences = props.userInfo.experiences.filter(exp => exp.id !== id)
   } catch (error) {
     console.error('Error deleting experience:', error)
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
     if (error.response?.data?.redirect) {
       window.location.href = error.response.data.redirect
     }
@@ -1381,6 +1385,9 @@ const deleteLanguage = async (id) => {
     props.userInfo.languages = props.userInfo.languages.filter(lang => lang.id !== id);
   } catch (error) {
     console.error('Error deleting language:', error);
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
   }
 };
 
@@ -1415,6 +1422,9 @@ const deleteEducation = async (id) => {
     props.userInfo.educations = props.userInfo.educations.filter(edu => edu.id !== id)
   } catch (error) {
     console.error('Error deleting education:', error)
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
     if (error.response?.data?.redirect) {
       window.location.href = error.response.data.redirect
     }
@@ -1439,6 +1449,36 @@ const closeEducationModal = () => {
     endDate: '',
     school: '',
     diploma: '',
+    description: '',
+    city: '',
+    country: ''
+  }
+}
+const closeExperienceModal = () => {
+  showExperienceModal.value = false
+  isEditingExperience.value = false
+  editingExperienceId.value = null
+  experienceForm.value = {
+    title: '',
+    company: '',
+    location: '',
+    start_date: '',
+    end_date: '',
+    description: '',
+    city: '',
+    country: ''
+  }
+}
+const openExperienceModal = () => {
+  showExperienceModal.value = true
+  isEditingExperience.value = false
+  editingExperienceId.value = null
+  experienceForm.value = {
+    title: '',
+    company: '',
+    location: '',
+    start_date: '',
+    end_date: '',
     description: '',
     city: '',
     country: ''

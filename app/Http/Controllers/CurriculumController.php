@@ -162,7 +162,7 @@ class CurriculumController extends Controller
     public function addLanguage(Request $request)
     {
         $data = $request->validate([
-            'language' => 'required|string',
+            'language' => 'required|string|min:2|max:25',
             'level' => 'required|string',
         ]);
 
@@ -179,7 +179,7 @@ class CurriculumController extends Controller
     public function updateLanguages(Request $request, Language $language)
     {
         $data = $request->validate([
-            'language' => 'required|string',
+            'language' => 'required|string|min:2|max:25',
             'level' => 'required|string',
         ]);
 
