@@ -196,11 +196,11 @@
 
               <div class="mt-4 flex justify-end space-x-4">
                 <button
-                  @click="handleCorrection"
+                  @click="correctSummary(summary)"
                   :disabled="isLoading || !summary.trim()"
                   class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {{ isLoading ? 'Correction en cours...' : 'Corriger avec GEO-AI' }}
+                  {{ isLoading ? 'Correction en cours...' : 'Corriger avec HOKOUI-EMPLOI' }}
                 </button>
                 <button
                   @click="validateSummary"
@@ -222,23 +222,20 @@
               <h3 class="text-lg font-semibold">Formation</h3>
             </div>
             <button
-              @click="toggleEducationForm"
+              @click="openEducationModal"
               :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
             >
-              <svg v-if="!showEducationForm" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-              <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
-          <div v-if="showEducationForm" class="mt-4 mb-6">
+          <div v-if="showEducationModal" class="mt-4 mb-6">
             <div class="bg-white p-6 rounded-lg shadow-lg">
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2"> Niveau d'étude </label>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Niveau d'étude</label>
                   <select v-model="educationForm.level"
                     class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                   >
@@ -249,8 +246,8 @@
                   </select>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2"> Type d'établissement </label>
-                  <select  v-model="educationForm.type"
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Type d'établissement</label>
+                  <select v-model="educationForm.type"
                     class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                   >
                     <option value="Université">Université</option>
@@ -263,19 +260,14 @@
                 <div>
                   <InputLabel for="education_city" value="Ville" />
                   <TextInput id="education_city" type="text" class="mt-1 block w-full" v-model="educationForm.city" />
-                  <!-- <InputError v-if="form.errors.city" class="mt-2" :message="form.errors.city" /> -->
                 </div>
-
                 <div>
                   <InputLabel for="education_country" value="Pays" />
                   <TextInput id="education_country" type="text" class="mt-1 block w-full" v-model="educationForm.country" />
-                  <!-- <InputError v-if="form.errors.country" class="mt-2" :message="form.errors.country[0]" /> -->
                 </div>
               </div>
               <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Date de début
-                </label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Date de début</label>
                 <input
                   v-model="educationForm.startDate"
                   type="date"
@@ -283,9 +275,7 @@
                 />
               </div>
               <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Date de fin
-                </label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Date de fin</label>
                 <input
                   v-model="educationForm.endDate"
                   type="date"
@@ -293,9 +283,7 @@
                 />
               </div>
               <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Établissement
-                </label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Établissement</label>
                 <input
                   v-model="educationForm.school"
                   type="text"
@@ -303,9 +291,7 @@
                 />
               </div>
               <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Diplôme
-                </label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Diplôme</label>
                 <input
                   v-model="educationForm.diploma"
                   type="text"
@@ -313,22 +299,21 @@
                 />
               </div>
               <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Description
-                </label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
                 <textarea
                   v-model="educationForm.description"
                   class="w-full h-40 p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 />
               </div>
-              
               <div class="mt-4 flex justify-end space-x-4">
-                <button @click="submitEducation"
-                  class="px-6 py-2 bg-secondary text-white  hover:bg-yellow-700"
+                <button
+                  @click="submitEducation"
+                  class="px-6 py-2 bg-secondary text-white hover:bg-yellow-700"
                 >
                   {{ isEditingEducation ? 'Modifier' : 'Ajouter' }}
                 </button>
-                <button @click="toggleEducationForm"
+                <button
+                  @click="closeEducationModal"
                   class="px-6 py-2 bg-danger text-white hover:bg-red-700"
                 >
                   Annuler
@@ -807,6 +792,118 @@
         </form>
       </div>
     </Modal>
+    <!-- Education Modal -->
+    <Modal :show="showEducationModal" @close="closeEducationModal">
+      <div class="p-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">
+          {{ isEditingEducation ? 'Modifier la formation' : 'Ajouter une formation' }}
+        </h2>
+
+        <form @submit.prevent="submitEducation" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Niveau d'étude</label>
+              <select v-model="educationForm.level"
+                class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              >
+                <option value="Bac +5 et plus">Bac +5 et plus</option>
+                <option value="Bac +3">Bac +3</option>
+                <option value="Bac +2">Bac +2</option>
+                <option value="Bac">Bac</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Type d'établissement</label>
+              <select v-model="educationForm.type"
+                class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              >
+                <option value="Université">Université</option>
+                <option value="École d'ingénieur">École d'ingénieur</option>
+                <option value="École de commerce">École de commerce</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <InputLabel for="education_city" value="Ville" />
+              <TextInput id="education_city" type="text" class="mt-1 block w-full" v-model="educationForm.city" />
+            </div>
+            <div>
+              <InputLabel for="education_country" value="Pays" />
+              <TextInput id="education_country" type="text" class="mt-1 block w-full" v-model="educationForm.country" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Date de début</label>
+              <input
+                v-model="educationForm.startDate"
+                type="date"
+                class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Date de fin</label>
+              <input
+                v-model="educationForm.endDate"
+                type="date"
+                class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Établissement</label>
+            <input
+              v-model="educationForm.school"
+              type="text"
+              class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Diplôme</label>
+            <input
+              v-model="educationForm.diploma"
+              type="text"
+              class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+            <textarea
+              v-model="educationForm.description"
+              class="w-full h-40 p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+            />
+          </div>
+
+          <div class="flex justify-end space-x-4">
+            <button @click="correctSummary(educationForm.description,'education')"
+              :disabled="isLoading || !educationForm.description?.trim()"
+              class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                  {{ isLoading ? 'Correction en cours...' : 'Corriger avec HOKOUI-EMPLOI' }}
+                </button>
+            <button type="submit"
+              class="px-6 py-2 bg-secondary text-white hover:bg-yellow-700"
+              :disabled="isLoading"
+            >
+              {{ isEditingEducation ? 'Modifier' : 'Ajouter' }}
+            </button>
+            <button
+              type="button"
+              @click="closeEducationModal"
+              class="px-6 py-2 bg-danger text-white hover:bg-red-700"
+            >
+              Annuler
+            </button>
+          </div>
+        </form>
+      </div>
+    </Modal>
   </AppLayout>
 </template>
 
@@ -835,6 +932,7 @@ const defaultAvatar = '/storage/default-avatar.png'
 // Form states
 const showEditModal = ref(false)
 const showLanguageModal = ref(false)
+const showEducationModal = ref(false)
 const editingLanguageId = ref(null);
 const languageForm = ref({
   language: '',
@@ -988,21 +1086,10 @@ const submitEducation = async () => {
       props.userInfo.educations.push(response.data.education)
     }
 
-    // Reset form and close
-    toggleEducationForm()
-    isEditingEducation.value = false
-    editingEducationId.value = null
-    educationForm.value = {
-      level: '',
-      type: '',
-      startDate: '',
-      endDate: '',
-      school: '',
-      diploma: '',
-      description: '',
-      city: '',
-      country: ''
-    }
+    // Make sure the modal closes by setting showEducationModal to false
+    showEducationModal.value = false
+    // Reset the form
+    closeEducationModal()
   } catch (error) {
     console.error('Error submitting education:', error)
     if (error.response?.data?.redirect) {
@@ -1105,6 +1192,37 @@ const handleCorrection = async () => {
 
     if (response.data.success) {
       summary.value = response.data.resume
+    } else {
+      error.value = response.data.message || 'Une erreur est survenue lors de la correction'
+    }
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Une erreur est survenue lors de la correction'
+    console.error('Erreur lors de la correction:', err)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const correctSummary = async (summaryToEdit,category = null) => {
+  console.log('Correcting: '+summaryToEdit)
+  if (!summaryToEdit.trim()) return
+
+  isLoading.value = true
+  error.value = ''
+
+  try {
+    const response = await axios.post(route('curriculum.resume.correct'), {
+      resume: summaryToEdit
+    })
+
+    if (response.data.success) {
+      if (category === 'education') {
+        educationForm.value.description = response.data.resume
+      } else if (category === 'experience') {
+        experienceForm.value.description = response.data.resume        
+      } else {
+        summary.value = response.data.resume        
+      }
     } else {
       error.value = response.data.message || 'Une erreur est survenue lors de la correction'
     }
@@ -1267,21 +1385,26 @@ const deleteLanguage = async (id) => {
 };
 
 const editEducation = (education) => {
-  console.table(education)
   educationForm.value = {
     level: education.level,
     type: education.type,
-    startDate: education.start_date,
-    endDate: education.end_date,
+    startDate: formatDateForInput(education.start_date),
+    endDate: formatDateForInput(education.end_date),
     school: education.school,
     diploma: education.diploma,
     description: education.description,
     city: education.city,
     country: education.country
   }
-  showEducationForm.value = true
   isEditingEducation.value = true
   editingEducationId.value = education.id
+  openEducationModal()
+}
+
+const formatDateForInput = (date) => {
+  if (!date) return ''
+  // Assuming date is in ISO format or a valid date string
+  return new Date(date).toISOString().split('T')[0]
 }
 
 const deleteEducation = async (id) => {
@@ -1301,4 +1424,24 @@ const isEditingEducation = ref(false)
 const editingEducationId = ref(null)
 const isEditingExperience = ref(false)
 const editingExperienceId = ref(null)
+const openEducationModal = () => {
+  showEducationModal.value = true
+}
+
+const closeEducationModal = () => {
+  showEducationModal.value = false
+  isEditingEducation.value = false
+  editingEducationId.value = null
+  educationForm.value = {
+    level: '',
+    type: '',
+    startDate: '',
+    endDate: '',
+    school: '',
+    diploma: '',
+    description: '',
+    city: '',
+    country: ''
+  }
+}
 </script>
