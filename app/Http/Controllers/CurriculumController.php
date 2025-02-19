@@ -60,7 +60,7 @@ class CurriculumController extends Controller
             'userInfo' => [
                 'name' => $user->name,
                 'email' => $user->email,
-                'title' => 'Développeur Full Stack',
+                'title' => $user->curriculum?->title ?? 'Aucun titre défini',
                 'categories' => ['Web', 'Mobile', 'Backend'],
                 'date_of_birth' => $user->curriculum?->date_of_birth?->format('Y-m-d'),
                 'nationality' => $user->curriculum?->nationality,
@@ -108,34 +108,7 @@ class CurriculumController extends Controller
                 'message' => 'Une erreur est survenue lors de la correction: ' . $e->getMessage()
             ], 500);
         }
-
-        // try {
-        //     $response = $client->get('correct', [
-        //         'text' => $prompts,
-        //         'lang' => 'fr',
-        //     ]);
-
-        //     $responseData = json_decode($response->getBody()->getContents());
-
-        //     if (isset($responseData->text)) {
-        //         $correctedText = trim($responseData->text);
-        //         return response()->json([
-        //             'success' => true,
-        //             'summary' => $correctedText
-        //         ]);
-        //     }
-
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'La correction n\'a pas pu être effectuée'
-        //     ], 422);
-
-        // } catch (RequestException $e) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Erreur lors de la correction: ' . $e->getMessage()
-        //     ], 500);
-        // }
+       
     }
 
     public function updateResume(Request $request)
@@ -163,7 +136,7 @@ class CurriculumController extends Controller
     {
         $data = $request->validate([
             'language' => 'required|string|min:2|max:25',
-            'level' => 'required|string',
+            'level' => 'required|string|min:2|max:25',
         ]);
 
         $curriculum = auth()->user()->curriculum ?? auth()->user()->curriculum()->create();
@@ -180,7 +153,7 @@ class CurriculumController extends Controller
     {
         $data = $request->validate([
             'language' => 'required|string|min:2|max:25',
-            'level' => 'required|string',
+            'level' => 'required|string|min:2|max:25',
         ]);
 
         $language->update([
@@ -199,51 +172,34 @@ class CurriculumController extends Controller
 
     public function updateProfile(Request $request)
     {
-        $request->validate([
+        $user = auth()->user();
+        $curriculum = $user->curriculum ?? $user->curriculum()->create();
+
+        $validated = $request->validate([
             'civility' => 'required|string',
+            'title' => 'required|string|min:2|max:255',
             'date_of_birth' => 'required|date',
-            'phone' => 'required|string',
-            'address' => 'nullable|string',
-            'nationality' => 'nullable|string',
-            'study_level' => 'required|string',
-            'country' => 'nullable|string',
-            'family_status' => 'nullable|string',
+            'phone' => 'required|string|min:10|max:20',
+            'address' => 'nullable|string|min:2|max:255',
+            'nationality' => 'nullable|string|min:2|max:255',
+            'study_level' => 'required|string|min:2|max:255',
+            'country' => 'nullable|string|min:2|max:255',
+            'family_status' => 'nullable|string|min:2|max:255',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:1024',
         ]);
 
-        $data = $request->only([
-            'civility',
-            'phone',
-            'address',
-            'nationality',
-            'study_level',
-            'country',
-            'family_status'
-        ]);
-
-        // Format the date before saving
-        $data['date_of_birth'] = Carbon::parse($request->date_of_birth)->format('Y-m-d');
-
-        $curriculum = auth()->user()->curriculum;
-        if (!$curriculum) {
-            $curriculum = auth()->user()->curriculum()->create($data);
-        } else {
-            $curriculum->update($data);
-        }
+        $validated['date_of_birth'] = Carbon::parse($validated['date_of_birth'])->format('Y-m-d');
+        $curriculum->update($validated);
 
         if ($request->hasFile('avatar')) {
-            if ($curriculum->avatar) {
-                Storage::disk('public')->delete($curriculum->avatar);
-            }
-        
-            // Store the new avatar
-            $path = $request->file('avatar')->store('avatars', 'public');
-        
-            // Update the curriculum with the new avatar path
-            $curriculum->update(['avatar' => $path]);
+            Storage::disk('public')->delete($curriculum->avatar);
+            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        } else {
+            unset($validated['avatar']); 
         }
 
-        return back()->with('success', 'Profile updated successfully');
+        $curriculum->update($validated);
+        return response()->json($curriculum);
     }
 
 

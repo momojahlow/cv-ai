@@ -141,10 +141,10 @@
           <div class="p-6 text-white flex justify-between items-center">
             <div>
               <h2 class="text-3xl font-bold mb-2">Quelques secondes pour convaincre.</h2>
-              <p class="text-lg">Générez un résumé de CV percutant grâce à HOUKOUI <span class="text-gray-300">EMPLOI</span>.</p>
+              <p class="text-lg">Générez un résumé de CV percutant grâce à HOKOUKI <span class="text-gray-300">EMPLOI</span>.</p>
             </div>
             <div class="text-4xl font-bold text-white">
-              HOKOUI<span class="text-gray-300"> EMPLOI</span>
+              HOKOUKI<span class="text-gray-300"> EMPLOI</span>
             </div>
           </div>
           <div class="bg-white p-6">
@@ -549,18 +549,25 @@
     <!-- Edit Modal -->
     <Modal :show="showEditModal" @close="closeEditModal">
       <div class="p-6">
-        <h2 class="text-lg font-medium text-gray-900 mb-4">
-          Modifier mes informations
-        </h2>
-
+        <h2 class="text-lg font-medium text-gray-900 mb-4"> Modifier mes informations personnelles</h2>
         <form @submit.prevent="updateProfile" class="space-y-4"  enctype="multipart/form-data">
+        
           <div class="grid grid-cols-2 gap-4">
+            <!-- Phone -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Votre profession</label>
+              <input type="text" v-model="formProfile.title"
+                class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.title }"
+              >
+              <InputError v-if="formErrors.phone" :message="formErrors.title[0]" class="mt-1 text-xs text-red-500" />
+            </div>
             <!-- Civility -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Civilité</label>
               <select
                 v-model="formProfile.civility"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 :class="{ 'border-red-500': formErrors.civility }"
               >
                 <option value="M.">M.</option>
@@ -576,7 +583,7 @@
               <input
                 type="date"
                 v-model="formProfile.date_of_birth"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 :class="{ 'border-red-500': formErrors.date_of_birth }"
               >
               <InputError v-if="formErrors.date_of_birth" :message="formErrors.date_of_birth[0]" class="mt-1 text-xs text-red-500" />
@@ -586,7 +593,7 @@
               <label class="block text-sm font-medium text-gray-700">Statut familial</label>
               <select
                 v-model="formProfile.family_status"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 :class="{ 'border-red-500': formErrors.family_status }"
               >
                 <option value="Célibataire">Célibataire</option>
@@ -605,7 +612,7 @@
               <input
                 type="tel"
                 v-model="formProfile.phone"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 :class="{ 'border-red-500': formErrors.phone }"
               >
               <InputError v-if="formErrors.phone" :message="formErrors.phone[0]" class="mt-1 text-xs text-red-500" />
@@ -617,30 +624,18 @@
               <input
                 type="text"
                 v-model="formProfile.address"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 :class="{ 'border-red-500': formErrors.address }"
               >
               <InputError v-if="formErrors.address" :message="formErrors.address[0]" class="mt-1 text-xs text-red-500" />
-            </div>
-
-            <!-- Nationality -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Nationalité</label>
-              <input
-                type="text"
-                v-model="formProfile.nationality"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formErrors.nationality }"
-              >
-              <InputError v-if="formErrors.nationality" :message="formErrors.nationality[0]" class="mt-1 text-xs text-red-500" />
-            </div>
+            </div>            
 
             <!-- Study Level -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Niveau d'études</label>
               <select
                 v-model="formProfile.study_level"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 :class="{ 'border-red-500': formErrors.study_level }"
               >
                 <option value="Bac">Bac</option>
@@ -653,30 +648,43 @@
               <InputError v-if="formErrors.study_level" :message="formErrors.study_level[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
+            <!-- Nationality -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Nationalité</label>
+              <input
+                type="text"
+                v-model="formProfile.nationality"
+                class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.nationality }"
+              >
+              <InputError v-if="formErrors.nationality" :message="formErrors.nationality[0]" class="mt-1 text-xs text-red-500" />
+            </div>
+
             <!-- Country -->
             <div>
-              <label class="block text-sm font-medium text-gray-700">Pays</label>
+              <label class="block text-sm font-medium text-gray-700">Pays de résidence</label>
               <input
                 type="text"
                 v-model="formProfile.country"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 :class="{ 'border-red-500': formErrors.country }"
               >
               <InputError v-if="formErrors.country" :message="formErrors.country[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Avatar -->
-            <div class="col-span-2">
+            <div class="">
               <label class="block text-sm font-medium text-gray-700">Photo de profil</label>
-              <input
-                type="file"
-                @change="handleAvatarUpload"
-                accept="image/*"
-                class="mt-1 block w-full"
+              <input type="file" @change="handleAvatarUpload" accept="image/*"
+                class="mt-1 block w-full border border-gray-200 shadow-sm rounded-xs text-sm 
+                    focus:z-10 focus:border-[#2b8d96] focus:ring-[#2b8d96] 
+                    disabled:opacity-50 disabled:pointer-events-none  file:me-4 file:py-2.5 file:px-4 "
                 :class="{ 'border-red-500': formErrors.avatar }"
               >
-              <p v-if="formErrors.avatar" class="mt-1 text-sm text-red-600">{{ formErrors.avatar[0] }}</p>
               <InputError v-if="formErrors.avatar" :message="formErrors.avatar[0]" class="mt-2" />
+            </div>
+            <div class="flex justify-end">
+              <img :src="avatarUrl" alt="Avatar" class="size-[52px] object-cover rounded-full mt-4">
             </div>
           </div>
 
@@ -947,6 +955,7 @@ const colorSetting = ref('primary')
 
 const formProfile = ref({
   civility: props.userInfo?.civility || '',
+  title: props.userInfo?.title || '',
   date_of_birth: props.userInfo?.date_of_birth || '',
   family_status: props.userInfo?.family_status || '',
   phone: props.userInfo?.phone || '',
@@ -1018,11 +1027,9 @@ const updateProfile = async () => {
     });
 
     const response = await axios.post(route('curriculum.profile.update'), formData);
+    console.log('response', response)
 
-    // Update the user info in the page
-    props.userInfo = { ...props.userInfo, ...response.data };
-
-    // Close the modal
+    router.reload();
     showEditModal.value = false;
 
     // Show success message (if you have a notification system)
