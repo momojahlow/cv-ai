@@ -220,6 +220,97 @@
             </button>
           </div>
 
+          <div v-if="showEducationModal" class="mt-4 mb-6">
+            <div class="bg-white p-6  shadow-lg">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Niveau d'étude</label>
+                  <select v-model="educationForm.level"
+                    class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                  >
+                    <option value="Bac +5 et plus">Bac +5 et plus</option>
+                    <option value="Bac +3">Bac +3</option>
+                    <option value="Bac +2">Bac +2</option>
+                    <option value="Bac">Bac</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Type d'établissement</label>
+                  <select v-model="educationForm.type"
+                    class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                  >
+                    <option value="Université">Université</option>
+                    <option value="École d'ingénieur">École d'ingénieur</option>
+                    <option value="École de commerce">École de commerce</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mt-4 grid grid-cols-2 gap-4">
+                <div>
+                  <InputLabel for="education_city" value="Ville" />
+                  <TextInput id="education_city" type="text" class="mt-1 block w-full" v-model="educationForm.city" />
+                </div>
+                <div>
+                  <InputLabel for="education_country" value="Pays" />
+                  <TextInput id="education_country" type="text" class="mt-1 block w-full" v-model="educationForm.country" />
+                </div>
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Date de début</label>
+                <input
+                  v-model="educationForm.startDate"
+                  type="date"
+                  class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                />
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Date de fin</label>
+                <input
+                  v-model="educationForm.endDate"
+                  type="date"
+                  class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                />
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Établissement</label>
+                <input
+                  v-model="educationForm.school"
+                  type="text"
+                  class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                />
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Diplôme</label>
+                <input
+                  v-model="educationForm.diploma"
+                  type="text"
+                  class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                />
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  v-model="educationForm.description"
+                  class="w-full h-40 p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                />
+              </div>
+              <div class="mt-4 flex justify-end space-x-4">
+                <button
+                  @click="submitEducation"
+                  class="px-6 py-2 bg-secondary text-white hover:bg-yellow-700"
+                >
+                  {{ isEditingEducation ? 'Modifier' : 'Ajouter' }}
+                </button>
+                <button
+                  @click="closeEducationModal"
+                  class="px-6 py-2 bg-danger text-white hover:bg-red-700"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="space-y-6">
             <template v-if="userInfo.educations?.length">
               <div v-for="(education, index) in userInfo.educations" :key="index" class="flex">
@@ -240,7 +331,7 @@
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                           {{ education.country }} •
                         </span>
-                      </div>
+                      </div>                      
                     </div>
                     <div class="flex space-x-2 p-2">
                       <button
@@ -651,17 +742,13 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <InputLabel for="education_city" value="Ville" />
-              <TextInput id="education_city" type="text" class="mt-1 block w-full" v-model="educationForm.city"
-                :class="{ 'border-red-500': educationForm.errors.city }"
-            />
-              <InputError v-if="educationForm.errors.city" :message="educationForm.errors.city" class="mt-1 text-xs text-red-500" />
+              <TextInput id="education_city" type="text" class="mt-1 block w-full" :class="{ 'border-red-500': educationForm.errors.city }" v-model="educationForm.city" />
+              <InputError v-if="educationForm.errors.city" :city="educationForm.errors.city" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <InputLabel for="education_country" value="Pays" />
-              <TextInput id="education_country" type="text" class="mt-1 block w-full" v-model="educationForm.country"
-                :class="{ 'border-red-500': educationForm.errors.country }"
-              />
-              <InputError v-if="educationForm.errors.country" :message="educationForm.errors.country" class="mt-1 text-xs text-red-500" />
+              <TextInput id="education_country" type="text" class="mt-1 block w-full" :class="{ 'border-red-500': formErrors.country }" v-model="educationForm.country" />
+              <InputError v-if="formErrors.country" :message="formErrors.country[0]" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
 
@@ -716,12 +803,19 @@
               :disabled="educationForm.processing || !educationForm.description?.trim()"
               class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                {{ isLoading ? 'Correction en cours...' : 'Corriger avec HOKOUI-EMPLOI' }}
-            </button>
-            <button class="px-6 py-2 bg-secondary text-white hover:bg-yellow-700" :disabled="educationForm.processing" >
+                  {{ isLoading ? 'Correction en cours...' : 'Corriger avec HOKOUI-EMPLOI' }}
+                </button>
+            <button type="submit"
+              class="px-6 py-2 bg-secondary text-white hover:bg-yellow-700"
+              :disabled="isLoading"
+            >
               {{ isEditingEducation ? 'Modifier' : 'Ajouter' }}
             </button>
-            <button type="button" @click="closeEducationModal" class="px-6 py-2 bg-danger text-white hover:bg-red-700" >
+            <button
+              type="button"
+              @click="closeEducationModal"
+              class="px-6 py-2 bg-danger text-white hover:bg-red-700"
+            >
               Annuler
             </button>
           </div>
@@ -785,7 +879,7 @@
                 class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 :class="{ 'border-red-500': formErrors.start_date }"
               />
-              <InputError v-if="formErrors.start_date" :message="formErrors.start_date" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.start_date" :message="formErrors.start_date[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Date de fin</label>
@@ -1021,21 +1115,27 @@ const submitEducation = () => {
     });
   }
 }
+
+
+
 const editEducation = (education) => {
- educationForm.level = education.level;
-  educationForm.type = education.type;
-  educationForm.start_date = formatDateForInput(education.start_date);
-  educationForm.end_date = formatDateForInput(education.end_date);
-  educationForm.school = education.school;
-  educationForm.diploma = education.diploma;
-  educationForm.description = education.description;
-  educationForm.city = education.city;
-  educationForm.country = education.country;
+  educationForm.defaults({
+    level: education.level,
+    type: education.type,
+    start_date: formatDateForInput(education.start_date),
+    end_date: formatDateForInput(education.end_date),
+    school: education.school,
+    diploma: education.diploma,
+    description: education.description,
+    city: education.city,
+    country: education.country
+  })
 
   isEditingEducation.value = true
   editingEducationId.value = education.id
   showEducationModal.value = true
 }
+
 const closeEducationModal = () => {
   showEducationModal.value = false
   isEditingEducation.value = false
@@ -1045,16 +1145,20 @@ const closeEducationModal = () => {
 
 const deleteEducation = async (id) => {
   if (!await confirmDelete()) return;
-  router.delete(route('education.destroy', id), {
-    preserveScroll: true,
-    onSuccess: () => {
-      showToast("success", "Supprimer avec succès !");
-    }
-    // onError: (errors) => {
-    //   console.error('Error deleting education:', errors)
-    // }
-  })
 
+  try {
+    await axios.delete(route('education.destroy', id))
+    props.userInfo.educations = props.userInfo.educations.filter(edu => edu.id !== id)
+    showToast("success", "Supprimer avec succès !");
+  } catch (error) {
+    console.error('Error deleting education:', error)
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
+    if (error.response?.data?.redirect) {
+      window.location.href = error.response.data.redirect
+    }
+  }
 }
 
 const submitLanguage = async () => {
@@ -1138,7 +1242,7 @@ const validateSummary = () => {
 // }
 
 const toggleSummaryEdit = () => {
-  isEditing.value = !isEditing.value
+  isEditing.value = !isEditing.value  
 }
 
 // props.userInfo?.summary || ''
@@ -1157,12 +1261,12 @@ const toggleSummaryEdit = () => {
 
 const correctSummary = async (summaryToEdit,category = null) => {
   if (!summaryToEdit.trim()) return
-  formErrors.value = {}
+  formErrors.value = {}  
   isLoading.value = true
 
   try {
     const { data } = await axios.post(route('curriculum.resume.correct'), {
-      resume: summaryToEdit,
+      resume: summaryToEdit,      
       category: category
     });
 
@@ -1176,7 +1280,7 @@ const correctSummary = async (summaryToEdit,category = null) => {
         formSummary.resume = correctedResume
       }
       showToast("success", "Corrigé avec succès !");
-    }
+    } 
   } catch (error) {
     if (error.response?.data?.errors) {
       formErrors.value = error.response.data.errors;
