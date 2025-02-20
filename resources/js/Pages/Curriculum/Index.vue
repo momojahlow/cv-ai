@@ -1,12 +1,13 @@
 <template>
   <AppLayout title="CV">
-    <template #header>
+    <!-- <template #header>
       <div class="flex justify-between items-center">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
           Mon CV
         </h2>
       </div>
-    </template>
+    </template> -->
+    <Head title="MON CV" />
     <div class="flex flex-col gap-6 max-w-5xl mx-auto bg-white shadow-md mb-6">
         <!-- Header -->
         <div class="p-6 bg-white border-t border-gray-200">
@@ -551,7 +552,7 @@
       <div class="p-6">
         <h2 class="text-lg font-medium text-gray-900 mb-4"> Modifier mes informations personnelles</h2>
         <form @submit.prevent="updateProfile" class="space-y-4"  enctype="multipart/form-data">
-        
+
           <div class="grid grid-cols-2 gap-4">
             <!-- Phone -->
             <div>
@@ -628,7 +629,7 @@
                 :class="{ 'border-red-500': formErrors.address }"
               >
               <InputError v-if="formErrors.address" :message="formErrors.address[0]" class="mt-1 text-xs text-red-500" />
-            </div>            
+            </div>
 
             <!-- Study Level -->
             <div>
@@ -676,8 +677,8 @@
             <div class="">
               <label class="block text-sm font-medium text-gray-700">Photo de profil</label>
               <input type="file" @change="handleAvatarUpload" accept="image/*"
-                class="mt-1 block w-full border border-gray-200 shadow-sm rounded-xs text-sm 
-                    focus:z-10 focus:border-[#2b8d96] focus:ring-[#2b8d96] 
+                class="mt-1 block w-full border border-gray-200 shadow-sm rounded-xs text-sm
+                    focus:z-10 focus:border-[#2b8d96] focus:ring-[#2b8d96]
                     disabled:opacity-50 disabled:pointer-events-none  file:me-4 file:py-2.5 file:px-4 "
                 :class="{ 'border-red-500': formErrors.avatar }"
               >
@@ -916,14 +917,14 @@
           </div>
 
           <div class="flex justify-end space-x-4">
-            <button 
+            <button
               @click="correctSummary(experienceForm.description,'experience')"
               :disabled="isLoading || !experienceForm.description?.trim()"
               class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ isLoading ? 'Correction en cours...' : 'Corriger avec HOKOUI-EMPLOI' }}
             </button>
-            <button 
+            <button
               type="submit"
               class="px-6 py-2 bg-secondary text-white hover:bg-yellow-700"
               :disabled="isLoading"
@@ -973,6 +974,10 @@ const showLanguageModal = ref(false)
 const showEducationModal = ref(false)
 const showExperienceModal = ref(false)
 const editingLanguageId = ref(null);
+const isEditingEducation = ref(false)
+const editingEducationId = ref(null)
+const isEditingExperience = ref(false)
+const editingExperienceId = ref(null)
 const colorSetting = ref('primary')
 const isEditing = ref(false)
 const formErrors = ref({});
@@ -980,10 +985,7 @@ const formErrors = ref({});
 const languageForm = ref({
   language: '',
   level: ''
-})
-const form = ref({
-  avatar: null
-})
+});
 
 const formProfile = ref({
   civility: props.userInfo?.civility || '',
@@ -1055,9 +1057,11 @@ const updateProfile = async () => {
         formData.append(key, value);
       }
     });
+    console.table('formData', formData)
 
     const response = await axios.post(route('curriculum.profile.update'), formData);
-    console.log('response', response)
+    formErrors.value = {};
+    showToast("success", "Profil mis à jour avec succès !");
 
     router.reload();
     showEditModal.value = false;
@@ -1084,7 +1088,6 @@ const isLoading = ref(false)
 const error = ref('')
 
 // Education form state
-const showEducationForm = ref(false)
 const educationForm = ref({
   level: '',
   type: '',
@@ -1097,10 +1100,6 @@ const educationForm = ref({
   city: '',
   country: ''
 })
-
-const toggleEducationForm = () => {
-  showEducationForm.value = !showEducationForm.value
-}
 
 const submitEducation = async () => {
   try {
@@ -1123,12 +1122,14 @@ const submitEducation = async () => {
       if (index !== -1) {
         props.userInfo.educations[index] = response.data.education
       }
+      showToast("success", "Formation modifiée avec succès !");
     } else {
       response = await axios.post(route('education.store'), formData)
       if (!props.userInfo.educations) {
         props.userInfo.educations = []
       }
       props.userInfo.educations.push(response.data.education)
+      showToast("success", "Formation ajoutée avec succès!");
     }
 
     // Make sure the modal closes by setting showEducationModal to false
@@ -1180,6 +1181,7 @@ const submitLanguage = async () => {
         props.userInfo.languages = [];
       }
       props.userInfo.languages.push(response.data);
+      showToast("success", "Langue ajoutée avec succès !");
     }
 
     // Close modal and reset form
@@ -1207,9 +1209,10 @@ const validateSummary = () => {
   }, {
     preserveScroll: true,
     onSuccess: () => {
-      displayedSummary.value = resumeText
-      summary.value = ''
-      isEditing.value = false
+      displayedSummary.value = resumeText;
+      summary.value = '';
+      isEditing.value = false;
+      showToast("success", "Résumé mis à jour avec succès !");
     },
     onError: (errors) => {
       console.error('Error updating resume:', errors)
@@ -1270,10 +1273,11 @@ const correctSummary = async (summaryToEdit,category = null) => {
       if (category === 'education') {
         educationForm.value.description = response.data.resume
       } else if (category === 'experience') {
-        experienceForm.value.description = response.data.resume        
+        experienceForm.value.description = response.data.resume
       } else {
-        summary.value = response.data.resume        
+        summary.value = response.data.resume
       }
+      showToast("success", "Corrigé avec succès !");
     } else {
       error.value = response.data.message || 'Une erreur est survenue lors de la correction'
     }
@@ -1325,6 +1329,7 @@ const submitExperience = async () => {
         props.userInfo.experiences = []
       }
       props.userInfo.experiences.push(response.data)
+      showToast("success", "Supprimer avec succès !");
     }
 
     closeExperienceModal()
@@ -1352,7 +1357,7 @@ const editExperience = (experience) => {
   }
   isEditingExperience.value = true
   editingExperienceId.value = experience.id
-  showExperienceModal.value = true 
+  showExperienceModal.value = true
 }
 
 const deleteExperience = async (id) => {
@@ -1420,7 +1425,6 @@ const deleteLanguage = async (id) => {
     showToast("success", "Supprimer avec succès !");
     props.userInfo.languages = props.userInfo.languages.filter(lang => lang.id !== id);
   } catch (error) {
-    console.error('Error deleting language:', error);
     if (error.response && error.response.data.errors) {
       formErrors.value = error.response.data.errors;
     }
@@ -1446,7 +1450,6 @@ const editEducation = (education) => {
 
 const formatDateForInput = (date) => {
   if (!date) return ''
-  // Assuming date is in ISO format or a valid date string
   return new Date(date).toISOString().split('T')[0]
 }
 
@@ -1467,10 +1470,6 @@ const deleteEducation = async (id) => {
     }
   }
 }
-const isEditingEducation = ref(false)
-const editingEducationId = ref(null)
-const isEditingExperience = ref(false)
-const editingExperienceId = ref(null)
 const openEducationModal = () => {
   showEducationModal.value = true
 }
