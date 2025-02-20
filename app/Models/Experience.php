@@ -13,6 +13,8 @@ class Experience extends Model
         'location',
         'start_date',
         'end_date',
+        'city',
+        'country',
         'description'
     ];
 

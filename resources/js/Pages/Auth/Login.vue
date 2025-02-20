@@ -71,8 +71,8 @@ const submit = () => {
 
             <div class="block mt-4">
                 <label class="flex items-center">
-                    <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600">Rester connecté</span>
+                    <Checkbox v-model:checked="form.remember" name="remember" class="text-secondary  focus:ring-secondary" />
+                    <span class="ms-2 text-sm text-gray-600 ">Rester connecté</span>
                 </label>
             </div>
 
@@ -84,7 +84,7 @@ const submit = () => {
                     S'inscrire
                 </Link>
 
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <PrimaryButton class="ms-4 hover:bg-yellow-800 focus:bg-yellow-700 active:bg-yellow-900 " :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Connexion
                 </PrimaryButton>
             </div>

@@ -18,6 +18,8 @@ class Education extends Model
         'end_date',
         'school',
         'diploma',
+        'city',
+        'country',
         'description'
     ];
 

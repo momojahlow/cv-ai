@@ -18,7 +18,9 @@
         "vue": "^3.3.13"
     },
     "dependencies": {
+        "@headlessui/vue": "^1.7.23",
         "puppeteer": "^24.2.1",
+        "sweetalert2": "^11.17.2",
         "vite": "^5.0.0"
     }
 }

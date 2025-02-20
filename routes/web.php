@@ -50,6 +50,7 @@ Route::middleware([
         // Route::put('/experience/{id}/update', [ExperienceController::class, 'update'])->name('experience.update');
         // Route::delete('/experience/{id}/delete', [ExperienceController::class, 'destroy'])->name('experience.destroy');
         Route::post('/educations', [EducationController::class, 'store'])->name('education.store');
+        Route::put('/education/{education}', [EducationController::class, 'update'])->name('education.update');
         Route::delete('/education/{education}', [EducationController::class, 'destroy'])->name('education.destroy');
     });
 });
