@@ -22,24 +22,21 @@ class EducationController extends Controller
         }
 
         $validated = $request->validate([
-            'level' => 'required|string',
-            'type' => 'required|string',
-            'start_date' => 'required|string',
-            'end_date' => 'required|string',
-            'school' => 'required|string',
-            'diploma' => 'required|string',
-            'city' => 'nullable|string',
-            'country' => 'nullable|string',
-            'description' => 'nullable|string'
+            'level' => 'required|string |min:2|max:255',
+            'type' => 'required|string |min:2|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'school' => 'required|string |min:2|max:255',
+            'diploma' => 'required|string |min:2|max:255',
+            'city' => 'nullable|string|min:2|max:255',
+            'country' => 'nullable|string |min:2|max:255',
+            'description' => 'nullable|string |min:10|max:255'
         ]);
-        // dd($validated);
 
         $education = $user->curriculum->educations()->create([
             ...$validated,
             'status' => 'completed'
         ]);
-
-        // return redirect()->back();
 
         return response()->json([
             'success' => true,

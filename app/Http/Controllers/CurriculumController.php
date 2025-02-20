@@ -13,6 +13,7 @@ use App\Models\Language;
 use GeminiAPI\Resources\Parts\TextPart;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use App\Services\GeminiAiService;
 
 class CurriculumController extends Controller
 {
@@ -82,33 +83,61 @@ class CurriculumController extends Controller
         ]);
     }
 
-    public function correctResume(Request $request)
+    // public function correctResume(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'resume' => 'required|string|min:10',
+    //     ]);
+
+    //     $client = new Client(env('GEMINI_API_KEY'));
+    //     $prompts = "Sans commentaire corrige moi ce texte et reformule le de manière professionnelle en 100 mots :" . $validated['resume'];
+
+    //     try {
+    //         $response = $client->geminiPro()->generateContent(
+    //             new TextPart($prompts)
+    //         );
+
+    //         $correctedResume = trim($response->text());
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'resume' => $correctedResume
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Une erreur est survenue lors de la correction: ' . $e->getMessage()
+    //         ], 500);
+    //     }       
+    // }
+
+    public function correctResume(Request $request, GeminiAiService $geminiAiService)
     {
         $validated = $request->validate([
-            'resume' => 'required|string',
+            'resume' => 'required|string|min:10',
+            'category' => 'nullable|string|in:education,experience',
         ]);
 
-        $client = new Client(env('GEMINI_API_KEY'));
-        $prompts = "Sans commentaire corrige moi ce texte et reformule le de manière professionnelle en 100 mots :" . $validated['resume'];
+        $prompts = [
+            'education' => "Corrige et reformule ce texte pour une section Éducation d'un CV professionnel :",
+            'experience' => "Corrige et reformule ce texte pour une section Expérience professionnelle d'un CV :",
+            'default' => "Adapte ce texte pour un CV professionnel :"
+        ];
+        $prompt = $prompts[$validated['category']] ?? $prompts['default'];
 
         try {
-            $response = $client->geminiPro()->generateContent(
-                new TextPart($prompts)
-            );
-
-            $correctedResume = trim($response->text());
+            $correctedResume = $geminiAiService->correct($validated['resume'], $prompt);
 
             return response()->json([
                 'success' => true,
                 'resume' => $correctedResume
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue lors de la correction: ' . $e->getMessage()
+                'message' => $e->getMessage()
             ], 500);
         }
-       
     }
 
     public function updateResume(Request $request)

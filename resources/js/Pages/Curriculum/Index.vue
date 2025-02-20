@@ -164,8 +164,7 @@
               <div :class="`h-4 w-1 bg-${colorSetting} mr-2`"></div>
               <h3 class="text-lg font-semibold">Résumé de mon CV</h3>
             </div>
-            <button
-              @click="toggleSummaryEdit"
+            <button @click="toggleSummaryEdit"
               :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
             >
               <svg v-if="!isEditing" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,35 +176,24 @@
             </button>
           </div>
 
-          <div v-if="!isEditing && displayedSummary" class="mb-6">
-            <div class="flex items-center">
-              <p class="text-gray-600 flex-1">{{ displayedSummary }}</p>
-            </div>
-          </div>
-
+          <div v-if="!isEditing && formSummary.resume" class="mb-6 text-gray-600">{{ formSummary.resume }}</div>
           <!-- Resume form Section -->
           <div v-if="isEditing" class="mt-6 bg-[#2b8d96] overflow-hidden">
 
             <div class="bg-white p-6">
-              <textarea
-                v-model="summary"
-                rows="4"
+              <textarea v-model="formSummary.resume" rows="4"
                 class="w-full p-4 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
                 placeholder="Écrivez votre résumé ici..."
               />
-              <div v-if="error" class="mt-2 text-red-500">{{ error }}</div>
-
+              <div v-if="formSummary.errors.resume" class="mt-1 text-xs text-red-500">{{ formSummary.errors.resume }}</div>
+              <div v-if="formErrors.resume" class="mt-1 text-xs text-red-500">{{ formErrors.resume[0] }}</div>
               <div class="mt-4 flex justify-end space-x-4">
-                <button
-                  @click="correctSummary(summary)"
-                  :disabled="isLoading || !summary.trim()"
+                <button @click="correctSummary(formSummary.resume)" :disabled="isLoading || !formSummary.resume?.trim()"
                   class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {{ isLoading ? 'Correction en cours...' : 'Corriger avec HOKOUI-EMPLOI' }}
                 </button>
-                <button
-                  @click="validateSummary"
-                  :disabled="!summary.trim()"
+                <button @click="validateSummary" :disabled="!formSummary.resume?.trim()"
                   class="px-6 py-2 bg-secondary text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Valider
@@ -335,7 +323,15 @@
                   <div class="flex justify-between">
                     <div>
                       <h4 class="text-lg font-medium text-gray-900">{{ education.diploma }}</h4>
-                      <div class="text-sm text-gray-600 mt-1">{{ education.school }}</div>
+                      <div class="mt-2 flex items-center space-x-4">
+                        <div class="text-sm text-gray-600 mt-1">{{ education.school }} • </div>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                          {{ education.city }} •
+                        </span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          {{ education.country }} •
+                        </span>
+                      </div>                      
                     </div>
                     <div class="flex space-x-2 p-2">
                       <button
@@ -358,10 +354,10 @@
                   </div>
                   <div class="mt-2 flex items-center space-x-4">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      {{ education.level }}
+                      {{ education.level }} •
                     </span>
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      {{ education.type }}
+                      {{ education.type }} •
                     </span>
                   </div>
                   <p class="mt-2 text-sm text-gray-500">{{ education.description }}</p>
@@ -773,9 +769,9 @@
                 v-model="educationForm.endDate"
                 type="date"
                 class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formErrors.endDate }"
+                :class="{ 'border-red-500': formErrors.end_date }"
               />
-              <InputError v-if="formErrors.endDate" :message="formErrors.endDate[0]" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.end_date" :message="formErrors.end_date[0]" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
 
@@ -947,7 +943,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { usePage } from '@inertiajs/vue3'
+import { useForm, usePage } from '@inertiajs/vue3'
 import { Head } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Modal from '@/Components/Modal.vue'
@@ -968,6 +964,10 @@ const props = defineProps({
   userInfo: Object,
 })
 
+const formSummary = useForm({
+  resume: props.userInfo?.summary || '',
+})
+
 const defaultAvatar = '/storage/default-avatar.png';
 const showEditModal = ref(false)
 const showLanguageModal = ref(false)
@@ -981,6 +981,10 @@ const editingExperienceId = ref(null)
 const colorSetting = ref('primary')
 const isEditing = ref(false)
 const formErrors = ref({});
+// const summary = ref('')
+// const displayedSummary = ref(props.userInfo?.summary || '')
+const isLoading = ref(false)
+// const error = ref('')
 
 const languageForm = ref({
   language: '',
@@ -1081,12 +1085,6 @@ const handleAvatarUpload = (event) => {
   formProfile.value.avatar = event.target.files[0]
 }
 
-// Resume
-const summary = ref('')
-const displayedSummary = ref(props.userInfo?.summary || '')
-const isLoading = ref(false)
-const error = ref('')
-
 // Education form state
 const educationForm = ref({
   level: '',
@@ -1131,10 +1129,8 @@ const submitEducation = async () => {
       props.userInfo.educations.push(response.data.education)
       showToast("success", "Formation ajoutée avec succès!");
     }
-
-    // Make sure the modal closes by setting showEducationModal to false
+    
     showEducationModal.value = false
-    // Reset the form
     closeEducationModal()
   } catch (error) {
     console.error('Error submitting education:', error)
@@ -1147,12 +1143,7 @@ const submitEducation = async () => {
   }
 }
 
-const startEdit = () => {
-  isEditing.value = true
-  if (displayedSummary.value) {
-    summary.value = displayedSummary.value
-  }
-}
+
 
 const submitLanguage = async () => {
   try {
@@ -1194,7 +1185,6 @@ const submitLanguage = async () => {
     editingLanguageId.value = null;
 
   } catch (error) {
-    console.error('Error submitting language:', error);
     if (error.response && error.response.data.errors) {
       formErrors.value = error.response.data.errors;
     }
@@ -1202,96 +1192,90 @@ const submitLanguage = async () => {
 };
 
 const validateSummary = () => {
-  const resumeText = summary.value
 
-  router.post(route('curriculum.resume.update'), {
-    resume: resumeText
-  }, {
+  formSummary.post(route('curriculum.resume.update'), {
     preserveScroll: true,
     onSuccess: () => {
-      displayedSummary.value = resumeText;
-      summary.value = '';
-      isEditing.value = false;
+      isEditing.value = false
       showToast("success", "Résumé mis à jour avec succès !");
     },
     onError: (errors) => {
       console.error('Error updating resume:', errors)
+      showToast("error", "Une erreur est survenue lors de la mise à jour du résumé !");
     }
   })
 }
 
-const cancelEdit = () => {
-  isEditing.value = false
-  summary.value = ''
-}
+// const validateSummary = () => {
+//   const resumeText = summary.value
+
+//   router.post(route('curriculum.resume.update'), {
+//     resume: resumeText
+//   }, {
+//     preserveScroll: true,
+//     onSuccess: () => {
+//       displayedSummary.value = resumeText;
+//       summary.value = '';
+//       isEditing.value = false;
+//       showToast("success", "Résumé mis à jour avec succès !");
+//     },
+//     onError: (errors) => {
+//       console.error('Error updating resume:', errors)
+//     }
+//   })
+// }
 
 const toggleSummaryEdit = () => {
-  if (isEditing.value) {
-    cancelEdit()
-  } else {
-    startEdit()
-  }
+  isEditing.value = !isEditing.value  
 }
 
-// const handleCorrection = async () => {
-//   if (!summary.value.trim()) return
+// props.userInfo?.summary || ''
+// const cancelEdit = () => {
+//   isEditing.value = false
+//   summary.value = ''
+// }
 
-//   isLoading.value = true
-//   error.value = ''
-
-//   try {
-//     const response = await axios.post(route('curriculum.resume.correct'), {
-//       resume: summary.value
-//     })
-
-//     if (response.data.success) {
-//       summary.value = response.data.resume
-//     } else {
-//       error.value = response.data.message || 'Une erreur est survenue lors de la correction'
-//     }
-//   } catch (err) {
-//     error.value = err.response?.data?.message || 'Une erreur est survenue lors de la correction'
-//     console.error('Erreur lors de la correction:', err)
-//   } finally {
-//     isLoading.value = false
+// const startEdit = () => {
+//   isEditing.value = true
+//   if (displayedSummary.value) {
+//     summary.value = displayedSummary.value
 //   }
 // }
 
-const correctSummary = async (summaryToEdit,category = null) => {
-  console.log('Correcting: '+summaryToEdit)
-  if (!summaryToEdit.trim()) return
 
+const correctSummary = async (summaryToEdit,category = null) => {
+  if (!summaryToEdit.trim()) return
+  formErrors.value = {}  
   isLoading.value = true
-  error.value = ''
 
   try {
-    const response = await axios.post(route('curriculum.resume.correct'), {
-      resume: summaryToEdit
-    })
+    const { data } = await axios.post(route('curriculum.resume.correct'), {
+      resume: summaryToEdit,      
+      category: category
+    });
 
-    if (response.data.success) {
+    if (data.success) {
+      const correctedResume = data.resume;
       if (category === 'education') {
-        educationForm.value.description = response.data.resume
+        educationForm.value.description = correctedResume
       } else if (category === 'experience') {
-        experienceForm.value.description = response.data.resume
+        experienceForm.value.description = correctedResume
       } else {
-        summary.value = response.data.resume
+        formSummary.resume = correctedResume
       }
       showToast("success", "Corrigé avec succès !");
-    } else {
-      error.value = response.data.message || 'Une erreur est survenue lors de la correction'
-    }
-  } catch (err) {
-    error.value = err.response?.data?.message || 'Une erreur est survenue lors de la correction'
-    if (error.response && error.response.data.errors) {
+    } 
+  } catch (error) {
+    if (error.response?.data?.errors) {
       formErrors.value = error.response.data.errors;
     }
+    console.error('Error correcting resume:', error)
+    showToast("error", "Une erreur est survenue lors de la correction du résumé !");
   } finally {
     isLoading.value = false
   }
 }
 
-// Experience form state
 const experienceForm = ref({
   title: '',
   company: '',
