@@ -211,7 +211,7 @@
               <h3 class="text-lg font-semibold">Formation</h3>
             </div>
             <button
-              @click="openEducationModal"
+              @click="showEducationModal = true"
               :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -716,34 +716,34 @@
               <label class="block text-sm font-medium text-gray-700 mb-2">Niveau d'étude</label>
               <select v-model="educationForm.level"
                 class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formErrors.level }"
+                :class="{ 'border-red-500': educationForm.errors.level }"
               >
                 <option value="Bac +5 et plus">Bac +5 et plus</option>
                 <option value="Bac +3">Bac +3</option>
                 <option value="Bac +2">Bac +2</option>
                 <option value="Bac">Bac</option>
               </select>
-              <InputError v-if="formErrors.level" :message="formErrors.level[0]" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="educationForm.errors.level" :message="educationForm.errors.level" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Type d'établissement</label>
               <select v-model="educationForm.type"
                 class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formErrors.type }"
+                :class="{ 'border-red-500': educationForm.errors.type }"
               >
                 <option value="Université">Université</option>
                 <option value="École d'ingénieur">École d'ingénieur</option>
                 <option value="École de commerce">École de commerce</option>
               </select>
-              <InputError v-if="formErrors.type" :message="formErrors.type[0]" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="educationForm.errors.type" :message="educationForm.errors.type" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
               <InputLabel for="education_city" value="Ville" />
-              <TextInput id="education_city" type="text" class="mt-1 block w-full" :class="{ 'border-red-500': formErrors.city }" v-model="educationForm.city" />
-              <InputError v-if="formErrors.city" :city="formErrors.city[0]" class="mt-1 text-xs text-red-500" />
+              <TextInput id="education_city" type="text" class="mt-1 block w-full" :class="{ 'border-red-500': educationForm.errors.city }" v-model="educationForm.city" />
+              <InputError v-if="educationForm.errors.city" :city="educationForm.errors.city" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <InputLabel for="education_country" value="Pays" />
@@ -755,61 +755,52 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Date de début</label>
-              <input
-                v-model="educationForm.startDate"
-                type="date"
+              <input v-model="educationForm.start_date" type="date"
                 class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formErrors.startDate }"
+                :class="{ 'border-red-500': educationForm.errors.start_date }"
               />
-              <InputError v-if="formErrors.startDate" :message="formErrors.startDate[0]" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="educationForm.errors.start_date" :message="educationForm.errors.start_date" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Date de fin</label>
-              <input
-                v-model="educationForm.endDate"
-                type="date"
+              <input v-model="educationForm.end_date" type="date"
                 class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formErrors.end_date }"
+                :class="{ 'border-red-500': educationForm.errors.end_date }"
               />
-              <InputError v-if="formErrors.end_date" :message="formErrors.end_date[0]" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="educationForm.errors.end_date" :message="educationForm.errors.end_date" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Établissement</label>
-            <input
-              v-model="educationForm.school"
-              type="text"
+            <input v-model="educationForm.school" type="text"
               class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-              :class="{ 'border-red-500': formErrors.school }"
+              :class="{ 'border-red-500': educationForm.errors.school }"
             />
-            <InputError v-if="formErrors.school" :message="formErrors.school[0]" class="mt-1 text-xs text-red-500" />
+            <InputError v-if="educationForm.errors.school" :message="educationForm.errors.school" class="mt-1 text-xs text-red-500" />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Diplôme</label>
-            <input
-              v-model="educationForm.diploma"
-              type="text"
+            <input v-model="educationForm.diploma" type="text"
               class="w-full p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-              :class="{ 'border-red-500': formErrors.diploma }"
+              :class="{ 'border-red-500': educationForm.errors.diploma }"
             />
-            <InputError v-if="formErrors.diploma" :message="formErrors.diploma[0]" class="mt-1 text-xs text-red-500" />
+            <InputError v-if="educationForm.errors.diploma" :message="educationForm.errors.diploma" class="mt-1 text-xs text-red-500" />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <textarea
-              v-model="educationForm.description"
+            <textarea v-model="educationForm.description"
               class="w-full h-40 p-2 border border-gray-300  focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-              :class="{ 'border-red-500': formErrors.description }"
+              :class="{ 'border-red-500': educationForm.errors.description }"
             />
-            <InputError v-if="formErrors.description" :message="formErrors.description[0]" class="mt-1 text-xs text-red-500" />
+            <InputError v-if="educationForm.errors.description" :message="educationForm.errors.description" class="mt-1 text-xs text-red-500" />
           </div>
 
           <div class="flex justify-end space-x-4">
             <button @click="correctSummary(educationForm.description,'education')"
-              :disabled="isLoading || !educationForm.description?.trim()"
+              :disabled="educationForm.processing || !educationForm.description?.trim()"
               class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a] disabled:opacity-50 disabled:cursor-not-allowed"
             >
                   {{ isLoading ? 'Correction en cours...' : 'Corriger avec HOKOUI-EMPLOI' }}
@@ -970,14 +961,19 @@ const formSummary = useForm({
 
 const defaultAvatar = '/storage/default-avatar.png';
 const showEditModal = ref(false)
+// Language state
 const showLanguageModal = ref(false)
-const showEducationModal = ref(false)
-const showExperienceModal = ref(false)
 const editingLanguageId = ref(null);
+
+// Education state
+const showEducationModal = ref(false)
 const isEditingEducation = ref(false)
 const editingEducationId = ref(null)
+// Experience state
 const isEditingExperience = ref(false)
 const editingExperienceId = ref(null)
+const showExperienceModal = ref(false)
+
 const colorSetting = ref('primary')
 const isEditing = ref(false)
 const formErrors = ref({});
@@ -1085,11 +1081,10 @@ const handleAvatarUpload = (event) => {
   formProfile.value.avatar = event.target.files[0]
 }
 
-// Education form state
-const educationForm = ref({
+const educationForm = useForm({
   level: '',
   type: '',
-  status: 'completed',
+  status: 'valider',
   start_date: '',
   end_date: '',
   school: '',
@@ -1099,41 +1094,64 @@ const educationForm = ref({
   country: ''
 })
 
-const submitEducation = async () => {
-  try {
-    const formData = {
-      level: educationForm.value.level,
-      type: educationForm.value.type,
-      start_date: educationForm.value.startDate,
-      end_date: educationForm.value.endDate,
-      school: educationForm.value.school,
-      diploma: educationForm.value.diploma,
-      description: educationForm.value.description,
-      city: educationForm.value.city,
-      country: educationForm.value.country
-    }
+const submitEducation = () => {
+  if (isEditingEducation.value) {
+    educationForm.put(route('education.update', editingEducationId.value), {
+      preserveScroll: true,
+      onSuccess: () => {
+        showToast("success", "Formation modifiée avec succès !");
+        showEducationModal.value = false;
+        closeEducationModal();
+      }
+    });
+  } else {
+    educationForm.post(route('education.store'), {
+      preserveScroll: true,
+      onSuccess: () => {
+        showToast("success", "Formation ajoutée avec succès !");
+        showEducationModal.value = false;
+        closeEducationModal();
+      }
+    });
+  }
+}
 
-    let response
-    if (isEditingEducation.value) {
-      response = await axios.put(route('education.update', editingEducationId.value), formData)
-      const index = props.userInfo.educations.findIndex(edu => edu.id === editingEducationId.value)
-      if (index !== -1) {
-        props.userInfo.educations[index] = response.data.education
-      }
-      showToast("success", "Formation modifiée avec succès !");
-    } else {
-      response = await axios.post(route('education.store'), formData)
-      if (!props.userInfo.educations) {
-        props.userInfo.educations = []
-      }
-      props.userInfo.educations.push(response.data.education)
-      showToast("success", "Formation ajoutée avec succès!");
-    }
-    
-    showEducationModal.value = false
-    closeEducationModal()
+
+
+const editEducation = (education) => {
+  educationForm.defaults({
+    level: education.level,
+    type: education.type,
+    start_date: formatDateForInput(education.start_date),
+    end_date: formatDateForInput(education.end_date),
+    school: education.school,
+    diploma: education.diploma,
+    description: education.description,
+    city: education.city,
+    country: education.country
+  })
+
+  isEditingEducation.value = true
+  editingEducationId.value = education.id
+  showEducationModal.value = true
+}
+
+const closeEducationModal = () => {
+  showEducationModal.value = false
+  isEditingEducation.value = false
+  editingEducationId.value = null
+  educationForm.reset();
+}
+
+const deleteEducation = async (id) => {
+  if (!await confirmDelete()) return;
+
+  try {
+    await axios.delete(route('education.destroy', id))
+    props.userInfo.educations = props.userInfo.educations.filter(edu => edu.id !== id)
+    showToast("success", "Supprimer avec succès !");
   } catch (error) {
-    console.error('Error submitting education:', error)
+    console.error('Error deleting education:', error)
     if (error.response && error.response.data.errors) {
       formErrors.value = error.response.data.errors;
     }
@@ -1142,8 +1160,6 @@ const submitEducation = async () => {
     }
   }
 }
-
-
 
 const submitLanguage = async () => {
   try {
@@ -1257,7 +1273,7 @@ const correctSummary = async (summaryToEdit,category = null) => {
     if (data.success) {
       const correctedResume = data.resume;
       if (category === 'education') {
-        educationForm.value.description = correctedResume
+        educationForm.description = correctedResume
       } else if (category === 'experience') {
         experienceForm.value.description = correctedResume
       } else {
@@ -1415,65 +1431,16 @@ const deleteLanguage = async (id) => {
   }
 };
 
-const editEducation = (education) => {
-  educationForm.value = {
-    level: education.level,
-    type: education.type,
-    startDate: formatDateForInput(education.start_date),
-    endDate: formatDateForInput(education.end_date),
-    school: education.school,
-    diploma: education.diploma,
-    description: education.description,
-    city: education.city,
-    country: education.country
-  }
-  isEditingEducation.value = true
-  editingEducationId.value = education.id
-  openEducationModal()
-}
+
 
 const formatDateForInput = (date) => {
   if (!date) return ''
   return new Date(date).toISOString().split('T')[0]
 }
 
-const deleteEducation = async (id) => {
-  if (!await confirmDelete()) return;
 
-  try {
-    await axios.delete(route('education.destroy', id))
-    props.userInfo.educations = props.userInfo.educations.filter(edu => edu.id !== id)
-    showToast("success", "Supprimer avec succès !");
-  } catch (error) {
-    console.error('Error deleting education:', error)
-    if (error.response && error.response.data.errors) {
-      formErrors.value = error.response.data.errors;
-    }
-    if (error.response?.data?.redirect) {
-      window.location.href = error.response.data.redirect
-    }
-  }
-}
-const openEducationModal = () => {
-  showEducationModal.value = true
-}
 
-const closeEducationModal = () => {
-  showEducationModal.value = false
-  isEditingEducation.value = false
-  editingEducationId.value = null
-  educationForm.value = {
-    level: '',
-    type: '',
-    startDate: '',
-    endDate: '',
-    school: '',
-    diploma: '',
-    description: '',
-    city: '',
-    country: ''
-  }
-}
+
 const closeExperienceModal = () => {
   showExperienceModal.value = false
   isEditingExperience.value = false
