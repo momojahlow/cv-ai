@@ -9,10 +9,11 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Parental\HasChildren;
 
 class User extends Authenticatable
 {
-    use HasApiTokens;
+    use HasApiTokens, HasChildren;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
@@ -27,8 +28,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'type',
         'email',
         'password',
+    ];
+
+    protected $childTypes = [
+        'admin' => Admin::class,
+        'member' => Guest::class,
     ];
 
     /**
@@ -81,5 +88,10 @@ class User extends Authenticatable
     public function curriculum()
     {
         return $this->hasOne(Curriculum::class);
+    }
+
+    public function isAdmin()
+    {
+        return $this->type === 'admin';
     }
 }
