@@ -1,5 +1,12 @@
 <template>
   <AppLayout title="CV">
+    <!-- <template #header>
+      <div class="flex justify-between items-center">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+          Mon CV
+        </h2>
+      </div>
+    </template> -->
     <Head title="MON CV" />
     <div class="flex flex-col gap-6 max-w-5xl mx-auto bg-white shadow-md mb-6">
         <!-- Header -->
@@ -9,7 +16,8 @@
               <div :class="`h-4 w-1 bg-${colorSetting} mr-2`"></div>
               <h3 class="text-lg font-semibold">Informations personnelles</h3>
             </div>
-            <button @click="showProfilModal = true"
+            <button
+              @click="showEditModal = true"
               :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
             >
               <svg  class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -23,7 +31,11 @@
         <div class="px-6 py-4 border-t border-gray-200">
           <div class="flex space-x-6">
             <div class="w-32">
-              <img :src="avatarUrl" alt="Profile" class="w-full h-32 object-cover  bg-gray-200" />
+              <img
+                :src="avatarUrl"
+                alt="Profile"
+                class="w-full h-32 object-cover  bg-gray-200"
+              />
             </div>
             <div class="flex-1">
               <h2 class="text-xl font-semibold text-gray-700">{{ userInfo.name }}</h2>
@@ -38,7 +50,7 @@
                 <div>
                   <p class="text-sm">
                     <span class="text-gray-500">Date de naissance :</span>
-                    <span class="ml-2">{{ formattedNormalDate(userInfo.date_of_birth) }}</span>
+                    <span class="ml-2">{{ formattedBirthDate }}</span>
                   </p>
                   <p class="text-sm">
                     <span class="text-gray-500">Nationalité :</span>
@@ -155,32 +167,33 @@
             <button @click="toggleSummaryEdit"
               :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
             >
-              <svg v-if="!isEditingSummary" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg v-if="!isEditing" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
-              <svg v-else class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
-          <div v-if="!isEditingSummary && formSummary.resume" class="mb-6 text-gray-600">{{ formSummary.resume }}</div>
+          <div v-if="!isEditing && formSummary.resume" class="mb-6 text-gray-600">{{ formSummary.resume }}</div>
           <!-- Resume form Section -->
-          <div v-if="isEditingSummary" class="bg-white overflow-hidden shadow-lg">
-            <div class="px-4 py-6">
-              <textarea v-model="formSummary.resume" rows="4" placeholder="Écrivez votre résumé ici..."
-                class="w-full p-4 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"                
+          <div v-if="isEditing" class="mt-6 bg-[#2b8d96] overflow-hidden">
+
+            <div class="bg-white p-6">
+              <textarea v-model="formSummary.resume" rows="4"
+                class="w-full p-4 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                placeholder="Écrivez votre résumé ici..."
               />
               <div v-if="formSummary.errors.resume" class="mt-1 text-xs text-red-500">{{ formSummary.errors.resume }}</div>
               <div v-if="formErrors.resume" class="mt-1 text-xs text-red-500">{{ formErrors.resume[0] }}</div>
               <div class="mt-4 flex justify-end space-x-4">
-                <button @click="correctSummary(formSummary.resume)" 
-                  :disabled="isLoading || !formSummary.resume?.trim() || formSummary.processing"
+                <button @click="correctSummary(formSummary.resume)" :disabled="isLoading || !formSummary.resume?.trim()"
                   class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {{ isLoading ? 'Correction en cours...' : 'Corriger avec HOKOUI-EMPLOI' }}
                 </button>
-                <button @click="validateSummary" :disabled="!formSummary.resume?.trim() || formSummary.processing || isLoading"
+                <button @click="validateSummary" :disabled="!formSummary.resume?.trim()"
                   class="px-6 py-2 bg-secondary text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Valider
@@ -197,7 +210,8 @@
               <div :class="`h-4 w-1 bg-${colorSetting} mr-2`"></div>
               <h3 class="text-lg font-semibold">Formation</h3>
             </div>
-            <button type="button" @click="showEducationModal = true"
+            <button
+              @click="showEducationModal = true"
               :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,12 +220,103 @@
             </button>
           </div>
 
+          <div v-if="showEducationModal" class="mt-4 mb-6">
+            <div class="bg-white p-6  shadow-lg">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Niveau d'étude</label>
+                  <select v-model="educationForm.level"
+                    class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                  >
+                    <option value="Bac +5 et plus">Bac +5 et plus</option>
+                    <option value="Bac +3">Bac +3</option>
+                    <option value="Bac +2">Bac +2</option>
+                    <option value="Bac">Bac</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Type d'établissement</label>
+                  <select v-model="educationForm.type"
+                    class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                  >
+                    <option value="Université">Université</option>
+                    <option value="École d'ingénieur">École d'ingénieur</option>
+                    <option value="École de commerce">École de commerce</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mt-4 grid grid-cols-2 gap-4">
+                <div>
+                  <InputLabel for="education_city" value="Ville" />
+                  <TextInput id="education_city" type="text" class="mt-1 block w-full" v-model="educationForm.city" />
+                </div>
+                <div>
+                  <InputLabel for="education_country" value="Pays" />
+                  <TextInput id="education_country" type="text" class="mt-1 block w-full" v-model="educationForm.country" />
+                </div>
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Date de début</label>
+                <input
+                  v-model="educationForm.startDate"
+                  type="date"
+                  class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                />
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Date de fin</label>
+                <input
+                  v-model="educationForm.endDate"
+                  type="date"
+                  class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                />
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Établissement</label>
+                <input
+                  v-model="educationForm.school"
+                  type="text"
+                  class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                />
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Diplôme</label>
+                <input
+                  v-model="educationForm.diploma"
+                  type="text"
+                  class="w-full p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                />
+              </div>
+              <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  v-model="educationForm.description"
+                  class="w-full h-40 p-2 border border-gray-300 rounded-lg focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                />
+              </div>
+              <div class="mt-4 flex justify-end space-x-4">
+                <button
+                  @click="submitEducation"
+                  class="px-6 py-2 bg-secondary text-white hover:bg-yellow-700"
+                >
+                  {{ isEditingEducation ? 'Modifier' : 'Ajouter' }}
+                </button>
+                <button
+                  @click="closeEducationModal"
+                  class="px-6 py-2 bg-danger text-white hover:bg-red-700"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="space-y-6">
             <template v-if="userInfo.educations?.length">
               <div v-for="(education, index) in userInfo.educations" :key="index" class="flex">
                 <div class="w-48 flex-shrink-0 whitespace-nowrap">
                   <div class="text-sm text-gray-600">
-                    {{ formatSortedDate(education.start_date) }} - {{ formatSortedDate(education.end_date) }}
+                    {{ formatDate(education.start_date) }} - {{ formatDate(education.end_date) }}
                   </div>
                 </div>
                 <div class="flex-1">
@@ -220,13 +325,13 @@
                       <h4 class="text-lg font-medium text-gray-900">{{ education.diploma }}</h4>
                       <div class="mt-2 flex items-center space-x-4">
                         <div class="text-sm text-gray-600 mt-1">{{ education.school }} • </div>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
                           {{ education.city }} •
                         </span>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                           {{ education.country }} •
                         </span>
-                      </div>
+                      </div>                      
                     </div>
                     <div class="flex space-x-2 p-2">
                       <button
@@ -271,7 +376,8 @@
               <div :class="`h-4 w-1 bg-${colorSetting} mr-2`"></div>
               <h3 class="text-lg font-semibold">Experience professionnelle</h3>
             </div>
-            <button type="button" @click="showExperienceModal = true"
+            <button
+              @click="openExperienceModal"
               :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -283,8 +389,8 @@
           <div class="space-y-6">
             <template v-if="userInfo.experiences?.length">
               <div v-for="(experience, index) in userInfo.experiences" :key="index" class="flex gap-2">
-                <div class="w-48 flex-shrink-0 whitespace-nowrap overflow-hidden">
-                  <div class="text-sm text-gray-600">{{ formatSortedDate(experience.start_date) }} - {{ formatSortedDate(experience.end_date) }}</div>
+                <div class="w-48 flex-shrink-0 whitespace-nowrap">
+                  <div class="text-sm text-gray-600">{{ formatDate(experience.start_date) }} - {{ formatDate(experience.end_date) }}</div>
                 </div>
                 <div class="flex-1">
                   <div class="flex justify-between">
@@ -295,12 +401,18 @@
                       </div>
                     </div>
                     <div class="flex space-x-2 p-2">
-                      <button type="button" @click="editExperience(experience)" class="text-[#2b8d96] hover:text-[#1a646b]" >
+                      <button
+                        @click="editExperience(experience)"
+                        class="text-[#2b8d96] hover:text-[#1a646b]"
+                      >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                       </button>
-                      <button type="button" @click="deleteExperience(experience.id)" class="text-red-500 hover:text-red-700" >
+                      <button
+                        @click="deleteExperience(experience.id)"
+                        class="text-red-500 hover:text-red-700"
+                      >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
@@ -323,7 +435,8 @@
               <div :class="`h-4 w-1 bg-${colorSetting} mr-2`"></div>
               <h3 class="text-lg font-semibold">Langues</h3>
             </div>
-            <button @click="showLanguageModal = true"
+            <button
+              @click="toggleLanguageModal"
               :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
             >
               <svg v-if="!showLanguageModal" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -336,42 +449,43 @@
           </div>
 
           <div class="mt-6 bg-white shadow rounded-lg">
-            <!-- Display languages -->
-            <div class="space-y-2">
-              <template v-if="props.userInfo.languages?.length">
-                <div
-                  v-for="(lang, index) in props.userInfo.languages"
-                  :key="index"
-                  class="flex justify-between items-center p-3 bg-gray-50 rounded-md"
-                >
-                  <div>
-                    <span class="font-medium">{{ lang.name }}</span>
-                    <span class="text-gray-500 ml-2">- {{ lang.level }}</span>
+
+              <!-- Display languages -->
+              <div class="space-y-2">
+                <template v-if="props.userInfo.languages?.length">
+                  <div
+                    v-for="(lang, index) in props.userInfo.languages"
+                    :key="index"
+                    class="flex justify-between items-center p-3 bg-gray-50 rounded-md"
+                  >
+                    <div>
+                      <span class="font-medium">{{ lang.name }}</span>
+                      <span class="text-gray-500 ml-2">- {{ lang.level }}</span>
+                    </div>
+                    <div class="flex space-x-2">
+                      <button
+                        @click="editLanguage(lang)"
+                        class="text-[#2b8d96] hover:text-[#1a646b]"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        @click="deleteLanguage(lang.id)"
+                        class="text-red-500 hover:text-red-700"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
-                  <div class="flex space-x-2">
-                    <button
-                      @click="editLanguage(lang)"
-                      class="text-[#2b8d96] hover:text-[#1a646b]"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
-                    <button
-                      @click="deleteLanguage(lang.id)"
-                      class="text-red-500 hover:text-red-700"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
+                </template>
+                <div v-else class="text-gray-500 text-center py-4">
+                  Aucune langue ajoutée
                 </div>
-              </template>
-              <div v-else class="text-gray-500 text-center py-4">
-                Aucune langue ajoutée
               </div>
-            </div>
           </div>
         </div>
     </div>
@@ -379,24 +493,27 @@
     <Modal :show="showLanguageModal" @close="closeLanguageModal">
       <div class="p-6">
         <h2 class="text-lg font-medium text-gray-900 mb-4">
-          {{ isEditingLanguage ? 'Modifier la langue' : 'Ajouter une langue' }}
+          {{ isEditing ? 'Modifier la langue' : 'Ajouter une langue' }}
         </h2>
 
         <form @submit.prevent="submitLanguage" class="space-y-4">
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700">Langue</label>
-              <input type="text" v-model="languageForm.name" required
+              <input type="text" v-model="languageForm.language"
                 class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': languageForm.errors.name }"                
+                :class="{ 'border-red-500': formErrors.language }"
+                required
               >
-              <InputError v-if="languageForm.errors.name" :message="languageForm.errors.name" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.language" :message="formErrors.language[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700">Niveau</label>
-              <select v-model="languageForm.level" required
+              <select
+                v-model="languageForm.level"
                 class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': languageForm.errors.level }"                
+                :class="{ 'border-red-500': formErrors.level }"
+                required
               >
                 <option value="">Sélectionnez un niveau</option>
                 <option value="Débutant">Débutant</option>
@@ -405,16 +522,21 @@
                 <option value="Bilingue">Bilingue</option>
                 <option value="Langue maternelle">Langue maternelle</option>
               </select>
-              <InputError v-if="languageForm.errors.level" :message="languageForm.errors.level" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.level" :message="formErrors.level[0]" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
           <div class="mt-6 flex justify-end space-x-3">
-            <button type="submit"
+            <button
+              type="submit"
               class="inline-flex items-center justify-center px-4 py-2 rounded-xs text-white bg-[#2b8d96] hover:bg-[#1a646b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2b8d96]"
             >
-              {{ isEditingLanguage ? 'Modifier' : 'Ajouter' }}
+              {{ isEditing ? 'Modifier' : 'Ajouter' }}
             </button>
-            <button @click="closeLanguageModal" type="button" class="px-4 py-2 bg-red-500 text-white rounded-xs hover:bg-red-700" >
+            <button
+              @click="closeLanguageModal"
+              type="button"
+              class="px-4 py-2 bg-red-500 text-white rounded-xs hover:bg-red-700"
+            >
               Annuler
             </button>
           </div>
@@ -422,25 +544,34 @@
       </div>
     </Modal>
     <!-- Edit Modal -->
-    <Modal :show="showProfilModal" @close="closeProfilModal">
+    <Modal :show="showEditModal" @close="closeEditModal">
       <div class="p-6">
         <h2 class="text-lg font-medium text-gray-900 mb-4"> Modifier mes informations personnelles</h2>
         <form @submit.prevent="updateProfile" class="space-y-4"  enctype="multipart/form-data">
 
-          <div class="grid grid-cols-2 gap-4">            
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Phone -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Votre profession</label>
+              <input type="text" v-model="formProfile.title"
+                class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.title }"
+              >
+              <InputError v-if="formErrors.phone" :message="formErrors.title[0]" class="mt-1 text-xs text-red-500" />
+            </div>
             <!-- Civility -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Civilité</label>
               <select
                 v-model="formProfile.civility"
                 class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formProfile.errors.civility }"
+                :class="{ 'border-red-500': formErrors.civility }"
               >
                 <option value="M.">M.</option>
                 <option value="Mme">Mme</option>
                 <option value="Mlle">Mlle</option>
               </select>
-              <InputError v-if="formProfile.errors.civility" :message="formProfile.errors.civility" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.civility" :message="formErrors.civility[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Date of Birth -->
@@ -450,16 +581,18 @@
                 type="date"
                 v-model="formProfile.date_of_birth"
                 class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formProfile.errors.date_of_birth }"
+                :class="{ 'border-red-500': formErrors.date_of_birth }"
               >
-              <InputError v-if="formProfile.errors.date_of_birth" :message="formProfile.errors.date_of_birth" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.date_of_birth" :message="formErrors.date_of_birth[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <!-- family status -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Statut familial</label>
-              <select v-model="formProfile.family_status"
+              <select
+                v-model="formProfile.family_status"
                 class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formProfile.errors.family_status }" >
+                :class="{ 'border-red-500': formErrors.family_status }"
+              >
                 <option value="Célibataire">Célibataire</option>
                 <option value="Marié(e)">Marié(e)</option>
                 <option value="Divorcé(e)">Divorcé(e)</option>
@@ -467,43 +600,41 @@
                 <option value="Séparé(e)">Séparé(e)</option>
                 <option value="Union libre">Union libre</option>
               </select>
-              <InputError v-if="formProfile.errors.family_status" :message="formProfile.errors.family_status" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.family_status" :message="formErrors.family_status[0]" class="mt-1 text-xs text-red-500" />
             </div>
-            <!-- Profession -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Votre profession</label>
-              <input type="text" v-model="formProfile.title"
-                class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formProfile.errors.title }"
-              >
-              <InputError v-if="formProfile.errors.phone" :message="formProfile.errors.title" class="mt-1 text-xs text-red-500" />
-            </div>
+
             <!-- Phone -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Téléphone</label>
-              <input type="tel" v-model="formProfile.phone"
+              <input
+                type="tel"
+                v-model="formProfile.phone"
                 class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formProfile.errors.phone }"
+                :class="{ 'border-red-500': formErrors.phone }"
               >
-              <InputError v-if="formProfile.errors.phone" :message="formProfile.errors.phone" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.phone" :message="formErrors.phone[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Address -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Adresse</label>
-              <input type="text" v-model="formProfile.address"
+              <input
+                type="text"
+                v-model="formProfile.address"
                 class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formProfile.errors.address }"
+                :class="{ 'border-red-500': formErrors.address }"
               >
-              <InputError v-if="formProfile.errors.address" :message="formProfile.errors.address" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.address" :message="formErrors.address[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Study Level -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Niveau d'études</label>
-              <select v-model="formProfile.study_level"
+              <select
+                v-model="formProfile.study_level"
                 class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formProfile.errors.study_level }" >
+                :class="{ 'border-red-500': formErrors.study_level }"
+              >
                 <option value="Bac">Bac</option>
                 <option value="Bac +2">Bac +2</option>
                 <option value="Bac +3">Bac +3</option>
@@ -511,42 +642,43 @@
                 <option value="Bac +5">Bac +5</option>
                 <option value="Bac +5 et plus">Bac +5 et plus</option>
               </select>
-              <InputError v-if="formProfile.errors.study_level" :message="formProfile.errors.study_level" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.study_level" :message="formErrors.study_level[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Nationality -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Nationalité</label>
-              <input type="text" v-model="formProfile.nationality"
+              <input
+                type="text"
+                v-model="formProfile.nationality"
                 class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formProfile.errors.nationality }"
+                :class="{ 'border-red-500': formErrors.nationality }"
               >
-              <InputError v-if="formProfile.errors.nationality" :message="formProfile.errors.nationality" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.nationality" :message="formErrors.nationality[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Country -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Pays de résidence</label>
-              <input type="text" v-model="formProfile.country"
+              <input
+                type="text"
+                v-model="formProfile.country"
                 class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': formProfile.errors.country }"
+                :class="{ 'border-red-500': formErrors.country }"
               >
-              <InputError v-if="formProfile.errors.country" :message="formProfile.errors.country" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.country" :message="formErrors.country[0]" class="mt-1 text-xs text-red-500" />
             </div>
 
             <!-- Avatar -->
             <div class="">
               <label class="block text-sm font-medium text-gray-700">Photo de profil</label>
-              <input type="file" @input="formProfile.avatar = $event.target.files[0]" accept="image/*"
+              <input type="file" @change="handleAvatarUpload" accept="image/*"
                 class="mt-1 block w-full border border-gray-200 shadow-sm rounded-xs text-sm
                     focus:z-10 focus:border-[#2b8d96] focus:ring-[#2b8d96]
                     disabled:opacity-50 disabled:pointer-events-none  file:me-4 file:py-2.5 file:px-4 "
-                :class="{ 'border-red-500': formProfile.errors.avatar }"
+                :class="{ 'border-red-500': formErrors.avatar }"
               >
-              <progress v-if="formProfile.progress" :value="formProfile.progress.percentage" max="100">
-                {{ formProfile.progress.percentage }}%
-              </progress>
-              <InputError v-if="formProfile.errors.avatar" :message="formProfile.errors.avatar" class="mt-2" />
+              <InputError v-if="formErrors.avatar" :message="formErrors.avatar[0]" class="mt-2" />
             </div>
             <div class="flex justify-end">
               <img :src="avatarUrl" alt="Avatar" class="size-[52px] object-cover rounded-full mt-4">
@@ -554,12 +686,17 @@
           </div>
 
           <div class="mt-6 flex justify-end space-x-3">
-            <button type="submit"
+            <button
+              type="submit"
               class="inline-flex items-center justify-center px-4 py-2 rounded-xs text-white bg-[#2b8d96] hover:bg-[#1a646b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2b8d96]"
             >
               Enregistrer
             </button>
-            <button @click="closeProfilModal" type="button" class="px-4 py-2 bg-red-500 text-white rounded-xs hover:bg-red-700" >
+            <button
+              @click="closeEditModal"
+              type="button"
+              class="px-4 py-2 bg-red-500 text-white rounded-xs hover:bg-red-700"
+            >
               Annuler
             </button>
           </div>
@@ -605,17 +742,13 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <InputLabel for="education_city" value="Ville" />
-              <TextInput id="education_city" type="text" class="mt-1 block w-full" v-model="educationForm.city"
-                :class="{ 'border-red-500': educationForm.errors.city }"
-              />
-              <InputError v-if="educationForm.errors.city" :message="educationForm.errors.city" class="mt-1 text-xs text-red-500" />
+              <TextInput id="education_city" type="text" class="mt-1 block w-full" :class="{ 'border-red-500': educationForm.errors.city }" v-model="educationForm.city" />
+              <InputError v-if="educationForm.errors.city" :city="educationForm.errors.city" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <InputLabel for="education_country" value="Pays" />
-              <TextInput id="education_country" type="text" class="mt-1 block w-full" v-model="educationForm.country"
-                :class="{ 'border-red-500': educationForm.errors.country }"
-              />
-              <InputError v-if="educationForm.errors.country" :message="educationForm.errors.country" class="mt-1 text-xs text-red-500" />
+              <TextInput id="education_country" type="text" class="mt-1 block w-full" :class="{ 'border-red-500': formErrors.country }" v-model="educationForm.country" />
+              <InputError v-if="formErrors.country" :message="formErrors.country[0]" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
 
@@ -670,12 +803,19 @@
               :disabled="educationForm.processing || !educationForm.description?.trim()"
               class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                {{ isLoading ? 'Correction en cours...' : 'Corriger avec HOKOUI-EMPLOI' }}
-            </button>
-            <button class="px-6 py-2 bg-secondary text-white hover:bg-yellow-700" :disabled="educationForm.processing" >
+                  {{ isLoading ? 'Correction en cours...' : 'Corriger avec HOKOUI-EMPLOI' }}
+                </button>
+            <button type="submit"
+              class="px-6 py-2 bg-secondary text-white hover:bg-yellow-700"
+              :disabled="isLoading"
+            >
               {{ isEditingEducation ? 'Modifier' : 'Ajouter' }}
             </button>
-            <button type="button" @click="closeEducationModal" class="px-6 py-2 bg-danger text-white hover:bg-red-700" >
+            <button
+              type="button"
+              @click="closeEducationModal"
+              class="px-6 py-2 bg-danger text-white hover:bg-red-700"
+            >
               Annuler
             </button>
           </div>
@@ -695,17 +835,17 @@
               <label class="block text-sm font-medium text-gray-700 mb-2">Titre du poste</label>
               <input v-model="experienceForm.title" type="text"
                 class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': experienceForm.errors.title }"
+                :class="{ 'border-red-500': formErrors.title }"
               />
-              <InputError v-if="experienceForm.errors.title" :message="experienceForm.errors.title" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.title" :message="formErrors.title[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Entreprise</label>
               <input v-model="experienceForm.company" type="text"
                 class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': experienceForm.errors.company }"
+                :class="{ 'border-red-500': formErrors.company }"
               />
-              <InputError v-if="experienceForm.errors.company" :message="experienceForm.errors.company" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.company" :message="formErrors.company[0]" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
 
@@ -713,66 +853,75 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">Lieu</label>
             <input v-model="experienceForm.location" type="text"
               class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-              :class="{ 'border-red-500': experienceForm.errors.location }"
+              :class="{ 'border-red-500': formErrors.location }"
             />
-            <InputError v-if="experienceForm.errors.location" :message="experienceForm.errors.location" class="mt-1 text-xs text-red-500" />
+            <InputError v-if="formErrors.location" :message="formErrors.location[0]" class="mt-1 text-xs text-red-500" />
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
               <InputLabel for="experience_city" value="Ville" />
-              <TextInput id="experience_city" type="text" class="mt-1 block w-full" v-model="experienceForm.city" 
-                :class="{ 'border-red-500': experienceForm.errors.city }" 
-              />
-              <InputError v-if="experienceForm.errors.city" :message="experienceForm.errors.city" class="mt-1 text-xs text-red-500" />
+              <TextInput id="experience_city" type="text" class="mt-1 block w-full" v-model="experienceForm.city" :class="{ 'border-red-500': formErrors.city }" />
+              <InputError v-if="formErrors.city" :message="formErrors.city[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <InputLabel for="experience_country" value="Pays" />
-              <TextInput id="experience_country" type="text" class="mt-1 block w-full" v-model="experienceForm.country" :class="{ 'border-red-500': experienceForm.errors.country }" />
-              <InputError v-if="experienceForm.errors.country" :message="experienceForm.errors.country" class="mt-1 text-xs text-red-500" />
+              <TextInput id="experience_country" type="text" class="mt-1 block w-full" v-model="experienceForm.country" />
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Date de début</label>
-              <input v-model="experienceForm.start_date" type="date" class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': experienceForm.errors.start_date }"
+              <input
+                v-model="experienceForm.start_date"
+                type="date"
+                class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.start_date }"
               />
-              <InputError v-if="experienceForm.errors.start_date" :message="experienceForm.errors.start_date" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.start_date" :message="formErrors.start_date[0]" class="mt-1 text-xs text-red-500" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Date de fin</label>
-              <input v-model="experienceForm.end_date" type="date" class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-                :class="{ 'border-red-500': experienceForm.errors.end_date }"
+              <input
+                v-model="experienceForm.end_date"
+                type="date"
+                class="w-full p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+                :class="{ 'border-red-500': formErrors.end_date }"
               />
-              <InputError v-if="experienceForm.errors.end_date" :message="experienceForm.errors.end_date" class="mt-1 text-xs text-red-500" />
+              <InputError v-if="formErrors.end_date" :message="formErrors.end_date[0]" class="mt-1 text-xs text-red-500" />
             </div>
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <textarea v-model="experienceForm.description"
+            <textarea
+              v-model="experienceForm.description"
               class="w-full h-40 p-2 border border-gray-300 focus:border-[#2b8d96] focus:ring-[#2b8d96]"
-              :class="{ 'border-red-500': experienceForm.errors.description }"
+              :class="{ 'border-red-500': formErrors.description }"
             />
-            <InputError v-if="experienceForm.errors.description" :message="experienceForm.errors.description" class="mt-1 text-xs text-red-500" />
+            <InputError v-if="formErrors.description" :message="formErrors.description[0]" class="mt-1 text-xs text-red-500" />
           </div>
 
           <div class="flex justify-end space-x-4">
-            <button @click="correctSummary(experienceForm.description,'experience')"
-              :disabled="isLoading || !experienceForm.description?.trim() || experienceForm.processing"
+            <button
+              @click="correctSummary(experienceForm.description,'experience')"
+              :disabled="isLoading || !experienceForm.description?.trim()"
               class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ isLoading ? 'Correction en cours...' : 'Corriger avec HOKOUI-EMPLOI' }}
             </button>
-            <button type="submit" class="px-6 py-2 bg-secondary text-white hover:bg-yellow-700" 
-             :disabled="isLoading || experienceForm.processing" 
+            <button
+              type="submit"
+              class="px-6 py-2 bg-secondary text-white hover:bg-yellow-700"
+              :disabled="isLoading"
             >
               {{ isEditingExperience ? 'Modifier' : 'Ajouter' }}
             </button>
-            <button type="button" @click="closeExperienceModal" class="px-6 py-2 bg-danger text-white hover:bg-red-700" 
-              :disabled="isLoading || experienceForm.processing" 
+            <button
+              type="button"
+              @click="closeExperienceModal"
+              class="px-6 py-2 bg-danger text-white hover:bg-red-700"
             >
               Annuler
             </button>
@@ -796,9 +945,9 @@ import { router } from '@inertiajs/vue3'
 import axios from 'axios'
 import { confirmDelete } from "@/utils/useConfirm";
 import { showToast } from '@/Utils/useToast'
-import { formatDateForInput, formatSortedDate, formattedNormalDate } from '@/Utils/useDate'
 
-const defaultAvatar = '/storage/default-avatar.png';
+
+const page = usePage()
 
 const props = defineProps({
   auth: Object,
@@ -806,10 +955,39 @@ const props = defineProps({
   userInfo: Object,
 })
 
+const formSummary = useForm({
+  resume: props.userInfo?.summary || '',
+})
 
-// Profil state
-const showProfilModal = ref(false)
-const formProfile = useForm({
+const defaultAvatar = '/storage/default-avatar.png';
+const showEditModal = ref(false)
+// Language state
+const showLanguageModal = ref(false)
+const editingLanguageId = ref(null);
+
+// Education state
+const showEducationModal = ref(false)
+const isEditingEducation = ref(false)
+const editingEducationId = ref(null)
+// Experience state
+const isEditingExperience = ref(false)
+const editingExperienceId = ref(null)
+const showExperienceModal = ref(false)
+
+const colorSetting = ref('primary')
+const isEditing = ref(false)
+const formErrors = ref({});
+// const summary = ref('')
+// const displayedSummary = ref(props.userInfo?.summary || '')
+const isLoading = ref(false)
+// const error = ref('')
+
+const languageForm = ref({
+  language: '',
+  level: ''
+});
+
+const formProfile = ref({
   civility: props.userInfo?.civility || '',
   title: props.userInfo?.title || '',
   date_of_birth: props.userInfo?.date_of_birth || '',
@@ -822,69 +1000,86 @@ const formProfile = useForm({
   avatar: null
 })
 
-// Summary state
-const isEditingSummary = ref(false);
-const formSummary = useForm({
-  resume: props.userInfo?.summary || '',
+
+const formattedBirthDate = computed(() => {
+  if (!props.userInfo?.date_of_birth) return ''
+  const date = new Date(props.userInfo.date_of_birth)
+  return date.toLocaleDateString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  })
 })
-
-// Language state
-const showLanguageModal = ref(false)
-const editingLanguageId = ref(null);
-const isEditingLanguage = ref(false)
-const languageForm = useForm({
-  name: '',
-  level: ''
-});
-
-// Education state
-const showEducationModal = ref(false)
-const isEditingEducation = ref(false)
-const editingEducationId = ref(null)
-// Experience state
-const isEditingExperience = ref(false)
-const editingExperienceId = ref(null)
-const showExperienceModal = ref(false)
-
-const colorSetting = ref('primary')
-const formErrors = ref({});
-const isLoading = ref(false)
 
 const downloadPDF = async () => {
   try {
-    const { data } = await axios.get(route('curriculum.pdf'), {
-      responseType: 'blob' // Ensures response is treated as a file
-    });
-
-    const url = URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+    const response = await axios.get(route('curriculum.pdf'), {
+      headers: {
+        'Content-Type': 'application/pdf'
+      },
+      responseType: 'blob'
+    })
+    const url = window.URL.createObjectURL(new Blob([response.data]))
     const link = document.createElement('a')
     link.href = url
-    link.download = 'cv.pdf';
+    link.setAttribute('download', 'cv.pdf')
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
   } catch (error) {
     console.error('Error downloading PDF:', error)
-    showToast("error", "Une erreur est survenue lors du téléchargement du PDF !");
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
+    if (error.response?.data?.redirect) {
+      window.location.href = error.response.data.redirect
+    }
   }
 }
-function closeProfilModal() {
-  showProfilModal.value = false
+
+function closeLanguageModal() {
+  showLanguageModal.value = false
+}
+
+function closeEditModal() {
+  showEditModal.value = false
 }
 
 const updateProfile = async () => {
-  formProfile.post(route('curriculum.profile.update'), {
-    preserveScroll: true,
-    onSuccess: () => {
-      showToast("success", "Profil mis à jour avec succès !");
-      showProfilModal.value = false
-    },
-    onError: (errors) => {
-      console.error('Error updating profile:', errors)
+  try {
+    const formData = new FormData();
+
+    Object.keys(formProfile.value).forEach((key) => {
+      const value = formProfile.value[key];
+      if (key === "avatar" && value instanceof File) {
+        formData.append(key, value);
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value);
+      }
+    });
+    console.table('formData', formData)
+
+    const response = await axios.post(route('curriculum.profile.update'), formData);
+    formErrors.value = {};
+    showToast("success", "Profil mis à jour avec succès !");
+
+    router.reload();
+    showEditModal.value = false;
+
+    // Show success message (if you have a notification system)
+    // notification.success('Profile updated successfully');
+  } catch (error) {
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
     }
-  })
-    
+    if (error.response?.data?.redirect) {
+      window.location.href = error.response.data.redirect
+    }
+  }
 };
+const handleAvatarUpload = (event) => {
+  formProfile.value.avatar = event.target.files[0]
+}
 
 const educationForm = useForm({
   level: '',
@@ -907,9 +1102,6 @@ const submitEducation = () => {
         showToast("success", "Formation modifiée avec succès !");
         showEducationModal.value = false;
         closeEducationModal();
-      },
-      onError: (errors) => {
-        console.error('Error updating education:', errors)
       }
     });
   } else {
@@ -923,21 +1115,27 @@ const submitEducation = () => {
     });
   }
 }
+
+
+
 const editEducation = (education) => {
- educationForm.level = education.level;
-  educationForm.type = education.type;
-  educationForm.start_date = formatDateForInput(education.start_date);
-  educationForm.end_date = formatDateForInput(education.end_date);
-  educationForm.school = education.school;
-  educationForm.diploma = education.diploma;
-  educationForm.description = education.description;
-  educationForm.city = education.city;
-  educationForm.country = education.country;
+  educationForm.defaults({
+    level: education.level,
+    type: education.type,
+    start_date: formatDateForInput(education.start_date),
+    end_date: formatDateForInput(education.end_date),
+    school: education.school,
+    diploma: education.diploma,
+    description: education.description,
+    city: education.city,
+    country: education.country
+  })
 
   isEditingEducation.value = true
   editingEducationId.value = education.id
   showEducationModal.value = true
 }
+
 const closeEducationModal = () => {
   showEducationModal.value = false
   isEditingEducation.value = false
@@ -947,84 +1145,74 @@ const closeEducationModal = () => {
 
 const deleteEducation = async (id) => {
   if (!await confirmDelete()) return;
-  router.delete(route('education.destroy', id), {
-    preserveScroll: true,
-    onSuccess: () => {
-      showToast("success", "Supprimer avec succès !");
-    },
-    onError: (errors) => {
-      console.error('Error deleting education:', errors)
-    }
-  })
 
+  try {
+    await axios.delete(route('education.destroy', id))
+    props.userInfo.educations = props.userInfo.educations.filter(edu => edu.id !== id)
+    showToast("success", "Supprimer avec succès !");
+  } catch (error) {
+    console.error('Error deleting education:', error)
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
+    if (error.response?.data?.redirect) {
+      window.location.href = error.response.data.redirect
+    }
+  }
 }
 
 const submitLanguage = async () => {
-  if (isEditingLanguage.value) {
-    // Update existing language
-    languageForm.put(route('curriculum.language.update', editingLanguageId.value), {
-      preserveScroll: true,
-      onSuccess: () => {
-        showToast("success", "Langue modifiée avec succès !");
-        closeLanguageModal();
-      },
-      onError: (errors) => {
-        console.error('Error updating language:', errors)
-      }
-    });
-    
-  } else {
-    // Add new language
-    languageForm.post(route('curriculum.language.add'), {
-      preserveScroll: true,
-      onSuccess: () => {
-        showToast("success", "Langue ajoutée avec succès !");
-        closeLanguageModal();
-      },
-      onError: (errors) => {
-        console.error('Error adding language:', errors)
-      }
-    });      
-  }  
-};
+  try {
+    let response;
+    if (isEditing.value) {
+      // Update existing language
+      response = await axios.put(route('curriculum.language.update', editingLanguageId.value), {
+        language: languageForm.value.language,
+        level: languageForm.value.level
+      });
 
-const editLanguage = (language) => {
-  editingLanguageId.value = language.id;
-  languageForm.name = language.name;
-  languageForm.level = language.level;
-  isEditingLanguage.value = true;
-  showLanguageModal.value = true;
-};
+      // Update the language in the list
+      const index = props.userInfo.languages.findIndex(lang => lang.id === editingLanguageId.value);
+      if (index !== -1) {
+        props.userInfo.languages[index] = response.data;
+      }
+    } else {
+      // Add new language
+      response = await axios.post(route('curriculum.language.add'), {
+        language: languageForm.value.language,
+        level: languageForm.value.level
+      });
 
-const deleteLanguage = async (id) => {
-  if (!await confirmDelete()) return;
-  router.delete(route('curriculum.language.delete', id), {
-    preserveScroll: true,
-    onSuccess: () => {
-      showToast("success", "Supprimer avec succès !");
-    },
-    onError: (errors) => {
-      console.error('Error deleting language:', errors)
+      // Add the new language to the list
+      if (!props.userInfo.languages) {
+        props.userInfo.languages = [];
+      }
+      props.userInfo.languages.push(response.data);
+      showToast("success", "Langue ajoutée avec succès !");
     }
-  })
+
+    // Close modal and reset form
+    showLanguageModal.value = false;
+    languageForm.value = {
+      language: '',
+      level: ''
+    };
+    isEditing.value = false;
+    editingLanguageId.value = null;
+
+  } catch (error) {
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
+  }
 };
-
-function closeLanguageModal() {
-  showLanguageModal.value = false
-  languageForm.reset();
-  isEditingLanguage.value = false;
-  editingLanguageId.value = null;
-}
-
-const toggleSummaryEdit = () => {
-  isEditingSummary.value = !isEditingSummary.value
-}
 
 const validateSummary = () => {
+
   formSummary.post(route('curriculum.resume.update'), {
     preserveScroll: true,
     onSuccess: () => {
-      isEditingSummary.value = false
+      isEditing.value = false
       showToast("success", "Résumé mis à jour avec succès !");
     },
     onError: (errors) => {
@@ -1034,14 +1222,51 @@ const validateSummary = () => {
   })
 }
 
+// const validateSummary = () => {
+//   const resumeText = summary.value
+
+//   router.post(route('curriculum.resume.update'), {
+//     resume: resumeText
+//   }, {
+//     preserveScroll: true,
+//     onSuccess: () => {
+//       displayedSummary.value = resumeText;
+//       summary.value = '';
+//       isEditing.value = false;
+//       showToast("success", "Résumé mis à jour avec succès !");
+//     },
+//     onError: (errors) => {
+//       console.error('Error updating resume:', errors)
+//     }
+//   })
+// }
+
+const toggleSummaryEdit = () => {
+  isEditing.value = !isEditing.value  
+}
+
+// props.userInfo?.summary || ''
+// const cancelEdit = () => {
+//   isEditing.value = false
+//   summary.value = ''
+// }
+
+// const startEdit = () => {
+//   isEditing.value = true
+//   if (displayedSummary.value) {
+//     summary.value = displayedSummary.value
+//   }
+// }
+
+
 const correctSummary = async (summaryToEdit,category = null) => {
   if (!summaryToEdit.trim()) return
-  formErrors.value = {}
+  formErrors.value = {}  
   isLoading.value = true
 
   try {
     const { data } = await axios.post(route('curriculum.resume.correct'), {
-      resume: summaryToEdit,
+      resume: summaryToEdit,      
       category: category
     });
 
@@ -1050,12 +1275,12 @@ const correctSummary = async (summaryToEdit,category = null) => {
       if (category === 'education') {
         educationForm.description = correctedResume
       } else if (category === 'experience') {
-        experienceForm.description = correctedResume
+        experienceForm.value.description = correctedResume
       } else {
         formSummary.resume = correctedResume
       }
       showToast("success", "Corrigé avec succès !");
-    }
+    } 
   } catch (error) {
     if (error.response?.data?.errors) {
       formErrors.value = error.response.data.errors;
@@ -1067,7 +1292,7 @@ const correctSummary = async (summaryToEdit,category = null) => {
   }
 }
 
-const experienceForm = useForm({
+const experienceForm = ref({
   title: '',
   company: '',
   location: '',
@@ -1078,38 +1303,58 @@ const experienceForm = useForm({
   country: ''
 })
 
-const submitExperience = async () => { 
-  if (isEditingExperience.value) {
-    experienceForm.put(route('experience.update', editingExperienceId.value), {
-      preserveScroll: true,
-      onSuccess: () => {
-        showToast("success", "Expérience modifiée avec succès !");
-        showExperienceModal.value = false;
-        closeExperienceModal();
+const submitExperience = async () => {
+  try {
+    const formData = {
+      title: experienceForm.value.title,
+      company: experienceForm.value.company,
+      location: experienceForm.value.location,
+      start_date: experienceForm.value.start_date,
+      end_date: experienceForm.value.end_date,
+      description: experienceForm.value.description,
+      city: experienceForm.value.city,
+      country: experienceForm.value.country
+    }
+
+    let response
+    if (isEditingExperience.value) {
+      response = await axios.put(route('experience.update', editingExperienceId.value), formData)
+      const index = props.userInfo.experiences.findIndex(exp => exp.id === editingExperienceId.value)
+      if (index !== -1) {
+        props.userInfo.experiences[index] = response.data
       }
-    });
-  } else {
-    experienceForm.post(route('experience.store'), {
-      preserveScroll: true,
-      onSuccess: () => {
-        showToast("success", "Expérience ajoutée avec succès !");
-        showExperienceModal.value = false;
-        closeExperienceModal();
+    } else {
+      response = await axios.post(route('experience.store'), formData)
+      if (!props.userInfo.experiences) {
+        props.userInfo.experiences = []
       }
-    });
+      props.userInfo.experiences.push(response.data)
+      showToast("success", "Supprimer avec succès !");
+    }
+
+    closeExperienceModal()
+  } catch (error) {
+    console.error('Error submitting experience:', error)
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
+    if (error.response?.data?.redirect) {
+      window.location.href = error.response.data.redirect
+    }
   }
 }
 
 const editExperience = (experience) => {
-  experienceForm.title = experience.title
-  experienceForm.company = experience.company
-  experienceForm.location = experience.location
-  experienceForm.start_date = formatDateForInput(experience.start_date)
-  experienceForm.end_date = formatDateForInput(experience.end_date)
-  experienceForm.description = experience.description
-  experienceForm.city = experience.city
-  experienceForm.country = experience.country
-
+  experienceForm.value = {
+    title: experience.title,
+    company: experience.company,
+    location: experience.location || '',
+    start_date: formatDateForInput(experience.start_date),
+    end_date: formatDateForInput(experience.end_date),
+    description: experience.description,
+    city: experience.city || '',
+    country: experience.country || ''
+  }
   isEditingExperience.value = true
   editingExperienceId.value = experience.id
   showExperienceModal.value = true
@@ -1117,25 +1362,27 @@ const editExperience = (experience) => {
 
 const deleteExperience = async (id) => {
   if (!await confirmDelete()) return;
-  router.delete(route('experience.destroy', id), {
-    preserveScroll: true,
-    onSuccess: () => {
-      showToast("success", "Supprimer avec succès !");
-    },
-    onError: (errors) => {
-      console.error('Error deleting experience:', errors)
+  try {
+    await axios.delete(route('experience.destroy', id))
+    props.userInfo.experiences = props.userInfo.experiences.filter(exp => exp.id !== id)
+    showToast("success", "Supprimer avec succès !");
+  } catch (error) {
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
     }
+    if (error.response?.data?.redirect) {
+      window.location.href = error.response.data.redirect
+    }
+  }
+}
+
+const formatDate = (date) => {
+  if (!date) return ''
+  return new Date(date).toLocaleDateString('fr-FR', {
+    year: 'numeric',
+    month: 'long'
   })
 }
-
-const closeExperienceModal = () => {
-  showExperienceModal.value = false
-  isEditingExperience.value = false
-  editingExperienceId.value = null
-  experienceForm.reset();
-}
-
-
 
 const avatarUrl = computed(() => {
   if (props.userInfo.avatar) {
@@ -1146,5 +1393,82 @@ const avatarUrl = computed(() => {
   }
   return defaultAvatar
 })
+const toggleLanguageModal = () => {
+  if (showLanguageModal.value) {
+    // If modal is open, close it and reset form
+    showLanguageModal.value = false
+    languageForm.value = {
+      language: '',
+      level: ''
+    }
+    isEditing.value = false
+  } else {
+    // If modal is closed, open it
+    showLanguageModal.value = true
+  }
+}
+const editLanguage = (language) => {
+  editingLanguageId.value = language.id;
+  languageForm.value = {
+    language: language.name,  // Note: using 'name' as per your backend model
+    level: language.level
+  };
+  isEditing.value = true;
+  showLanguageModal.value = true;
+};
 
+const deleteLanguage = async (id) => {
+  if (!await confirmDelete()) return;
+
+  try {
+    await axios.delete(route('curriculum.language.delete', id));
+    showToast("success", "Supprimer avec succès !");
+    props.userInfo.languages = props.userInfo.languages.filter(lang => lang.id !== id);
+  } catch (error) {
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors;
+    }
+  }
+};
+
+
+
+const formatDateForInput = (date) => {
+  if (!date) return ''
+  return new Date(date).toISOString().split('T')[0]
+}
+
+
+
+
+const closeExperienceModal = () => {
+  showExperienceModal.value = false
+  isEditingExperience.value = false
+  editingExperienceId.value = null
+  experienceForm.value = {
+    title: '',
+    company: '',
+    location: '',
+    start_date: '',
+    end_date: '',
+    description: '',
+    city: '',
+    country: ''
+  }
+}
+const openExperienceModal = () => {
+  showExperienceModal.value = true
+  isEditingExperience.value = false
+  editingExperienceId.value = null
+  experienceForm.value = {
+    title: '',
+    company: '',
+    location: '',
+    start_date: '',
+    end_date: '',
+    description: '',
+    city: '',
+    country: ''
+  }
+}
 </script>

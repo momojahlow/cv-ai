@@ -22,79 +22,57 @@ class ExperienceController extends Controller
         $user = Auth::user();
 
         // Check if user has a curriculum, if not create one
-        if (!$user->curriculum) {
-            $curriculum = Curriculum::create([
-                'user_id' => $user->id
-            ]);
-            $user->refresh();
-        }
+        $curriculum = $user->curriculum ?? $user->curriculum()->create();
+        $user->refresh();
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'company' => 'required|string|max:255',
             'location' => 'required|string|max:255',
-            'start_date' => 'required|date',
+            'start_date' => 'required|date |before:end_date',
             'end_date' => 'nullable|date|after:start_date',
-            'city' => 'nullable|string',
-            'country' => 'nullable|string',
-            'description' => 'required|string'
+            'city' => 'nullable|string |max:255 |min:2',
+            'country' => 'nullable|string |max:255 |min:2 ',
+            'description' => 'required|string |max:255|min:10'
         ]);
-        // Convert snake_case to camelCase for database
-        $data = [
-            'title' => $validated['title'],
-            'company' => $validated['company'],
-            'location' => $validated['location'],
-            'start_date' => $validated['start_date'],
-            'end_date' => $validated['end_date'],
-            'description' => $validated['description'],
-            'curriculum_id' => $user->curriculum->id
-        ];
 
-        $experience = Experience::create($data);
+        $curriculum->experiences()->create($validated);
 
-        return response()->json($experience);
+        return redirect()->back()->with('success', 'Experience ajoutée avec succès !');
     }
 
     public function update(Request $request, Experience $experience)
     {
         $user = Auth::user();
 
-        // Ensure the user has a curriculum, creating one if necessary
-        $curriculum = $user->curriculum ?? Curriculum::create(['user_id' => $user->id]);
+        $curriculum = $user->curriculum ?? $user->curriculum()->create();
+        $user->refresh();
     
         $validated = $request->validate([
             'title'       => 'required|string|max:255',
             'company'     => 'required|string|max:255',
             'location'    => 'required|string|max:255',
-            'start_date'  => 'required|date',
+            'start_date'  => 'required|date |before:end_date',
             'end_date'    => 'nullable|date|after:start_date',
-            'city'        => 'nullable|string',
-            'country'     => 'nullable|string',
-            'description' => 'required|string',
+            'city'        => 'nullable|string |max:255|min:2',
+            'country'     => 'nullable|string |max:255|min:2',
+            'description' => 'required|string |max:255|min:10',
         ]);
     
         $validated['curriculum_id'] = $curriculum->id;
+        $experience->update($validated);
+        return redirect()->back()->with('success', 'Experience modifiée avec succès !');
     
-        return response()->json(Experience::create($validated));
+        return response()->json();
     }
 
     public function destroy(Experience $experience)
     {
         $user = Auth::user();
 
-        // Check if user has a curriculum, if not create one
-        if (!$user->curriculum) {
-            $curriculum = Curriculum::create([
-                'user_id' => $user->id
-            ]);
-            $user->refresh();
-        }
-
-        // $this->authorize('delete', $experience);
-
         $experience->delete();
 
-        return response()->json(['message' => 'Experience deleted successfully']);
+        return redirect()->back()->with('success', 'Experience supprimée avec succès !');
     }
 
     /**

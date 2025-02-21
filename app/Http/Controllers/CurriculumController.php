@@ -14,6 +14,8 @@ use GeminiAPI\Resources\Parts\TextPart;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Services\GeminiAiService;
+use App\Http\Requests\CurriculumProfileRequest;
+use App\Http\Requests\LanguageRequest;
 
 class CurriculumController extends Controller
 {
@@ -55,6 +57,7 @@ class CurriculumController extends Controller
                 'country' => $experience->country,
             ];
         });
+        // dd( $user->curriculum?->title);
         
         return Inertia::render('Curriculum/Index', [
             'profileNumber' => $user->id,
@@ -82,34 +85,6 @@ class CurriculumController extends Controller
             ]
         ]);
     }
-
-    // public function correctResume(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'resume' => 'required|string|min:10',
-    //     ]);
-
-    //     $client = new Client(env('GEMINI_API_KEY'));
-    //     $prompts = "Sans commentaire corrige moi ce texte et reformule le de manière professionnelle en 100 mots :" . $validated['resume'];
-
-    //     try {
-    //         $response = $client->geminiPro()->generateContent(
-    //             new TextPart($prompts)
-    //         );
-
-    //         $correctedResume = trim($response->text());
-
-    //         return response()->json([
-    //             'success' => true,
-    //             'resume' => $correctedResume
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Une erreur est survenue lors de la correction: ' . $e->getMessage()
-    //         ], 500);
-    //     }       
-    // }
 
     public function correctResume(Request $request, GeminiAiService $geminiAiService)
     {
@@ -141,85 +116,62 @@ class CurriculumController extends Controller
     }
 
     public function updateResume(Request $request)
-    {
-        $request->validate([
-            'resume' => 'required|string|min:10',
-        ]);
+    {        
+        $validated = $request->validate([
+            'resume' => 'required|string|min:10|max:255',
+        ], [
+            'resume.required' => 'Le résumé est obligatoire.',
+            'resume.string' => 'Le résumé doit être une chaîne de caractères.',
+            'resume.min' => 'Le résumé doit contenir au moins :min caractères.',
+            'resume.max' => 'Le résumé ne peut pas dépasser :max caractères.',
+        ]);        
+        $user = auth()->user();
 
-        $curriculum = auth()->user()->curriculum;
-        if (!$curriculum) {
-            $curriculum = auth()->user()->curriculum()->create([
-                'resume' => $request->resume,
-            ]);
-        } else {
-            $curriculum->update([
-                'resume' => $request->resume
-            ]);
-        }
-
+        $curriculum = $user->curriculum()->firstOrCreate([]);
+        $curriculum->update($validated);    
+        
         return back()->with('success', 'Resume updated successfully');
     }
 
 
-    public function addLanguage(Request $request)
+    public function addLanguage(LanguageRequest $request)
     {
-        $data = $request->validate([
-            'language' => 'required|string|min:2|max:25',
-            'level' => 'required|string|min:2|max:25',
-        ]);
+        $validated = $request->validated();
 
-        $curriculum = auth()->user()->curriculum ?? auth()->user()->curriculum()->create();
+        $user = auth()->user();
+        $curriculum = $user->curriculum ?? $user->curriculum()->firstOrCreate([]);
+        $curriculum->languages()->create($validated);
+    
 
-        $language = $curriculum->languages()->create([
-            'name' => $data['language'],  // Changed to use 'name'
-            'level' => $data['level'],
-        ]);
-
-        return response()->json($language);
+        return redirect()->back()->with('success', 'Language ajoutée avec succès');
     }
 
-    public function updateLanguages(Request $request, Language $language)
+    public function updateLanguages(LanguageRequest $request, Language $language)
     {
-        $data = $request->validate([
-            'language' => 'required|string|min:2|max:25',
-            'level' => 'required|string|min:2|max:25',
-        ]);
+        $validated = $request->validated();
 
-        $language->update([
-            'name' => $data['language'],  // Changed to use 'name'
-            'level' => $data['level'],
-        ]);
+        // if ($language->curriculum->user_id !== auth()->id()) {
+        //     abort(403, 'Action non autorisée.');
+        // }
 
-        return response()->json($language);
+        $language->update( $validated );
+        return redirect()->back()->with('success', 'Language modifiée avec succès');
     }
 
     public function deleteLanguage(Language $language)
     {
         $language->delete();
-        return response()->json(['success' => true]);
+        return redirect()->back()->with('success', 'Language supprimée avec succès');
     }
 
-    public function updateProfile(Request $request)
-    {
+    public function updateProfile(CurriculumProfileRequest $request)
+    { 
+        $validated = $request->validated();
+        
         $user = auth()->user();
         $curriculum = $user->curriculum ?? $user->curriculum()->create();
 
-        $validated = $request->validate([
-            'civility' => 'required|string',
-            'title' => 'required|string|min:2|max:255',
-            'date_of_birth' => 'required|date',
-            'phone' => 'required|string|min:10|max:20',
-            'address' => 'nullable|string|min:2|max:255',
-            'nationality' => 'nullable|string|min:2|max:255',
-            'study_level' => 'required|string|min:2|max:255',
-            'country' => 'nullable|string|min:2|max:255',
-            'family_status' => 'nullable|string|min:2|max:255',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:1024',
-        ]);
-
-        $validated['date_of_birth'] = Carbon::parse($validated['date_of_birth'])->format('Y-m-d');
-        $curriculum->update($validated);
-
+        // $validated['date_of_birth'] = Carbon::parse($validated['date_of_birth'])->format('Y-m-d');       
         if ($request->hasFile('avatar')) {
             Storage::disk('public')->delete($curriculum->avatar);
             $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
@@ -228,8 +180,7 @@ class CurriculumController extends Controller
         }
 
         $curriculum->update($validated);
-        return response()->json($curriculum);
+        return redirect()->back()->with('success', 'Profil mis à jour avec succès !');
     }
-
 
 }

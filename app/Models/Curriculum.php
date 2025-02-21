@@ -19,6 +19,7 @@ class Curriculum extends Model
         'date_of_birth',
         'nationality',
         'civility',
+        'title',
         'study_level',
         'phone',
         'address',
