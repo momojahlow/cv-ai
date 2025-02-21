@@ -64,7 +64,7 @@
                 <p class="italic font-semibold">
                     {{$education->start_date->format('Y')}} - {{$education->end_date->format('Y')}}
                 </p>
-                <p class="italic text-gray-600">Fez | Maroc</p>
+                <p class="italic text-gray-600">{{$education->city}} | {{$education->country}}</p>
                 <p class="text-gray-700 text-xs">{{$education->description}}</p>
             </div>
         @endforeach
@@ -80,7 +80,7 @@
                 <p class="italic font-semibold">
                     {{$experience->start_date->format('m/Y')}} - {{$experience->end_date->format('m/Y')}}
                 </p>
-                <p class="italic text-gray-600">Fez | Maroc</p>
+                <p class="italic text-gray-600">{{$experience->city}} | {{$experience->country}}</p>
                 <p class="text-gray-700 text-xs">{{$experience->description}}</p>
             </div>
         @endforeach
