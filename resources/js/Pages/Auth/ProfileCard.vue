@@ -1,53 +1,47 @@
 
 <template>
-    <Head title="Dashboard" />
-    
+    <Head title="Dashboard" />    
  
-    <div className="max-w-4xl mx-auto mt-10 bg-white rounded-lg shadow-lg border">
-        {/* Cover Photo */}
+    <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-lg border">
         <div className="relative">
-            <div className="h-32 md:h-40 bg-gradient-to-r from-gray-200 to-blue-300 rounded-t-lg"></div>
-            {/* Profile Picture */}
+            <div className="h-32 md:h-40 bg-gradient-to-r from-white to-teal-600 rounded-t-lg"></div>
             <div className="absolute inset-x-0 -bottom-10 flex justify-center">
                 <img
-                    src="https://via.placeholder.com/100"
+                    :src="user.profile_photo_url"
                     alt="Profile"
                     className="w-24 h-24 md:w-28 md:h-28 rounded-full border-4 border-white shadow-lg"
                 />
-                {/* Camera Icon */}
+                
                 <div className="absolute bottom-1 right-1 bg-gray-200 p-1 rounded-full shadow-md cursor-pointer">
                     📷
                 </div>
             </div>
         </div>
-
-        {/* Profile Info */}
+        
         <div className="pt-12 pb-6 text-center">
-            <h2 className="text-lg font-semibold">Amanda Harvey</h2>
-            <p className="text-gray-500">@iam_amanda</p>
+            <h2 className="text-lg font-semibold">{{user.name}}</h2>
+            <p className="text-gray-500">{{user.email}}</p>
         </div>
-
-        {/* Navigation Links */}
+        
         <div className="flex justify-center space-x-6 text-gray-500 text-sm border-t py-3">
-            <div className="flex items-center space-x-1 cursor-pointer hover:text-gray-700">
+            <Link :href="route('profile.show')" className="flex items-center space-x-1 cursor-pointer hover:text-gray-700">
                 <span>👤</span>
-                <span>My Profile</span>
-            </div>
-            <div className="flex items-center space-x-1 cursor-pointer hover:text-gray-700">
+                <span>Mon Profile</span>
+            </Link>
+            <!-- <div className="flex items-center space-x-1 cursor-pointer hover:text-gray-700">
                 <span>👥</span>
                 <span>Teams</span>
-            </div>
-            <div className="flex items-center space-x-1 cursor-pointer hover:text-gray-700">
+            </div> -->
+            <Link :href="route('curriculum.index')" className="flex items-center space-x-1 cursor-pointer hover:text-gray-700">
                 <span>📂</span>
-                <span>Files</span>
-            </div>
+                <span>Mon CV</span>
+            </Link>
             <div className="flex items-center space-x-1 cursor-pointer hover:text-gray-700">
                 <span>🔗</span>
                 <span>Connections</span>
             </div>
         </div>
 
-        {/* Edit Button */}
         <div className="text-right p-4">
             <button className="px-4 py-1 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg shadow hover:bg-gray-200">
                 Edit
@@ -58,4 +52,14 @@
 </template>
 
 <script setup>
+import { Head, Link } from '@inertiajs/vue3';
+
+defineProps({
+    canLogin: Boolean,
+    canRegister: Boolean,
+    laravelVersion: String,
+    phpVersion: String,
+    user: Object,
+    errors: Object,
+});
 </script>

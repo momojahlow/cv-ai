@@ -54,9 +54,9 @@ const logout = () => {
                                 <NavLink :href="route('curriculum.index')" :active="route().current('curriculum.index')">
                                     Mon CV
                                 </NavLink>
-                                <NavLink :href="route('experience.create')" :active="route().current('experience.create')">
+                                <!-- <NavLink :href="route('experience.create')" :active="route().current('experience.create')">
                                     Ajouter une expérience
-                                </NavLink>
+                                </NavLink> -->
                             </div>
                         </div>
 
