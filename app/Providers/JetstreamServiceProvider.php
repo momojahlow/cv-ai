@@ -6,6 +6,11 @@ use App\Actions\Jetstream\DeleteUser;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Jetstream\Jetstream;
+use App\Models\Education;
+use App\Policies\EducationPolicy;
+use App\Policies\UserPolicy;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 
 class JetstreamServiceProvider extends ServiceProvider
 {
@@ -23,6 +28,8 @@ class JetstreamServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configurePermissions();
+        Gate::policy(Education::class, EducationPolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
 
         Jetstream::deleteUsersUsing(DeleteUser::class);
 

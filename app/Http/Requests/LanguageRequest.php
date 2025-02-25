@@ -11,7 +11,7 @@ class LanguageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return bool;
+        return true;
     }
 
     /**

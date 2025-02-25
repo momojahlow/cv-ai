@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Resources\UserResource;
+use App\Models\Member;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
@@ -12,9 +15,10 @@ class DashboardController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $user = auth()->user();
+        $user = new UserResource(auth()->user());
         return Inertia::render('Dashboard', [
-            'user' => $user
+            'user' => $user,
+            'users' => $user->isAdmin() ? UserResource::collection(Member::all()) : []
         ]);
     }
 }

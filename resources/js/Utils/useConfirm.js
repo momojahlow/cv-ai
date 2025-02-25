@@ -13,9 +13,10 @@ export const confirmDelete = async (
   confirmButtonText = "Oui, supprimer !"
 ) => {
   const result = await Swal.fire({
-    title,
+    title: '<span style="font-size: 1.3rem; color: #d33;">'+title+'</span>',
     text,
-    icon: "warning",
+    // icon: "question",
+    width: "350px",
     showCancelButton: true,
     confirmButtonColor: "#d33",
     cancelButtonColor: "#c0997a",

@@ -6,11 +6,10 @@ use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserPolicy
 {
-    use HandlesAuthorization;
-
     /**
      * Determine whether the user can view any models.
      */
@@ -46,9 +45,9 @@ class UserPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, User $model): bool
+    public function delete(User $authenticatedUser, User $userToDelete): bool
     {
-        return $user->isAdmin() || $user->id === $model->id;
+        return $authenticatedUser->isAdmin() || $authenticatedUser->id === $userToDelete->id;
     }
 
     /**

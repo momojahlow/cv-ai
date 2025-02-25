@@ -6,9 +6,12 @@ use App\Models\Education;
 use App\Models\Curriculum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class EducationController extends Controller
 {
+    use AuthorizesRequests;
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -43,22 +46,14 @@ class EducationController extends Controller
 
     public function destroy(Education $education)
     {
-        $user = Auth::user();
-
-        if (!$user->curriculum) {
-            Curriculum::create([
-                'user_id' => $user->id
+        // $this->authorize('delete', $education);
+        if (!Gate::allows('delete', $education)) {
+            return back()->withErrors([
+                'message' => 'Vous ne pouvez pas supprimer cette formation.',
             ]);
-            $user->refresh();
         }
 
-        if ($education->curriculum->user_id !== $user->id) {
-            abort(403, 'Unauthorized');
-
-            return redirect()->back()->with('error', 'Unauthorized');
-        }
-
-        $education->delete();
+        // $education->delete();
 
         return redirect()->back()->with('success', 'Education deleted successfully');
     }

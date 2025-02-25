@@ -1,6 +1,5 @@
 
-<template>
-    <Head title="Dashboard" />    
+<template> 
  
     <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-lg border">
         <div className="relative">
@@ -54,7 +53,7 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({
+const props = defineProps({
     canLogin: Boolean,
     canRegister: Boolean,
     laravelVersion: String,
@@ -62,4 +61,5 @@ defineProps({
     user: Object,
     errors: Object,
 });
+console.log(props.user);
 </script>

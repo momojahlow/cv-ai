@@ -63,6 +63,8 @@ class CurriculumController extends Controller
             'profileNumber' => $user->id,
             'userInfo' => [
                 'name' => $user->name,
+                'profile_photo_url' => $user->profile_photo_url,
+                'isAdmin' => $user->isAdmin(),
                 'email' => $user->email,
                 'title' => $user->curriculum?->title ?? 'Aucun titre défini',
                 'categories' => ['Web', 'Mobile', 'Backend'],
@@ -173,7 +175,9 @@ class CurriculumController extends Controller
 
         // $validated['date_of_birth'] = Carbon::parse($validated['date_of_birth'])->format('Y-m-d');       
         if ($request->hasFile('avatar')) {
-            Storage::disk('public')->delete($curriculum->avatar);
+            if ($curriculum->avatar && Storage::disk('public')->exists($curriculum->avatar)) {
+                Storage::disk('public')->delete($curriculum->avatar);
+            }
             $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
         } else {
             unset($validated['avatar']); 
