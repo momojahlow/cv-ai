@@ -30,9 +30,7 @@ const logout = () => {
 <template>
     <div>
         <Head :title="title" />
-
-        <Banner />
-
+        <Banner  />
         <div class="min-h-screen bg-gray-100">
             <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
@@ -51,12 +49,12 @@ const logout = () => {
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
-                                <NavLink :href="route('curriculum.index')" :active="route().current('curriculum.index')">
+                                <NavLink :href="route('curriculum.index')" :active="route().current('curriculum.index')" v-if="$page.props.auth.user.type !== 'admin'">
                                     Mon CV
                                 </NavLink>
-                                <NavLink :href="route('experience.create')" :active="route().current('experience.create')">
+                                <!-- <NavLink :href="route('experience.create')" :active="route().current('experience.create')">
                                     Ajouter une expérience
-                                </NavLink>
+                                </NavLink> -->
                             </div>
                         </div>
 
@@ -140,25 +138,15 @@ const logout = () => {
 
                                     <template #content>
                                         <!-- Account Management -->
-                                        <div class="block px-4 py-2 text-xs text-gray-400">
-                                            Manage Account
-                                        </div>
-
-                                        <DropdownLink :href="route('profile.show')">
-                                            Profile
-                                        </DropdownLink>
-
+                                        <div class="block px-4 py-2 text-xs text-gray-400"> Gérer mon compte </div>
+                                        <DropdownLink :href="route('profile.show')">Profile</DropdownLink>
                                         <DropdownLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')">
                                             API Tokens
                                         </DropdownLink>
-
                                         <div class="border-t border-gray-200" />
-
                                         <!-- Authentication -->
                                         <form @submit.prevent="logout">
-                                            <DropdownLink as="button">
-                                                Log Out
-                                            </DropdownLink>
+                                            <DropdownLink as="button">Déconnexion</DropdownLink>
                                         </form>
                                     </template>
                                 </Dropdown>

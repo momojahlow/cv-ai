@@ -9,6 +9,7 @@ use GeminiAPI\Client;
 use GeminiAPI\Resources\Parts\TextPart;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ExperienceController extends Controller
 {
@@ -68,7 +69,11 @@ class ExperienceController extends Controller
 
     public function destroy(Experience $experience)
     {
-        $user = Auth::user();
+        if (!Gate::allows('delete', $experience)) {
+            return back()->withErrors([
+                'message' => 'Vous ne pouvez pas supprimer cette experience.',
+            ]);
+        }
 
         $experience->delete();
 
