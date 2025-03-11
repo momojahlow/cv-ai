@@ -8,11 +8,8 @@ use App\Models\User;
 use App\Models\Curriculum;
 use GuzzleHttp\Exception\RequestException;
 use Carbon\Carbon;
-use GeminiAPI\Client;
 use App\Models\Language;
-use GeminiAPI\Resources\Parts\TextPart;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
 use App\Services\GeminiAiService;
 use App\Http\Requests\CurriculumProfileRequest;
 use App\Http\Requests\LanguageRequest;
@@ -96,9 +93,9 @@ class CurriculumController extends Controller
         ]);
 
         $prompts = [
-            'education' => "Corrige et reformule ce texte pour une section Éducation d'un CV professionnel :",
-            'experience' => "Corrige et reformule ce texte pour une section Expérience professionnelle d'un CV :",
-            'default' => "Adapte ce texte pour un CV professionnel :"
+            'education' => "Sans commentaire corrige et reformule ce texte pour une section Éducation d'un CV professionnel :",
+            'experience' => "Sans commentaire corrige et reformule ce texte pour une section Expérience professionnelle d'un CV :",
+            'default' => "Sans commentaire corrige moi ce texte :"
         ];
         $prompt = $prompts[$validated['category']] ?? $prompts['default'];
 

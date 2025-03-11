@@ -27,8 +27,8 @@ Route::middleware([
 ])->group(function () {
 
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
-    Route::get('/cv-pdf/{color?}', CurriculumGenerator::class)->name('curriculum.pdf');
-    Route::get('/cv-web/{color?}', CurriculumGenerator::class)->name('curriculum.web');
+    Route::get('/cv-pdf/{id}/{color}', CurriculumGenerator::class)->name('curriculum.pdf');
+    Route::get('/cv-web/{id}/{color}', CurriculumGenerator::class)->name('curriculum.web');
     Route::get('/curriculum', [CurriculumController::class, 'index'])->name('curriculum.index');
     Route::post('/curriculum/profile', [CurriculumController::class, 'updateProfile'])->name('curriculum.profile.update');
     Route::post('/curriculum/resume', [CurriculumController::class, 'updateResume'])->name('curriculum.resume.update');

@@ -72,8 +72,7 @@
         <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
           <div class="flex space-x-4 justify-between">
             <div class="flex space-x-4">
-              <button
-                @click="downloadPDF"
+              <button @click="downloadPDF" :disabled = "isLoading"
                 :class="['flex items-center', `text-${colorSetting}`, 'hover:text-pink-600']"
               >
                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -88,11 +87,14 @@
                 </svg>
                 Envoyer ce CV par mail
               </button> -->
-              <a :href="`/cv-web/${colorSetting}`" target="_blank" :class="`flex items-center text-${colorSetting} hover:text-pink-600`">
+              <a :href="`/cv-web/${auth.user.id}/${colorSetting}`" target="_blank" :class="`flex items-center text-${colorSetting} hover:text-pink-600`">
                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 014 16a5.986 5.986 0 004.546-2.084A5 5 0 0014 10z" clip-rule="evenodd" />
                 </svg> Version Web
               </a>
+              <div v-if="$page.props.flash.error" class="text-red-500 text-sm">
+                {{ $page.props.flash.error }}
+              </div>
             </div>
             <div class="flex space-x-4 items-center">
               <div class="text-sm text-gray-500">Couleur du CV</div>
@@ -852,8 +854,12 @@ const isLoading = ref(false)
 
 const downloadPDF = async () => {
   try {
-    const { data } = await axios.get(route('curriculum.pdf'), {
-      responseType: 'blob' // Ensures response is treated as a file
+    isLoading.value = true;
+    const { data } = await axios.get(route('curriculum.pdf', {
+      id: props.auth.user.id, 
+      color: colorSetting.value 
+    }), {
+      responseType: 'blob' 
     });
 
     const url = URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
@@ -863,9 +869,12 @@ const downloadPDF = async () => {
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    isLoading.value = false;
   } catch (error) {
     console.error('Error downloading PDF:', error)
     showToast("error", "Une erreur est survenue lors du téléchargement du PDF !");
+    isLoading.value = false;
   }
 }
 function closeProfilModal() {

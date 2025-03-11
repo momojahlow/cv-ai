@@ -4,6 +4,8 @@ namespace App\Services;
 
 use GeminiAPI\Client;
 use GeminiAPI\Resources\Parts\TextPart;
+use GeminiAPI\Resources\ModelName;
+
 use Exception;
 
 class GeminiAiService
@@ -22,7 +24,10 @@ class GeminiAiService
         $prompts = $promptTemplate . $resume;
 
         try {
-            $response = $this->client->geminiPro()->generateContent(new TextPart($prompts));
+            // $response = $this->client->geminiPro()->generateContent(new TextPart($prompts));
+            $response = $this->client->generativeModel(ModelName::GEMINI_1_5_FLASH)->generateContent(
+                new TextPart($prompts),
+            );
             return trim($response->text());
         } catch (Exception $e) {
             throw new Exception("Erreur lors de la correction: " . $e->getMessage());

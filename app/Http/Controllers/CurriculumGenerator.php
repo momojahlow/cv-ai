@@ -14,13 +14,16 @@ class CurriculumGenerator extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request, $color = 'primary')
+    public function __invoke(Request $request,$id ,$color)
     {
-        $user = auth()->user();
+        $user = User::find($id);        
+        if (!$user) {
+            abort(404, "User not found.");
+        }
         $curriculum = $user->curriculum()->with(['experiences', 'educations', 'languages'])->first();
-
+        // dd($curriculum);
         if (!$curriculum) {
-            abort(404, "Curriculum not found.");
+            return redirect()->route('curriculum.index')->with('error', 'Complétez dabord votre cv.');
         }
 
         $educations = $curriculum->educations;
@@ -32,6 +35,7 @@ class CurriculumGenerator extends Controller
                 // Storage::makeDirectory('public/cv');
                 Storage::disk('public')->makeDirectory('cv');
             }
+            // dd($color);
             $html = view('cv', compact('user', 'curriculum', 'educations', 'experiences', 'languages', 'color'))->render();
 
             // Save PDF
