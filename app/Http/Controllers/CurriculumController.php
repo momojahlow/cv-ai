@@ -90,14 +90,15 @@ class CurriculumController extends Controller
         $validated = $request->validate([
             'resume' => 'required|string|min:10',
             'category' => 'nullable|string|in:education,experience',
-        ]);
+        ]);        
 
         $prompts = [
             'education' => "Sans commentaire corrige et reformule ce texte pour une section Éducation d'un CV professionnel :",
             'experience' => "Sans commentaire corrige et reformule ce texte pour une section Expérience professionnelle d'un CV :",
             'default' => "Sans commentaire corrige moi ce texte :"
         ];
-        $prompt = $prompts[$validated['category']] ?? $prompts['default'];
+        // $prompt = $prompts[$validated['category']] ?? $prompts['default'];
+        $prompt = $prompts['default'];
 
         try {
             $correctedResume = $geminiAiService->correct($validated['resume'], $prompt);

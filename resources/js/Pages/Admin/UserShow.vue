@@ -137,9 +137,8 @@
           </div>
           <div class="bg-white p-6">
             <p class="text-gray-600 text-sm italic">
-              Rédigez ci-dessous un résumé de votre carrière et de vos aspirations professionnelles.
-              GEO-AI peut vous faire ici un résumé sur la base de votre CV joint.
-              Êtes-vous prêt à utiliser la puissance de l'IA ?!
+              Veuillez rédiger ci-dessous un résumé de votre carrière et de vos expériences professionnelles. 
+              HOUKOUKI-EMPLOI vous aidera à créer un CV professionnel.
             </p>
           </div>
         </div>
@@ -463,7 +462,6 @@
                 <option value="Divorcé(e)">Divorcé(e)</option>
                 <option value="Veuf(ve)">Veuf(ve)</option>
                 <option value="Séparé(e)">Séparé(e)</option>
-                <option value="Union libre">Union libre</option>
               </select>
               <InputError v-if="formProfile.errors.family_status" :message="formProfile.errors.family_status" class="mt-1 text-xs text-red-500" />
             </div>

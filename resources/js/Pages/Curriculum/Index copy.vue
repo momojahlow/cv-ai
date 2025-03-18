@@ -598,7 +598,6 @@
                 <option value="Divorcé(e)">Divorcé(e)</option>
                 <option value="Veuf(ve)">Veuf(ve)</option>
                 <option value="Séparé(e)">Séparé(e)</option>
-                <option value="Union libre">Union libre</option>
               </select>
               <InputError v-if="formErrors.family_status" :message="formErrors.family_status[0]" class="mt-1 text-xs text-red-500" />
             </div>

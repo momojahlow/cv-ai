@@ -47,7 +47,7 @@ const logout = () => {
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
+                                    Tableau de bord 
                                 </NavLink>
                                 <NavLink :href="route('curriculum.index')" :active="route().current('curriculum.index')" v-if="$page.props.auth.user.type !== 'admin'">
                                     Mon CV

@@ -376,6 +376,45 @@
             </div>
           </div>
         </div>
+        <!-- Contact Section -->
+        <div class="mt-12 p-6 bg-gray-50 border-t border-gray-200">
+          <div class="mt-6 bg-white shadow rounded-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+              <div :class="`flex items-center text-${colorSetting}`">
+                <div :class="`h-4 w-1 bg-${colorSetting} mr-2`"></div>
+                <h3 class="text-lg font-semibold">Besoin d’un coach ?</h3>
+              </div>
+            </div>
+            <div class="mt-6 bg-white">
+              Vous ressentez des blocages psychologiques ou du stress lors de vos entretiens d'embauche ? 
+              Vous vous sentez mal à l'aise ? Prenez rendez-vous avec un coach HOUKOUKI-EMPLOI pour vous aider à 
+              surmonter ces obstacles et à aborder vos entretiens avec plus de sérénité.
+            </div>
+            <div class="flex justify-end mt-6">
+              <a href="https://calendly.com/groupgeoagility/30min" target="_blank" role="button"  class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a]">
+                Prendre rendez-vous
+              </a>
+            </div>
+          </div>
+          
+          <div class="mt-6 bg-white shadow rounded-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+              <div :class="`flex items-center text-${colorSetting}`">
+                <div :class="`h-4 w-1 bg-${colorSetting} mr-2`"></div>
+                <h3 class="text-lg font-semibold">Besoin d’un expert RH ?</h3>
+              </div>
+            </div>
+            <div class="mt-6 bg-white">
+              ouhaitez-vous une consultation avec un expert en ressources humaines de HOUKOUKI-EMPLOI pour apprendre 
+              à valoriser votre expérience professionnelle et obtenir des conseils pour réussir vos entretiens d'embauche ?
+            </div>
+            <div class="flex justify-end mt-6">
+              <a href="https://calendly.com/groupgeoagility/30min" target="_blank" role="button"  class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a]">
+                Prendre rendez-vous
+              </a>
+            </div>
+          </div>
+        </div>
     </div>
     <!-- Language Modal -->
     <Modal :show="showLanguageModal" @close="closeLanguageModal">
@@ -467,7 +506,6 @@
                 <option value="Divorcé(e)">Divorcé(e)</option>
                 <option value="Veuf(ve)">Veuf(ve)</option>
                 <option value="Séparé(e)">Séparé(e)</option>
-                <option value="Union libre">Union libre</option>
               </select>
               <InputError v-if="formProfile.errors.family_status" :message="formProfile.errors.family_status" class="mt-1 text-xs text-red-500" />
             </div>
@@ -668,7 +706,7 @@
           </div>
 
           <div class="flex justify-end space-x-4">
-            <button @click="correctSummary(educationForm.description,'education')"
+            <button type="button" @click="correctSummary(educationForm.description,'education')"
               :disabled="educationForm.processing || !educationForm.description?.trim()"
               class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a] disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -762,7 +800,7 @@
           </div>
 
           <div class="flex justify-end space-x-4">
-            <button @click="correctSummary(experienceForm.description,'experience')"
+            <button type="button" @click="correctSummary(experienceForm.description,'experience')"
               :disabled="isLoading || !experienceForm.description?.trim() || experienceForm.processing"
               class="px-6 py-2 bg-[#2b8d96] text-white hover:bg-[#1a526a] disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -1063,7 +1101,7 @@ const correctSummary = async (summaryToEdit,category = null) => {
       } else {
         formSummary.resume = correctedResume
       }
-      showToast("success", "Corrigé avec succès !");
+      // showToast("success", "Corrigé avec succès !");
     }
   } catch (error) {
     if (error.response?.data?.errors) {

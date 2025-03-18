@@ -12,10 +12,10 @@ const props = defineProps({
 </script>
 
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Tableau de bord">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Dashboard
+                Accueil
             </h2>
         </template>
 
