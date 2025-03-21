@@ -132,17 +132,16 @@
           <div class="p-6 text-white flex justify-between items-center">
             <div>
               <h2 class="text-3xl font-bold mb-2">Quelques secondes pour convaincre.</h2>
-              <p class="text-lg">Générez un résumé de CV percutant grâce à HOKOUKI <span class="text-gray-300">EMPLOI</span>.</p>
+              <p class="text-lg">Générez un résumé de CV percutant grâce à HOUKOUKI <span class="text-gray-300">EMPLOI</span>.</p>
             </div>
             <div class="text-4xl font-bold text-white">
-              HOKOUKI<span class="text-gray-300"> EMPLOI</span>
+              HOUKOUKI<span class="text-gray-300"> EMPLOI</span>
             </div>
           </div>
           <div class="bg-white p-6">
             <p class="text-gray-600 text-sm italic">
-              Rédigez ci-dessous un résumé de votre carrière et de vos aspirations professionnelles.
-              GEO-AI peut vous faire ici un résumé sur la base de votre CV joint.
-              Êtes-vous prêt à utiliser la puissance de l'IA ?!
+              Veuillez rédiger ci-dessous un résumé de votre carrière et de vos expériences professionnelles. 
+              HOUKOUKI-EMPLOI vous aidera à créer un CV professionnel.
             </p>
           </div>
         </div>
@@ -372,6 +371,64 @@
               </template>
               <div v-else class="text-gray-500 text-center py-4">
                 Aucune langue ajoutée
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Hobbies Section -->
+        <div class="p-6 bg-gray-50 border-t border-gray-200">
+          <div class="flex items-center justify-between mb-6">
+            <div :class="`flex items-center text-${colorSetting}`">
+              <div :class="`h-4 w-1 bg-${colorSetting} mr-2`"></div>
+              <h3 class="text-lg font-semibold">Loisirs</h3>
+            </div>
+            <button @click="showHobbyModal = true"
+              :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
+            >
+              <svg v-if="!showHobbyModal" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="mt-6 bg-white shadow rounded-lg">
+            <!-- Display hobbies -->
+            <div class="space-y-2">
+              <template v-if="props.userInfo.hobbies?.length">
+                <div
+                  v-for="(hobby, index) in props.userInfo.hobbies"
+                  :key="index"
+                  class="flex justify-between items-center p-3 bg-gray-50 rounded-md"
+                >
+                  <div>
+                    <span class="font-medium">{{ hobby.name }}</span>
+                    <span v-if="hobby.description" class="text-gray-500 ml-2">- {{ hobby.description }}</span>
+                  </div>
+                  <div class="flex space-x-2">
+                    <button
+                      @click="editHobby(hobby)"
+                      class="text-[#2b8d96] hover:text-[#1a646b]"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      @click="deleteHobby(hobby.id)"
+                      class="text-red-500 hover:text-red-700"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </template>
+              <div v-else class="text-gray-500 text-center py-4">
+                Aucun loisir ajouté
               </div>
             </div>
           </div>
@@ -820,6 +877,41 @@
         </form>
       </div>
     </Modal>
+    <!-- Hobby Modal -->
+    <Modal :show="showHobbyModal" @close="closeHobbyModal">
+      <div class="p-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">
+          {{ isEditingHobby ? 'Modifier le loisir' : 'Ajouter un loisir' }}
+        </h2>
+        <form @submit.prevent="submitHobby" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Nom</label>
+            <input type="text" v-model="hobbyForm.name" required
+              class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              :class="{ 'border-red-500': hobbyForm.errors.name }"
+            >
+            <InputError v-if="hobbyForm.errors.name" :message="hobbyForm.errors.name" class="mt-1 text-xs text-red-500" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Description (optionnel)</label>
+            <textarea v-model="hobbyForm.description"
+              class="mt-1 block w-full border-gray-300 shadow-sm focus:border-[#2b8d96] focus:ring-[#2b8d96]"
+              :class="{ 'border-red-500': hobbyForm.errors.description }"
+              rows="3"
+            ></textarea>
+            <InputError v-if="hobbyForm.errors.description" :message="hobbyForm.errors.description" class="mt-1 text-xs text-red-500" />
+          </div>
+          <div class="flex justify-end space-x-3">
+            <button type="submit" class="px-4 py-2 bg-[#2b8d96] text-white rounded-xs hover:bg-[#1a646b]">
+              {{ isEditingHobby ? 'Modifier' : 'Ajouter' }}
+            </button>
+            <button @click="closeHobbyModal" type="button" class="px-4 py-2 bg-red-500 text-white rounded-xs hover:bg-red-700">
+              Annuler
+            </button>
+          </div>
+        </form>
+      </div>
+    </Modal>
   </AppLayout>
 </template>
 
@@ -1194,4 +1286,63 @@ const avatarUrl = computed(() => {
   return defaultAvatar
 })
 
+// Modal states
+const showHobbyModal = ref(false)
+const isEditingHobby = ref(false)
+const editingHobbyId = ref(null)
+
+// Forms
+const hobbyForm = useForm({
+  name: '',
+  description: ''
+})
+
+// Hobby methods
+const submitHobby = async () => {
+  if (isEditingHobby.value) {
+    hobbyForm.put(route('hobbies.update', editingHobbyId.value), {
+      preserveScroll: true,
+      onSuccess: () => {
+        showToast("success", "Loisir modifié avec succès !");
+        closeHobbyModal();
+      }
+    });
+  } else {
+    hobbyForm.post(route('hobbies.store'), {
+      preserveScroll: true,
+      onSuccess: () => {
+        showToast("success", "Loisir ajouté avec succès !");
+        closeHobbyModal();
+      }
+    });
+  }
+};
+
+const editHobby = (hobby) => {
+  editingHobbyId.value = hobby.id;
+  hobbyForm.name = hobby.name;
+  hobbyForm.description = hobby.description;
+  isEditingHobby.value = true;
+  showHobbyModal.value = true;
+};
+
+const deleteHobby = async (id) => {
+  if (!await confirmDelete()) return;
+  router.delete(route('hobbies.destroy', id), {
+    preserveScroll: true,
+    onSuccess: () => {
+      showToast("success", "Supprimé avec succès !");
+    }
+  });
+};
+
+const closeHobbyModal = () => {
+  showHobbyModal.value = false;
+  hobbyForm.reset();
+  isEditingHobby.value = false;
+  editingHobbyId.value = null;
+};
 </script>
+
+
+

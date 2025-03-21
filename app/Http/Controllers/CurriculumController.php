@@ -22,7 +22,7 @@ class CurriculumController extends Controller
             'curriculum.languages',
             'curriculum.educations',
             'curriculum.experiences',
-            
+            'curriculum.hobbies',
         ]);
 
         $educations = $user->curriculum?->educations->map(function ($education) {
@@ -38,6 +38,14 @@ class CurriculumController extends Controller
                 'description' => $education->description,
                 'city' => $education->city,
                 'country' => $education->country,
+            ];
+        });
+
+        $hobbies = $user->curriculum?->hobbies->map(function ($hobby) {
+            return [
+                'id' => $hobby->id,
+                'name' => $hobby->name,
+                'description' => $hobby->description,
             ];
         });
 
@@ -74,6 +82,7 @@ class CurriculumController extends Controller
                 'study_level' => $user->curriculum?->study_level,
                 'address' => $user->curriculum?->address,
                 'educations' => $educations ?? [],
+                'hobbies' => $hobbies ?? [],
                 'experiences' => $experiences ?? [],
                 'languages' => $user->curriculum?->languages ?? [],
                 'avatar' => $user->curriculum?->avatar ?? null,
@@ -186,3 +195,4 @@ class CurriculumController extends Controller
     }
 
 }
+

@@ -8,10 +8,11 @@ use App\Http\Controllers\CurriculumController;
 use Inertia\Inertia;
 use App\Http\Controllers\CurriculumGenerator;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HobbyController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return redirect()->route('register');
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -50,9 +51,17 @@ Route::middleware([
     Route::put('/education/{education}', [EducationController::class, 'update'])->name('education.update');
     Route::delete('/education/{education}', [EducationController::class, 'destroy'])->name('education.destroy');
 
+    Route::controller(HobbyController::class)->group(function () {
+        Route::get('/hobbies', 'index')->name('hobbies.index');
+        Route::post('/hobbies', 'store')->name('hobbies.store');
+        Route::put('/hobbies/{hobby}', 'update')->name('hobbies.update');
+        Route::delete('/hobbies/{hobby}', 'destroy')->name('hobbies.destroy');
+    });
+
     Route::controller(UserController::class)->group(function () {
         Route::get('/users', 'index')->name('users.index');
         Route::get('/users/{user}', 'show')->name('users.show');
+        Route::put('/users/{user}', 'update')->name('users.update');
         Route::delete('/users/{user}', 'destroy')->name('users.destroy');
     });
     

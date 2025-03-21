@@ -95,6 +95,22 @@
                 <p class="text-gray-700 text-xs">{{$language->description}}</p>
             </div>
         @endforeach
+        @if($hobbies && count($hobbies) > 0)
+            <h2 class="{{$textColor}} font-bold text-lg flex items-center mt-4">
+                <span class="w-2 h-6 {{$bgColor}} mr-2"></span> Loisirs
+            </h2>        
+            @foreach ($hobbies as $hobby)
+                <div class="mt-2 pl-6">
+                    <p class="text-md font-bold">
+                        {{$hobby->name}}
+                        @if($hobby->description)
+                            <span class="text-xs font-semibold">- {{$hobby->description}}</span>
+                        @endif
+                    </p>
+                </div>
+            @endforeach
+        @endif
     </div>
 </body>
 </html>
+

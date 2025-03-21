@@ -162,5 +162,22 @@
         </div>
     </div>
     @endif
+
+    @if($curriculum->hobbies && count($curriculum->hobbies) > 0)
+    <div class="section">
+        <h2 class="section-title">Loisirs</h2>
+        <div class="languages-grid">
+            @foreach($curriculum->hobbies as $hobby)
+                <div class="language-item">
+                    <span class="language-name">{{ $hobby->name }}</span>
+                    @if($hobby->description)
+                        <span class="language-level">{{ $hobby->description }}</span>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
 </body>
 </html>
+
