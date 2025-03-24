@@ -163,25 +163,9 @@
     </div>
     @endif
 
-    @if($curriculum->competencies && count($curriculum->competencies) > 0)
-    <div class="section">
-        <h2 class="section-title">Compétences</h2>
-        <div class="languages-grid">
-            @foreach($curriculum->competencies as $competency)
-                <div class="language-item">
-                    <span class="language-name">{{ $competency->name }}</span>
-                    @if($competency->description)
-                        <span class="language-level">{{ $competency->description }}</span>
-                    @endif
-                </div>
-            @endforeach
-        </div>
-    </div>
-    @endif
-
     @if($curriculum->hobbies && count($curriculum->hobbies) > 0)
     <div class="section">
-        <h2 class="section-title">Centres d’intérêt</h2>
+        <h2 class="section-title">Loisirs</h2>
         <div class="languages-grid">
             @foreach($curriculum->hobbies as $hobby)
                 <div class="language-item">
@@ -196,5 +180,4 @@
     @endif
 </body>
 </html>
-
 

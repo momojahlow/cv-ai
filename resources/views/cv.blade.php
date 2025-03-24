@@ -16,7 +16,22 @@
         <div class="flex gap-4">
             {{-- @dd($curriculum) --}}
             <div class="w-24 h-24 bg-gray-200 rounded-md shrink-0">
-                <img src="{{ $curriculum->avatar ?  asset('storage/'.$curriculum->avatar):asset('storage/' . $user->avatar)  }}" alt="Avatar de l'utilisateur" class="w-full h-full object-cover rounded-md">
+                @php
+                    $hasAvatar = $curriculum->avatar || ($user->avatar && $user->avatar !== 'default-avatar.png');
+                    $initials = substr($user->name, 0, 2);
+                @endphp
+
+                @if ($hasAvatar)
+                    <img 
+                        src="{{ $curriculum->avatar ? asset('storage/'.$curriculum->avatar) : asset('storage/' . $user->avatar) }}" 
+                        alt="Avatar de l'utilisateur" 
+                        class="w-full h-full object-cover rounded-md"
+                    >
+                @else
+                    <div class="w-full h-full rounded-md flex items-center justify-center bg-gray-300 text-gray-600 text-2xl font-bold uppercase">
+                        {{ $initials }}
+                    </div>
+                @endif
             </div>
             <div>
                 <h1 class="text-xl font-bold text-gray-800">{{ $user->name }}</h1>
@@ -51,23 +66,24 @@
         <hr class="my-3 {{$borderColor}} border-dotted ">
 
         <h2 class="{{$textColor}} font-bold text-lg flex items-center">
-            <span class="w-2 h-6 {{$bgColor}} mr-2"></span> Résumé du CV
+            <span class="w-2 h-6 {{$bgColor}} mr-2"></span>  Objectif Professionnel
         </h2>
         <p class="text-gray-700 mt-2 text-xs">{{ $curriculum->resume ?? 'Aucun résumé disponible' }}</p>
         <h2 class="{{$textColor}} font-bold text-lg flex items-center mt-4">
-            <span class="w-2 h-6 {{$bgColor}} mr-2"></span> Formation
-        </h2>        
-        @foreach ($educations as $education)
-            <div class="mt-2 pl-6">
-                <p class="text-lg font-bold {{$textColor}}">{{$education->school}} : {{$education->diploma}}</p>
-                <p class="text-md font-bold">{{$education->level}} : <span class="text-xs font-semibold">{{$education->type}}</span></p>
-                <p class="italic font-semibold">
-                    {{$education->start_date->format('Y')}} - {{$education->end_date->format('Y')}}
-                </p>
-                <p class="italic text-gray-600">{{$education->city}} | {{$education->country}}</p>
-                <p class="text-gray-700 text-xs">{{$education->description}}</p>
-            </div>
-        @endforeach
+            <span class="w-2 h-6 {{$bgColor}} mr-2"></span> Compétences
+        </h2> 
+        @if($competencies && count($competencies) > 0)  
+            <ul class="mt-2 pl-8 space-y-2 list-disc">
+                @foreach ($competencies as $competency)
+                <li class="text-md font-bold capitalize icon">
+                    {{$competency->name}}
+                    {{-- @if($competency->description)
+                        <span class="text-xs font-semibold text-gray-600"> - {{$competency->description}}</span>
+                    @endif --}}
+                </li>
+                @endforeach
+            </ul>           
+        @endif
         <h2 class="text-{{$color}} font-bold text-lg flex items-center mt-4">
             <span class="w-2 h-6 bg-{{$color}} mr-2"></span> Expérience Professionnelle
         </h2>        
@@ -75,60 +91,62 @@
             <div class="mt-2 pl-6">
                 {{-- <p class="text-lg font-bold text-teal-700">{{$experience->title}} : {{$experience->company}}</p> --}}
                 <p class="text-md font-bold">
-                    {{$experience->title}} : <span class="text-xs font-semibold">{{$experience->company}}</span>
+                    <span> {{$experience->title}} - {{$experience->company}}</span>
+                    <span class="text-sm text-gray-600 "> 
+                        - {{$experience->start_date->format('m/Y')}} - {{$experience->end_date->format('m/Y')}}
+                    </span>
                 </p>
-                <p class="italic font-semibold">
-                    {{$experience->start_date->format('m/Y')}} - {{$experience->end_date->format('m/Y')}}
-                </p>
-                <p class="italic text-gray-600">{{$experience->city}} | {{$experience->country}}</p>
+                <p class="text-sm text-gray-600">{{$experience->city}} | {{$experience->country}}</p>
                 <p class="text-gray-700 text-xs">{{$experience->description}}</p>
             </div>
         @endforeach
+        <h2 class="{{$textColor}} font-bold text-lg flex items-center mt-4">
+            <span class="w-2 h-6 {{$bgColor}} mr-2"></span> Formation
+        </h2>        
+        @foreach ($educations as $education)
+            <div class="mt-2 pl-6">
+                {{-- <p class="text-lg font-bold {{$textColor}}">{{$education->school}} : {{$education->diploma}}</p> --}}
+                <p class="text-lg font-bold ">
+                    <span>{{$education->diploma}} - {{$education->school}} | </span>
+                    <span class="text-sm text-gray-600">{{$education->start_date->format('Y')}} - {{$education->end_date->format('Y')}}</span>
+                </p>
+                <p class="text-md font-bold text-gray-600">
+                    {{$education->level}} | <span class="text-xs">{{$education->type}}</span>
+                </p>
+                <p class="text-gray-600">{{$education->city}} | {{$education->country}}</p>
+                <p class="text-gray-700 text-xs">{{$education->description}}</p>
+            </div>
+        @endforeach
+        
         <h2 class="{{$textColor}} font-bold text-lg flex items-center mt-4">
             <span class="w-2 h-6 bg-{{$color}} mr-2"></span> Langues
         </h2>        
         @foreach ($languages as $language)
             <div class="mt-2 pl-6">
                 <p class="text-md font-bold">
-                    {{$language->name}} : <span class="text-xs font-semibold">{{$language->level}}</span>
+                    <span class="uppercase ">{{$language->name}} </span>: <span class="text-xs font-semibold">{{$language->level}}</span>
                 </p>
-                <p class="text-gray-700 text-xs">{{$language->description}}</p>
+                {{-- <p class="text-gray-700 text-xs">{{$language->description}}</p> --}}
             </div>
         @endforeach
 
-        @if($competencies && count($competencies) > 0)
-            <h2 class="{{$textColor}} font-bold text-lg flex items-center mt-4">
-                <span class="w-2 h-6 {{$bgColor}} mr-2"></span> Compétences
-            </h2>        
-            @foreach ($competencies as $competency)
-                <div class="mt-2 pl-6">
-                    <p class="text-md font-bold">
-                        {{$competency->name}}
-                        @if($competency->description)
-                            <span class="text-xs font-semibold">- {{$competency->description}}</span>
-                        @endif
-                    </p>
-                </div>
-            @endforeach
-        @endif
-
-        @if($hobbies && count($hobbies) > 0)
-            <h2 class="{{$textColor}} font-bold text-lg flex items-center mt-4">
-                <span class="w-2 h-6 {{$bgColor}} mr-2"></span> Loisirs
-            </h2>        
-            @foreach ($hobbies as $hobby)
-                <div class="mt-2 pl-6">
-                    <p class="text-md font-bold">
-                        {{$hobby->name}}
-                        @if($hobby->description)
-                            <span class="text-xs font-semibold">- {{$hobby->description}}</span>
-                        @endif
-                    </p>
-                </div>
-            @endforeach
+        
+        <h2 class="{{$textColor}} font-bold text-lg flex items-center mt-4">
+            <span class="w-2 h-6 {{$bgColor}} mr-2"></span> Centres d’intérêt
+        </h2>
+        @if($hobbies && count($hobbies) > 0)               
+            <div class="mt-2 pl-6">
+                @foreach ($hobbies as $hobby)
+                    <span class="capitalize ">{{$hobby->name}} </span>
+                    @if (!$loop->last)
+                    |
+                    @endif
+                @endforeach
+            </div>
         @endif
     </div>
 </body>
 </html>
+
 
 

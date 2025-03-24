@@ -12,6 +12,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HobbyController;
 use App\Http\Controllers\UserController;
 
+Route::get('/cv-model', function () {
+    return view('cv-two');
+});
+
 Route::get('/', function () {
     return redirect()->route('register');
     return Inertia::render('Welcome', [
