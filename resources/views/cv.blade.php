@@ -12,7 +12,7 @@
         $textColor = 'text-' . $color;
         $borderColor = 'border-' . $color.' border-opacity-30';
     @endphp
-    <div class="bg-white rounded-lg p-6 w-[600px] mx-auto">
+    <div class="bg-white rounded-lg p-6 max-w-5xl mx-auto">
         <div class="flex gap-4">
             {{-- @dd($curriculum) --}}
             <div class="w-24 h-24 bg-gray-200 rounded-md shrink-0">
@@ -95,6 +95,23 @@
                 <p class="text-gray-700 text-xs">{{$language->description}}</p>
             </div>
         @endforeach
+
+        @if($competencies && count($competencies) > 0)
+            <h2 class="{{$textColor}} font-bold text-lg flex items-center mt-4">
+                <span class="w-2 h-6 {{$bgColor}} mr-2"></span> Compétences
+            </h2>        
+            @foreach ($competencies as $competency)
+                <div class="mt-2 pl-6">
+                    <p class="text-md font-bold">
+                        {{$competency->name}}
+                        @if($competency->description)
+                            <span class="text-xs font-semibold">- {{$competency->description}}</span>
+                        @endif
+                    </p>
+                </div>
+            @endforeach
+        @endif
+
         @if($hobbies && count($hobbies) > 0)
             <h2 class="{{$textColor}} font-bold text-lg flex items-center mt-4">
                 <span class="w-2 h-6 {{$bgColor}} mr-2"></span> Loisirs
@@ -113,4 +130,5 @@
     </div>
 </body>
 </html>
+
 

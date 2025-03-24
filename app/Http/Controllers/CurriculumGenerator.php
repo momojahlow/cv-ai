@@ -30,6 +30,7 @@ class CurriculumGenerator extends Controller
         $experiences = $curriculum->experiences;
         $languages = $curriculum->languages;
         $hobbies = $curriculum->hobbies;
+        $competencies = $curriculum->competencies;
 
         if ($request->route()->getName() === 'curriculum.pdf') { 
             if (!Storage::disk('public')->exists('cv')) {
@@ -37,7 +38,7 @@ class CurriculumGenerator extends Controller
                 Storage::disk('public')->makeDirectory('cv');
             }
             // dd($color);
-            $html = view('cv-pdf', compact('user', 'curriculum', 'educations', 'experiences', 'languages', 'hobbies', 'color'))->render();
+            $html = view('cv-pdf', compact('user', 'competencies', 'curriculum', 'educations', 'experiences', 'languages', 'hobbies', 'color'))->render();
 
             // Save PDF
             $pdfRelativePath = "cv/cv-{$user->id}.pdf";
@@ -49,7 +50,7 @@ class CurriculumGenerator extends Controller
 
             return response()->download($pdfPath);
         }
-        return view('cv', compact('user', 'curriculum', 'educations', 'experiences', 'languages', 'hobbies', 'color'));
+        return view('cv', compact('user', 'curriculum', 'competencies','educations', 'experiences', 'languages', 'hobbies', 'color'));
     }
 }
 
