@@ -23,6 +23,7 @@ class CurriculumController extends Controller
             'curriculum.educations',
             'curriculum.experiences',
             'curriculum.hobbies',
+            'curriculum.competencies',
         ]);
 
         $educations = $user->curriculum?->educations->map(function ($education) {
@@ -64,6 +65,14 @@ class CurriculumController extends Controller
         });
         // dd( $user->curriculum?->title);
         
+        $competencies = $user->curriculum?->competencies->map(function ($competency) {
+            return [
+                'id' => $competency->id,
+                'name' => $competency->name,
+                'description' => $competency->description,
+            ];
+        });
+
         return Inertia::render('Curriculum/Index', [
             'profileNumber' => $user->id,
             'userInfo' => [
@@ -86,7 +95,8 @@ class CurriculumController extends Controller
                 'experiences' => $experiences ?? [],
                 'languages' => $user->curriculum?->languages ?? [],
                 'avatar' => $user->curriculum?->avatar ?? null,
-                'summary' => $user->curriculum?->resume ?? 'Développeur web passionné avec une expertise en développement full-stack. Spécialisé dans les technologies modernes comme Laravel, Vue.js et React.'
+                'summary' => $user->curriculum?->resume ?? 'Une phrase courte et percutante qui résume ton projet professionnel et tes ambitions.',
+                'competencies' => $competencies ?? [],
             ],
             'auth' => [
                 'user' => $user
@@ -195,4 +205,5 @@ class CurriculumController extends Controller
     }
 
 }
+
 

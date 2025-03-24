@@ -128,21 +128,13 @@
           </div>
         </div>
         <!-- GEO-AI Section -->
-        <div class="mt-6 bg-danger overflow-hidden">
-          <div class="p-6 text-white flex justify-between items-center">
-            <div>
-              <h2 class="text-3xl font-bold mb-2">Quelques secondes pour convaincre.</h2>
-              <p class="text-lg">Générez un résumé de CV percutant grâce à HOUKOUKI <span class="text-gray-300">EMPLOI</span>.</p>
-            </div>
-            <div class="text-4xl font-bold text-white">
-              HOUKOUKI<span class="text-gray-300"> EMPLOI</span>
-            </div>
+        <div class="bg-danger overflow-hidden p-4 text-white flex justify-between items-center gap-4 flex-wrap">
+          <div class="whitespace-nowrap">
+            <h2 class="text-3xl font-bold mb-2">Quelques secondes pour convaincre.</h2>
+            <p class="text-lg">Générez un résumé de CV percutant grâce à HOUKOUKI <span class="text-gray-300">EMPLOI</span>.</p>
           </div>
-          <div class="bg-white p-6">
-            <p class="text-gray-600 text-sm italic">
-              Veuillez rédiger ci-dessous un résumé de votre carrière et de vos expériences professionnelles. 
-              HOUKOUKI-EMPLOI vous aidera à créer un CV professionnel.
-            </p>
+          <div class="text-4xl font-bold text-white whitespace-nowrap">
+            HOUKOUKI<span class="text-gray-300"> EMPLOI</span>
           </div>
         </div>
 
@@ -151,7 +143,7 @@
           <div class="flex items-center justify-between mb-6">
             <div :class="`flex items-center text-${colorSetting}`">
               <div :class="`h-4 w-1 bg-${colorSetting} mr-2`"></div>
-              <h3 class="text-lg font-semibold">Résumé de mon CV</h3>
+              <h3 class="text-lg font-semibold">Objectif Professionnel</h3>
             </div>
             <button @click="toggleSummaryEdit"
               :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
@@ -191,6 +183,99 @@
           </div>
         </div>
 
+        <!-- Competency Section -->
+        <div class="p-6 bg-gray-50 border-t border-gray-200">
+          <div class="flex items-center justify-between mb-6">
+            <div :class="`flex items-center text-${colorSetting}`">
+              <div :class="`h-4 w-1 bg-${colorSetting} mr-2`"></div>
+              <h3 class="text-lg font-semibold">Compétences</h3>
+            </div>
+            <button type="button" @click="showCompetencyModal = true"
+              :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="space-y-4">
+            <template v-if="userInfo.competencies?.length">
+              <div v-for="competency in userInfo.competencies" :key="competency.id" 
+                class="flex justify-between items-center bg-white px-4 py-2 rounded-lg shadow-sm">
+                <div>
+                  <h4 class="text-lg font-medium text-gray-900"> - {{ competency.name }}</h4>
+                  <p v-if="competency.description" class="text-sm text-gray-600 mt-1">
+                    {{ competency.description }}
+                  </p>
+                </div>
+                <div class="flex space-x-2">
+                  <button type="button" @click="editCompetency(competency)" 
+                    class="text-[#2b8d96] hover:text-[#1a646b]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button type="button" @click="deleteCompetency(competency.id)" 
+                    class="text-red-500 hover:text-red-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+        <!-- Experience Section -->
+        <div class="p-6 bg-gray-50 border-t border-gray-200">
+          <div class="flex items-center justify-between mb-6">
+            <div :class="`flex items-center text-${colorSetting}`">
+              <div :class="`h-4 w-1 bg-${colorSetting} mr-2`"></div>
+              <h3 class="text-lg font-semibold">Experience professionnelle</h3>
+            </div>
+            <button type="button" @click="showExperienceModal = true"
+              :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="space-y-6">
+            <template v-if="userInfo.experiences?.length">
+              <div v-for="(experience, index) in userInfo.experiences" :key="index" class="flex gap-2">
+                <div class="w-48 flex-shrink-0 whitespace-nowrap overflow-hidden">
+                  <div class="text-sm text-gray-600">{{ formatSortedDate(experience.start_date) }} - {{ formatSortedDate(experience.end_date) }}</div>
+                </div>
+                <div class="flex-1">
+                  <div class="flex justify-between">
+                    <div>
+                      <h4 class="text-lg font-medium text-gray-900">{{ experience.title }}</h4>
+                      <div class="text-sm text-gray-600 mt-1">
+                        {{ experience.company }} • {{ experience.location }}
+                      </div>
+                    </div>
+                    <div class="flex space-x-2 p-2">
+                      <button type="button" @click="editExperience(experience)" class="text-[#2b8d96] hover:text-[#1a646b]" >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button type="button" @click="deleteExperience(experience.id)" class="text-red-500 hover:text-red-700" >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-500">{{ experience.description }}</p>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
         <!-- Education Section -->
         <div class="p-6 bg-gray-50 border-t border-gray-200">
           <div class="flex items-center justify-between mb-6">
@@ -260,63 +345,11 @@
                 </div>
               </div>
             </template>
-            <div v-else class="text-gray-500 text-center py-4">
+            <!-- <div v-else class="text-gray-500 text-center py-4">
               Aucune formation ajoutée
-            </div>
+            </div> -->
           </div>
-        </div>
-        <!-- Experience Section -->
-        <div class="p-6 bg-gray-50 border-t border-gray-200">
-          <div class="flex items-center justify-between mb-6">
-            <div :class="`flex items-center text-${colorSetting}`">
-              <div :class="`h-4 w-1 bg-${colorSetting} mr-2`"></div>
-              <h3 class="text-lg font-semibold">Experience professionnelle</h3>
-            </div>
-            <button type="button" @click="showExperienceModal = true"
-              :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-            </button>
-          </div>
-
-          <div class="space-y-6">
-            <template v-if="userInfo.experiences?.length">
-              <div v-for="(experience, index) in userInfo.experiences" :key="index" class="flex gap-2">
-                <div class="w-48 flex-shrink-0 whitespace-nowrap overflow-hidden">
-                  <div class="text-sm text-gray-600">{{ formatSortedDate(experience.start_date) }} - {{ formatSortedDate(experience.end_date) }}</div>
-                </div>
-                <div class="flex-1">
-                  <div class="flex justify-between">
-                    <div>
-                      <h4 class="text-lg font-medium text-gray-900">{{ experience.title }}</h4>
-                      <div class="text-sm text-gray-600 mt-1">
-                        {{ experience.company }} • {{ experience.location }}
-                      </div>
-                    </div>
-                    <div class="flex space-x-2 p-2">
-                      <button type="button" @click="editExperience(experience)" class="text-[#2b8d96] hover:text-[#1a646b]" >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                      </button>
-                      <button type="button" @click="deleteExperience(experience.id)" class="text-red-500 hover:text-red-700" >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                  <p class="mt-2 text-sm text-gray-500">{{ experience.description }}</p>
-                </div>
-              </div>
-            </template>
-            <div v-else class="text-gray-500 text-center py-4">
-              Aucune expérience ajoutée
-            </div>
-          </div>
-        </div>
+        </div>        
         <!-- Language Section -->
         <div class="p-6 bg-gray-50 border-t border-gray-200">
           <div class="flex items-center justify-between mb-6">
@@ -369,9 +402,6 @@
                   </div>
                 </div>
               </template>
-              <div v-else class="text-gray-500 text-center py-4">
-                Aucune langue ajoutée
-              </div>
             </div>
           </div>
         </div>
@@ -380,7 +410,7 @@
           <div class="flex items-center justify-between mb-6">
             <div :class="`flex items-center text-${colorSetting}`">
               <div :class="`h-4 w-1 bg-${colorSetting} mr-2`"></div>
-              <h3 class="text-lg font-semibold">Loisirs</h3>
+              <h3 class="text-lg font-semibold">Centres d’intérêt</h3>
             </div>
             <button @click="showHobbyModal = true"
               :class="`inline-flex items-center justify-center p-2 rounded-full text-${colorSetting} hover:bg-gray-100`"
@@ -427,12 +457,10 @@
                   </div>
                 </div>
               </template>
-              <div v-else class="text-gray-500 text-center py-4">
-                Aucun loisir ajouté
-              </div>
             </div>
           </div>
         </div>
+        
         <!-- Contact Section -->
         <div class="mt-12 p-6 bg-gray-50 border-t border-gray-200">
           <div class="mt-6 bg-white shadow rounded-lg p-6">
@@ -912,6 +940,52 @@
         </form>
       </div>
     </Modal>
+    <!-- Competency Modal -->
+    <Modal :show="showCompetencyModal" @close="closeCompetencyModal">
+      <div class="p-6">
+        <h2 class="text-lg font-medium text-gray-900">
+          {{ isEditingCompetency ? 'Modifier la compétence' : 'Ajouter une compétence' }}
+        </h2>
+        <form @submit.prevent="submitCompetency" class="mt-6">
+          <div class="mt-4">
+            <InputLabel for="name" value="Nom" />
+            <TextInput
+              id="name"
+              v-model="competencyForm.name"
+              type="text"
+              class="mt-1 block w-full"
+              required
+            />
+            <InputError :message="competencyForm.errors.name" class="mt-2" />
+          </div>
+
+          <div class="mt-4">
+            <InputLabel for="description" value="Description" />
+            <TextArea
+              id="description"
+              v-model="competencyForm.description"
+              class="mt-1 block w-full"
+              rows="3"
+            />
+            <InputError :message="competencyForm.errors.description" class="mt-2" />
+          </div>
+
+          <div class="mt-6 flex justify-end">
+            <SecondaryButton @click="closeCompetencyModal" 
+              class="mr-3 px-6 py-2 bg-danger text-white hover:bg-red-700"
+            >
+              Annuler
+            </SecondaryButton>
+            <PrimaryButton @click="submitCompetency"
+              :disabled="competencyForm.processing"
+              class="px-6 py-2 bg-secondary text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ isEditingCompetency ? 'Mettre à jour' : 'Ajouter' }}
+            </PrimaryButton>
+          </div>
+        </form>
+      </div>
+    </Modal>
   </AppLayout>
 </template>
 
@@ -1342,7 +1416,64 @@ const closeHobbyModal = () => {
   isEditingHobby.value = false;
   editingHobbyId.value = null;
 };
-</script>
 
+// Competency state
+const showCompetencyModal = ref(false)
+const isEditingCompetency = ref(false)
+const editingCompetencyId = ref(null)
+
+// Competency form
+const competencyForm = useForm({
+  name: '',
+  description: ''
+})
+
+// Competency methods
+const submitCompetency = () => {
+  if (isEditingCompetency.value) {
+    competencyForm.put(route('competencies.update', editingCompetencyId.value), {
+      preserveScroll: true,
+      onSuccess: () => {
+        showToast("success", "Compétence modifiée avec succès !");
+        closeCompetencyModal();
+      }
+    });
+  } else {
+    competencyForm.post(route('competencies.store'), {
+      preserveScroll: true,
+      onSuccess: () => {
+        showToast("success", "Compétence ajoutée avec succès !");
+        closeCompetencyModal();
+      }
+    });
+  }
+};
+
+const editCompetency = (competency) => {
+  editingCompetencyId.value = competency.id;
+  competencyForm.name = competency.name;
+  competencyForm.description = competency.description;
+  isEditingCompetency.value = true;
+  showCompetencyModal.value = true;
+};
+
+const deleteCompetency = async (id) => {
+  if (!await confirmDelete()) return;
+  router.delete(route('competencies.destroy', id), {
+    preserveScroll: true,
+    onSuccess: () => {
+      showToast("success", "Compétence supprimée avec succès !");
+    }
+  });
+};
+
+const closeCompetencyModal = () => {
+  showCompetencyModal.value = false;
+  isEditingCompetency.value = false;
+  editingCompetencyId.value = null;
+  competencyForm.reset();
+  competencyForm.clearErrors();
+};
+</script>
 
 

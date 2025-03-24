@@ -71,5 +71,10 @@ class Curriculum extends Model
     {
         return $this->hasMany(Hobby::class);
     }
+    
+    public function competencies()
+    {
+        return $this->hasMany(Competency::class);
+    }
 }
 

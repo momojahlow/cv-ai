@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CompetencyController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExperienceController;
@@ -56,6 +57,13 @@ Route::middleware([
         Route::post('/hobbies', 'store')->name('hobbies.store');
         Route::put('/hobbies/{hobby}', 'update')->name('hobbies.update');
         Route::delete('/hobbies/{hobby}', 'destroy')->name('hobbies.destroy');
+    });
+
+    Route::controller(CompetencyController::class)->group(function () {
+        Route::get('/competencies', 'index')->name('competencies.index');
+        Route::post('/competencies', 'store')->name('competencies.store');
+        Route::put('/competencies/{competency}', 'update')->name('competencies.update');
+        Route::delete('/competencies/{competency}', 'destroy')->name('competencies.destroy');
     });
 
     Route::controller(UserController::class)->group(function () {

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Hobby;
+use App\Models\Competency;
 use Illuminate\Http\Request;
 
-class HobbyController extends Controller
+class CompetencyController extends Controller
 {
     /**
      * Store a newly created resource in storage.
@@ -19,35 +19,32 @@ class HobbyController extends Controller
         $user = auth()->user();
         $curriculum = $user->curriculum ?? $user->curriculum()->firstOrCreate([]);
 
-        $curriculum->hobbies()->create($validated);
+        $curriculum->competencies()->create($validated);
 
-        return redirect()->back()->with('success', 'Hobby added successfully');
+        return redirect()->back()->with('success', 'Competency added successfully');
     }
-
-
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Hobby $hobby)
+    public function update(Request $request, Competency $competency)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
         ]);
 
-        $hobby->update($validated);
+        $competency->update($validated);
 
-        return redirect()->back()->with('success', 'Hobby updated successfully');
+        return redirect()->back()->with('success', 'Competency updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Hobby $hobby)
+    public function destroy(Competency $competency)
     {
-        $hobby->delete();
-
+        $competency->delete();
         return redirect()->back()->with('success', 'Hobby deleted successfully');
     }
 }
